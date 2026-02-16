@@ -29,11 +29,13 @@ class ToolViewSet(viewsets.ModelViewSet):
     ordering_fields = ['price_per_day', 'created_at', 'name']
     ordering = ['-created_at']
     
+    
     def get_permissions(self):
         """Custom permissions"""
-        if self.action in ['list', 'retrieve']:
+        from .permissions import IsToolOwnerOrReadOnly
+        if self.action in ['list', 'retrieve', 'nearby']:
             return [AllowAny()]
-        return [IsAuthenticated()]
+        return [IsAuthenticated(), IsToolOwnerOrReadOnly()]
     
     def get_serializer_class(self):
         """Return appropriate serializer"""
@@ -43,18 +45,32 @@ class ToolViewSet(viewsets.ModelViewSet):
     
     def perform_create(self, serializer):
         """Validate user has a shop before creating tool"""
+        from django.core.files.storage import default_storage
+        
         user = self.request.user
         
         # Check if user is a provider
         if user.user_type != 'provider':
             raise serializers.ValidationError("Only providers can create tools")
         
-        # Get user's first  shop or require shop_id
+        # Get user's first shop or require shop_id
         shop = user.shops.first()
         if not shop:
             raise serializers.ValidationError("You must create a shop first")
+            
+        # Handle image upload
+        # Frontend sends 'image' (single file), Model expects 'images' (list of URLs)
+        image = self.request.FILES.get('image')
+        images_list = []
         
-        serializer.save(shop=shop)
+        if image:
+            # Save file to media directory
+            file_path = default_storage.save(f'tools/{image.name}', image)
+            # Get URL (ensure it starts with /media/ if not already)
+            file_url = default_storage.url(file_path)
+            images_list = [file_url]
+            
+        serializer.save(shop=shop, images=images_list)
     
     @action(detail=False, methods=['get'])
     def nearby(self, request):
