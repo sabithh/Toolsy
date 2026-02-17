@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { api } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
 import Modal from '@/components/ui/Modal';
+import PaymentModal from '@/components/PaymentModal';
 
 interface Booking {
     id: string;
@@ -33,6 +34,8 @@ export default function BookingsPage() {
     const [bookingToCancel, setBookingToCancel] = useState<string | null>(null);
     const [showAuthModal, setShowAuthModal] = useState(false);
     const [bookingToAuth, setBookingToAuth] = useState<string | null>(null);
+    const [showPaymentModal, setShowPaymentModal] = useState(false);
+    const [bookingToPay, setBookingToPay] = useState<Booking | null>(null);
 
     useEffect(() => {
         if (isAuthenticated && accessToken) {
@@ -91,6 +94,17 @@ export default function BookingsPage() {
         }
     };
 
+    const handlePayClick = (booking: Booking) => {
+        setBookingToPay(booking);
+        setShowPaymentModal(true);
+    };
+
+    const handlePaymentSuccess = () => {
+        loadBookings();
+        setShowPaymentModal(false);
+        setBookingToPay(null);
+    };
+
     const getStatusColor = (status: string) => {
         const colors: Record<string, string> = {
             pending: 'bg-yellow-900/20 text-yellow-500 border border-yellow-900/50',
@@ -124,6 +138,20 @@ export default function BookingsPage() {
                 cancelText="CANCEL"
                 variant="success"
             />
+            {bookingToPay && (
+                <PaymentModal
+                    isOpen={showPaymentModal}
+                    onClose={() => setShowPaymentModal(false)}
+                    onSuccess={handlePaymentSuccess}
+                    booking={{
+                        id: bookingToPay.id,
+                        tool_name: bookingToPay.tool.name,
+                        total_amount: bookingToPay.total_amount,
+                        start_date: bookingToPay.start_datetime,
+                        end_date: bookingToPay.end_datetime
+                    }}
+                />
+            )}
             <div className="container-custom">
                 <div className="flex justify-between items-end mb-16 border-b border-black pb-8">
                     <div>
@@ -215,6 +243,15 @@ export default function BookingsPage() {
                                                 }`}>
                                                 PAYMENT: {booking.payment_status}
                                             </div>
+
+                                            {booking.status === 'confirmed' && booking.payment_status === 'pending' && isRenter && booking.payment_method === 'razorpay' && (
+                                                <button
+                                                    onClick={() => handlePayClick(booking)}
+                                                    className="w-full bg-[#DC2626] text-white hover:bg-red-700 py-3 text-xs font-bold uppercase tracking-widest transition-colors mb-4 animate-pulse shadow-[0_0_15px_rgba(220,38,38,0.5)]"
+                                                >
+                                                    Pay Now
+                                                </button>
+                                            )}
 
                                             {booking.status === 'pending' && (
                                                 <div className="w-full space-y-3 mt-4">

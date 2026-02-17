@@ -1,18 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { api } from '@/lib/api';
-
-interface User {
-    id: string;
-    username: string;
-    email: string;
-    user_type: 'renter' | 'provider';
-    first_name?: string;
-    last_name?: string;
-    phone?: string;
-    has_shop?: boolean;
-}
+import { api, User } from '@/lib/api';
 
 interface AuthContextType {
     user: User | null;
@@ -20,10 +9,12 @@ interface AuthContextType {
     login: (username: string, password: string) => Promise<void>;
     register: (data: any) => Promise<void>;
     logout: () => void;
+    refreshUser: () => Promise<void>;
     isAuthenticated: boolean;
     isProvider: boolean;
     isRenter: boolean;
     hasShop: boolean;
+    isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -100,10 +91,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         login,
         register,
         logout,
+        refreshUser: () => (accessToken ? fetchUser(accessToken) : Promise.resolve()),
         isAuthenticated: !!user,
         isProvider: user?.user_type === 'provider',
         isRenter: user?.user_type === 'renter',
         hasShop: !!user?.has_shop,
+        isLoading: loading,
     };
 
     if (loading) {

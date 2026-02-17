@@ -1,10 +1,12 @@
 from rest_framework import viewsets, status
+from django.conf import settings
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from apps.bookings.models import Booking, Notification
+from apps.payments.services import create_razorpay_order, verify_payment_signature
 from .serializers import (
     BookingSerializer, BookingCreateSerializer, NotificationSerializer
 )
@@ -13,7 +15,13 @@ from .serializers import (
 class BookingViewSet(viewsets.ModelViewSet):
     """ViewSet for Booking operations"""
     
-    queryset = Booking.objects.select_related('renter', 'tool', 'shop').all()
+    queryset = Booking.objects.select_related(
+        'renter', 
+        'tool', 
+        'tool__category',
+        'shop', 
+        'shop__owner'
+    ).all()
     serializer_class = BookingSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
@@ -59,6 +67,14 @@ class BookingViewSet(viewsets.ModelViewSet):
         booking.status = 'confirmed'
         booking.save(update_fields=['status'])
         
+        # Send notification to renter
+        Notification.objects.create(
+            user=booking.renter,
+            type='booking',
+            title='Booking Confirmed',
+            message=f'Your booking for {booking.tool.name} has been confirmed. Please complete payment to activate it.'
+        )
+        
         serializer = self.get_serializer(booking)
         return Response(serializer.data)
     
@@ -89,6 +105,109 @@ class BookingViewSet(viewsets.ModelViewSet):
         
         serializer = self.get_serializer(booking)
         return Response(serializer.data)
+
+
+
+    @action(detail=True, methods=['post'])
+    def create_payment(self, request, pk=None):
+        """Create Razorpay order for booking"""
+        booking = self.get_object()
+        
+        # Validation
+        if booking.status != 'confirmed':
+             return Response(
+                {'error': 'Booking must be confirmed before payment'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
+        if booking.payment_status == 'paid':
+            return Response(
+                {'error': 'Booking is already paid'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
+        if booking.payment_method != 'razorpay':
+            return Response(
+                {'error': 'Payment method is not Razorpay'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
+        try:
+            order = create_razorpay_order(booking)
+            booking.razorpay_order_id = order['id']
+            booking.save(update_fields=['razorpay_order_id'])
+            
+            return Response({
+                'order_id': order['id'],
+                'amount': order['amount'],
+                'currency': order['currency'],
+                'key': settings.RAZORPAY_KEY_ID
+            })
+        except Exception as e:
+            return Response(
+                {'error': str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+    @action(detail=True, methods=['post'])
+    def verify_payment(self, request, pk=None):
+        """Verify Razorpay payment"""
+        booking = self.get_object()
+        
+        razorpay_payment_id = request.data.get('razorpay_payment_id')
+        razorpay_signature = request.data.get('razorpay_signature')
+        
+        if not razorpay_payment_id or not razorpay_signature:
+            return Response(
+                {'error': 'Missing payment details'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
+        if not booking.razorpay_order_id:
+            return Response(
+                {'error': 'Order ID not found for booking'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
+        try:
+            is_valid = verify_payment_signature(
+                booking.razorpay_order_id,
+                razorpay_payment_id,
+                razorpay_signature
+            )
+            
+            if is_valid:
+                booking.payment_status = 'paid'
+                booking.razorpay_payment_id = razorpay_payment_id
+                booking.status = 'active'  # Automatically activate paid booking
+                booking.save(update_fields=['payment_status', 'razorpay_payment_id', 'status'])
+                
+                # Notify both parties
+                Notification.objects.create(
+                    user=booking.renter,
+                    type='payment',
+                    title='Payment Successful',
+                    message=f'Payment for {booking.tool.name} was successful. Your booking is active!'
+                )
+                
+                Notification.objects.create(
+                    user=booking.shop.owner,
+                    type='payment',
+                    title='Payment Received',
+                    message=f'Payment received for booking {booking.id}'
+                )
+                
+                return Response({'status': 'Payment verified successfully'})
+            else:
+                return Response(
+                    {'error': 'Invalid payment signature'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        except Exception as e:
+            return Response(
+                {'error': str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class NotificationViewSet(viewsets.ReadOnlyModelViewSet):

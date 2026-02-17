@@ -6,6 +6,28 @@ interface RequestOptions extends RequestInit {
     token?: string;
 }
 
+export interface User {
+    id: string;
+    username: string;
+    email: string;
+    user_type: 'renter' | 'provider';
+    first_name?: string;
+    last_name?: string;
+    phone?: string;
+    profile_image?: string;
+    created_at?: string;
+    updated_at?: string;
+    location_lat?: number;
+    location_lng?: number;
+    is_verified?: boolean;
+    has_shop?: boolean;
+    is_superuser?: boolean;
+    is_staff?: boolean;
+    subscription_status?: 'active' | 'inactive';
+    total_bookings?: number;
+    total_reviews?: number;
+}
+
 class APIClient {
     private baseURL: string;
 
@@ -193,6 +215,84 @@ class APIClient {
     async cancelBooking(token: string, id: string) {
         return this.request(`/api/bookings/${id}/cancel/`, {
             method: 'POST',
+            token,
+        });
+    }
+
+    // Payments
+    async createPayment(token: string, bookingId: string) {
+        return this.request<{ order_id: string; amount: number; currency: string; key: string }>(
+            `/api/bookings/${bookingId}/create_payment/`,
+            {
+                method: 'POST',
+                token,
+            }
+        );
+    }
+
+    async verifyPayment(token: string, bookingId: string, data: { razorpay_payment_id: string; razorpay_signature: string }) {
+        return this.request(
+            `/api/bookings/${bookingId}/verify_payment/`,
+            {
+                method: 'POST',
+                token,
+                body: JSON.stringify(data),
+            }
+        );
+    }
+
+    // Subscriptions
+    async createSubscriptionOrder(token: string) {
+        return this.request<{ order_id: string; amount: number; key: string; subscription_id: string }>(
+            '/api/subscriptions/create_order/',
+            {
+                method: 'POST',
+                token,
+            }
+        );
+    }
+
+    async verifySubscriptionPayment(token: string, data: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) {
+        return this.request(
+            '/api/subscriptions/verify_payment/',
+            {
+                method: 'POST',
+                token,
+                body: JSON.stringify(data),
+            }
+        );
+    }
+
+    // Admin
+    async getAdminStats(token: string) {
+        return this.request<any>('/api/admin/stats/', {
+            token,
+        });
+    }
+
+    async getAdminUsers(token: string, search?: string) {
+        const query = search ? `?search=${search}` : '';
+        return this.request<any>(`/api/admin/users/${query}`, {
+            token,
+        });
+    }
+
+    async getAdminUser(token: string, id: string) {
+        return this.request<any>(`/api/admin/users/${id}/`, {
+            token,
+        });
+    }
+
+    async adminToggleVerifyUser(token: string, id: string) {
+        return this.request<{ is_verified: boolean }>(`/api/admin/users/${id}/toggle_verify/`, {
+            method: 'POST',
+            token,
+        });
+    }
+
+    async getAdminBookings(token: string, search?: string) {
+        const query = search ? `?search=${search}` : '';
+        return this.request<any>(`/api/admin/bookings/${query}`, {
             token,
         });
     }

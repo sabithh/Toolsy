@@ -15,9 +15,9 @@ class UserSerializer(serializers.ModelSerializer):
             'user_type', 'phone', 'profile_image', 
             'location_lat', 'location_lng',
             'is_verified', 'created_at', 'updated_at',
-            'has_shop'
+            'has_shop', 'is_superuser', 'is_staff'
         ]
-        read_only_fields = ['id', 'is_verified', 'created_at', 'updated_at', 'has_shop']
+        read_only_fields = ['id', 'is_verified', 'created_at', 'updated_at', 'has_shop', 'is_superuser', 'is_staff']
 
     has_shop = serializers.SerializerMethodField()
 
@@ -72,9 +72,10 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'location_lat', 'location_lng',
             'is_verified', 'created_at', 'updated_at',
             'total_bookings', 'total_reviews',
-            'has_shop'
+            'has_shop', 'is_superuser', 'is_staff',
+            'subscription_status'
         ]
-        read_only_fields = ['id', 'is_verified', 'created_at', 'updated_at', 'has_shop']
+        read_only_fields = ['id', 'is_verified', 'created_at', 'updated_at', 'has_shop', 'is_superuser', 'is_staff', 'subscription_status']
     
     def get_total_bookings(self, obj):
         """Get total number of bookings"""
@@ -86,3 +87,10 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     def get_has_shop(self, obj):
         return obj.shops.exists() if hasattr(obj, 'shops') else False
+
+    def get_subscription_status(self, obj):
+        if obj.user_type != 'provider':
+            return None
+        from django.utils import timezone
+        active_sub = obj.subscriptions.filter(status='active', end_date__gt=timezone.now()).first()
+        return 'active' if active_sub else 'inactive'

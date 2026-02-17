@@ -21,37 +21,39 @@ class ToolCategoryViewSet(viewsets.ReadOnlyModelViewSet):
 class ToolViewSet(viewsets.ModelViewSet):
     """ViewSet for Tool CRUD operations"""
     
-    queryset = Tool.objects.select_related('shop', 'category').filter(is_available=True)
-    serializer_class = ToolSerializer
-    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['category', 'condition', 'shop']
-    search_fields = ['name', 'description', 'brand']
-    ordering_fields = ['price_per_day', 'created_at', 'name']
-    ordering = ['-created_at']
-    
-    
-    def get_permissions(self):
-        """Custom permissions"""
-        from .permissions import IsToolOwnerOrReadOnly
-        if self.action in ['list', 'retrieve', 'nearby']:
-            return [AllowAny()]
-        return [IsAuthenticated(), IsToolOwnerOrReadOnly()]
-    
-    def get_serializer_class(self):
-        """Return appropriate serializer"""
-        if self.action == 'create':
-            return ToolCreateSerializer
-        return ToolSerializer
-    
+    def get_queryset(self):
+        """
+        Get all available tools from subscribed providers.
+        """
+        from django.utils import timezone
+        return Tool.objects.select_related('shop', 'category').filter(
+            is_available=True,
+            shop__owner__subscriptions__status='active',
+            shop__owner__subscriptions__end_date__gt=timezone.now()
+        ).distinct()
+
     def perform_create(self, serializer):
-        """Validate user has a shop before creating tool"""
+        """Validate user has a shop and active subscription before creating tool"""
         from django.core.files.storage import default_storage
+        from django.utils import timezone
         
         user = self.request.user
         
         # Check if user is a provider
         if user.user_type != 'provider':
             raise serializers.ValidationError("Only providers can create tools")
+        
+        # Check active subscription
+        # Note: We check if there is ANY active subscription that hasn't expired
+        has_subscription = user.subscriptions.filter(
+            status='active', 
+            end_date__gt=timezone.now()
+        ).exists()
+        
+        if not has_subscription:
+            raise serializers.ValidationError({
+                "subscription": "Active subscription required (> 200 INR/month) to list tools."
+            })
         
         # Get user's first shop or require shop_id
         shop = user.shops.first()

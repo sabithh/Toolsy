@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import { Orbitron, Exo_2 } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/Navbar';
@@ -37,6 +38,7 @@ export default function RootLayout({
             <CustomCursor />
             <Navbar />
             {children}
+            <Script src="https://checkout.razorpay.com/v1/checkout.js" />
           </ToastProvider>
         </AuthProvider>
       </body>
