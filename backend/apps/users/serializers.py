@@ -80,18 +80,31 @@ class UserProfileSerializer(serializers.ModelSerializer):
     
     def get_total_bookings(self, obj):
         """Get total number of bookings"""
-        return obj.bookings.count()
-    
+        try:
+            return obj.bookings.count()
+        except AttributeError:
+            return 0
+
     def get_total_reviews(self, obj):
         """Get total number of reviews written"""
-        return obj.reviews.count()
+        try:
+            return obj.reviews.count()
+        except AttributeError:
+            return 0
 
     def get_has_shop(self, obj):
-        return obj.shops.exists() if hasattr(obj, 'shops') else False
+        try:
+            return obj.shops.exists()
+        except AttributeError:
+            return False
 
     def get_subscription_status(self, obj):
         if obj.user_type != 'provider':
             return None
-        from django.utils import timezone
-        active_sub = obj.subscriptions.filter(status='active', end_date__gt=timezone.now()).first()
-        return 'active' if active_sub else 'inactive'
+        try:
+            from django.utils import timezone
+            active_sub = obj.subscriptions.filter(status='active', end_date__gt=timezone.now()).first()
+            return 'active' if active_sub else 'inactive'
+        except AttributeError:
+            return 'inactive'
+
