@@ -13,6 +13,8 @@ from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularSwaggerView,
 )
+from apps.users.setup_views import SetupAdminView
+
 
 urlpatterns = [
     # Admin
@@ -30,6 +32,9 @@ urlpatterns = [
     path('api/payments/', include('apps.payments.urls')),
     path('api/admin/', include('apps.admin_dashboard.urls')),
     path('api/subscriptions/', include('apps.subscriptions.urls')),
+    
+    # One-time admin setup (disabled after first superuser is created)
+    path('api/setup/create-admin/', SetupAdminView.as_view(), name='setup-admin'),
     
     # API Documentation
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
