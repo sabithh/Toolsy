@@ -21,19 +21,19 @@ interface PaymentModalProps {
 }
 
 export default function PaymentModal({ booking, isOpen, onClose, onSuccess }: PaymentModalProps) {
-    const { token, user } = useAuth();
+    const { accessToken, user } = useAuth();
     const { showToast } = useToast();
     const [loading, setLoading] = useState(false);
 
     if (!isOpen) return null;
 
     const handlePayment = async () => {
-        if (!token) return;
+        if (!accessToken) return;
 
         setLoading(true);
         try {
             // 1. Create Order
-            const order = await api.createPayment(token, booking.id);
+            const order = await api.createPayment(accessToken, booking.id);
 
             // 2. Open Checkout
             await openRazorpayCheckout({
@@ -45,13 +45,13 @@ export default function PaymentModal({ booking, isOpen, onClose, onSuccess }: Pa
                 name: 'Toolsy Rental',
                 description: `Payment for ${booking.tool_name}`,
                 prefill: {
-                    name: user?.name,
+                    name: user ? `${user.first_name || ''} ${user.last_name || ''}`.trim() : '',
                     email: user?.email,
                     contact: '', // Add contact if available in user profile
                 },
                 onSuccess: async (response) => {
                     try {
-                        await api.verifyPayment(token, booking.id, {
+                        await api.verifyPayment(accessToken, booking.id, {
                             razorpay_payment_id: response.razorpay_payment_id,
                             razorpay_signature: response.razorpay_signature,
                         });

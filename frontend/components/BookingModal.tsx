@@ -22,7 +22,7 @@ interface BookingModalProps {
 }
 
 export default function BookingModal({ tool, isOpen, onClose }: BookingModalProps) {
-    const { user, token } = useAuth();
+    const { user, accessToken } = useAuth();
     const { showToast } = useToast();
     const router = useRouter();
     const [loading, setLoading] = useState(false);
@@ -57,7 +57,7 @@ export default function BookingModal({ tool, isOpen, onClose }: BookingModalProp
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!token) {
+        if (!accessToken) {
             showToast('Please login to book tools', 'error');
             router.push('/login');
             return;
@@ -65,7 +65,7 @@ export default function BookingModal({ tool, isOpen, onClose }: BookingModalProp
 
         setLoading(true);
         try {
-            await api.createBooking(token, {
+            await api.createBooking(accessToken, {
                 tool_id: tool.id,
                 start_datetime: new Date(startDate).toISOString(),
                 end_datetime: new Date(endDate).toISOString(),
@@ -167,8 +167,8 @@ export default function BookingModal({ tool, isOpen, onClose }: BookingModalProp
                                     type="button"
                                     onClick={() => setPaymentMethod('razorpay')}
                                     className={`p-4 rounded-lg border flex flex-col items-center gap-2 transition-all ${paymentMethod === 'razorpay'
-                                            ? 'bg-primary/10 border-primary text-primary'
-                                            : 'bg-black/50 border-gray-800 text-gray-400 hover:border-gray-600'
+                                        ? 'bg-primary/10 border-primary text-primary'
+                                        : 'bg-black/50 border-gray-800 text-gray-400 hover:border-gray-600'
                                         }`}
                                 >
                                     <CreditCard className="w-6 h-6" />
@@ -178,8 +178,8 @@ export default function BookingModal({ tool, isOpen, onClose }: BookingModalProp
                                     type="button"
                                     onClick={() => setPaymentMethod('cash_on_return')}
                                     className={`p-4 rounded-lg border flex flex-col items-center gap-2 transition-all ${paymentMethod === 'cash_on_return'
-                                            ? 'bg-primary/10 border-primary text-primary'
-                                            : 'bg-black/50 border-gray-800 text-gray-400 hover:border-gray-600'
+                                        ? 'bg-primary/10 border-primary text-primary'
+                                        : 'bg-black/50 border-gray-800 text-gray-400 hover:border-gray-600'
                                         }`}
                                 >
                                     <Banknote className="w-6 h-6" />
