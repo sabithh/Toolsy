@@ -12,7 +12,7 @@ import LocationPicker from '@/components/ui/LocationPicker';
 
 export default function ManageShopPage() {
     const router = useRouter();
-    const { accessToken, user, isAuthenticated, loading: authLoading } = useAuth();
+    const { accessToken, user, isAuthenticated, isLoading: authLoading } = useAuth();
     const { showToast } = useToast();
 
     const [shopId, setShopId] = useState<string | null>(null);
@@ -170,7 +170,7 @@ export default function ManageShopPage() {
                                 <LocationPicker
                                     lat={parseFloat(String(formData.location_lat || 0))}
                                     lng={parseFloat(String(formData.location_lng || 0))}
-                                    onLocationChange={(lat, lng) => setFormData(prev => ({ ...prev, location_lat: lat, location_lng: lng }))}
+                                    onLocationChange={(lat: number, lng: number) => setFormData(prev => ({ ...prev, location_lat: lat, location_lng: lng }))}
                                 />
 
                                 <div className="space-y-2">
