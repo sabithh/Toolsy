@@ -63,6 +63,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     total_bookings = serializers.SerializerMethodField()
     total_reviews = serializers.SerializerMethodField()
     has_shop = serializers.SerializerMethodField()
+    subscription_status = serializers.SerializerMethodField()
     
     class Meta:
         model = User
