@@ -290,11 +290,39 @@ class APIClient {
         });
     }
 
-    async getAdminBookings(token: string, search?: string) {
-        const query = search ? `?search=${search}` : '';
-        return this.request<any>(`/api/admin/bookings/${query}`, {
+    async adminToggleActiveUser(token: string, id: string) {
+        return this.request<{ is_active: boolean }>(`/api/admin/users/${id}/toggle_active/`, {
+            method: 'POST',
             token,
         });
+    }
+
+    async adminDeleteUser(token: string, id: string) {
+        return this.request<void>(`/api/admin/users/${id}/`, {
+            method: 'DELETE',
+            token,
+        });
+    }
+
+    async adminGetUserTools(token: string, id: string) {
+        return this.request<any[]>(`/api/admin/users/${id}/tools/`, { token });
+    }
+
+    async adminGetUserSubscription(token: string, id: string) {
+        return this.request<any>(`/api/admin/users/${id}/subscription/`, { token });
+    }
+
+    async adminEditSubscription(token: string, id: string, data: { status: string; months?: number }) {
+        return this.request<any>(`/api/admin/users/${id}/subscription/edit/`, {
+            method: 'PATCH',
+            token,
+            body: JSON.stringify(data),
+        });
+    }
+
+    async getAdminBookings(token: string, search?: string) {
+        const query = search ? `?search=${search}` : '';
+        return this.request<any>(`/api/admin/bookings/${query}`, { token });
     }
 }
 
