@@ -42,7 +42,7 @@ export default function Navbar() {
                         <div className="flex items-center justify-between">
                             {/* Logo */}
                             <Link
-                                href={isAuthenticated ? (user?.user_type === 'provider' ? '/dashboard' : '/tools') : '/'}
+                                href={isAuthenticated ? (user?.is_superuser ? '/admin' : user?.user_type === 'provider' ? '/dashboard' : '/tools') : '/'}
                                 className="flex items-center gap-4 group"
                             >
                                 <div className="relative rounded-sm overflow-hidden border border-black/10 group-hover:border-black transition-colors">
@@ -80,7 +80,15 @@ export default function Navbar() {
                                             <span>Bookings</span>
                                         </Link>
 
-                                        {user?.user_type === 'provider' && (
+                                        {user?.is_superuser ? (
+                                            <Link
+                                                href="/admin"
+                                                className="flex items-center gap-2 px-6 py-2 border border-black/20 hover:border-black hover:bg-black hover:text-white text-black font-bold uppercase tracking-wider transition-all duration-300 no-underline"
+                                            >
+                                                <LayoutDashboard size={18} />
+                                                <span>Admin</span>
+                                            </Link>
+                                        ) : user?.user_type === 'provider' && (
                                             <>
                                                 <Link
                                                     href="/tools/new"
