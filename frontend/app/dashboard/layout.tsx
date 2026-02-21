@@ -9,7 +9,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const { user, isLoading } = useAuth();
     const router = useRouter();
 
-    if (isLoading) return <div className="min-h-screen bg-black text-white flex items-center justify-center">Loading...</div>;
+    if (isLoading) return (
+        <div className="min-h-screen bg-black px-6 py-10 animate-pulse">
+            <div className="max-w-5xl mx-auto space-y-6">
+                <div className="h-8 w-48 bg-neutral-800 rounded" />
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {[1, 2, 3].map(i => (
+                        <div key={i} className="h-28 bg-neutral-800 rounded-xl" />
+                    ))}
+                </div>
+                <div className="h-64 bg-neutral-800 rounded-xl" />
+            </div>
+        </div>
+    );
 
     if (!user) {
         router.push('/login');
