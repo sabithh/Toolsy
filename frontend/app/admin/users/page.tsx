@@ -65,7 +65,7 @@ export default function UsersPage() {
                             <tr>
                                 <th className="px-6 py-4">User</th>
                                 <th className="px-6 py-4">Role</th>
-                                <th className="px-6 py-4">Status</th>
+                                <th className="px-6 py-4">Subscription</th>
                                 <th className="px-6 py-4">Joined</th>
                                 <th className="px-6 py-4 text-right">Actions</th>
                             </tr>
@@ -90,21 +90,25 @@ export default function UsersPage() {
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className={`px-2 py-1 rounded text-xs font-medium ${user.user_type === 'provider'
-                                                ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
-                                                : 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
+                                            ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
+                                            : 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
                                             }`}>
                                             {user.user_type?.toUpperCase()}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4">
-                                        {user.is_verified ? (
-                                            <span className="flex items-center gap-1 text-green-400 text-xs">
-                                                <CheckCircle size={14} /> Verified
-                                            </span>
+                                        {user.user_type === 'provider' ? (
+                                            user.subscription_status === 'active' ? (
+                                                <span className="flex items-center gap-1 text-green-400 text-xs font-medium">
+                                                    <CheckCircle size={13} /> Subscribed
+                                                </span>
+                                            ) : (
+                                                <span className="flex items-center gap-1 text-red-400 text-xs font-medium">
+                                                    <XCircle size={13} /> Not Subscribed
+                                                </span>
+                                            )
                                         ) : (
-                                            <span className="flex items-center gap-1 text-gray-500 text-xs">
-                                                <XCircle size={14} /> Unverified
-                                            </span>
+                                            <span className="text-gray-600 text-xs">N/A</span>
                                         )}
                                     </td>
                                     <td className="px-6 py-4 text-gray-500">

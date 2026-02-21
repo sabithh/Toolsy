@@ -72,13 +72,15 @@ export default function Navbar() {
 
                                 {isAuthenticated ? (
                                     <>
-                                        <Link
-                                            href="/bookings"
-                                            className="flex items-center gap-2 px-6 py-2 border border-black/20 hover:border-black hover:bg-black hover:text-white text-black font-bold uppercase tracking-wider transition-all duration-300 no-underline"
-                                        >
-                                            <Calendar size={18} />
-                                            <span>Bookings</span>
-                                        </Link>
+                                        {!user?.is_superuser && (
+                                            <Link
+                                                href="/bookings"
+                                                className="flex items-center gap-2 px-6 py-2 border border-black/20 hover:border-black hover:bg-black hover:text-white text-black font-bold uppercase tracking-wider transition-all duration-300 no-underline"
+                                            >
+                                                <Calendar size={18} />
+                                                <span>Bookings</span>
+                                            </Link>
+                                        )}
 
                                         {user?.is_superuser ? (
                                             <Link
