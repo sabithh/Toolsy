@@ -1,4 +1,4 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, serializers
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -23,13 +23,14 @@ class ToolViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         """
-        Get all available tools from subscribed providers.
+        Get all available tools from subscribed providers (or admins).
         """
         from django.utils import timezone
+        from django.db.models import Q
         return Tool.objects.select_related('shop', 'category').filter(
-            is_available=True,
-            shop__owner__subscriptions__status='active',
-            shop__owner__subscriptions__end_date__gt=timezone.now()
+            Q(shop__owner__is_superuser=True) |
+            Q(shop__owner__subscriptions__status='active', shop__owner__subscriptions__end_date__gt=timezone.now()),
+            is_available=True
         ).distinct()
 
     def perform_create(self, serializer):
@@ -44,13 +45,12 @@ class ToolViewSet(viewsets.ModelViewSet):
             raise serializers.ValidationError("Only providers can create tools")
         
         # Check active subscription
-        # Note: We check if there is ANY active subscription that hasn't expired
         has_subscription = user.subscriptions.filter(
             status='active', 
             end_date__gt=timezone.now()
         ).exists()
         
-        if not has_subscription:
+        if not (user.is_superuser or has_subscription):
             raise serializers.ValidationError({
                 "subscription": "Active subscription required (> 200 INR/month) to list tools."
             })
@@ -58,7 +58,7 @@ class ToolViewSet(viewsets.ModelViewSet):
         # Get user's first shop or require shop_id
         shop = user.shops.first()
         if not shop:
-            raise serializers.ValidationError("You must create a shop first")
+            raise serializers.ValidationError({"shop": "You must create a shop first"})
             
         # Handle image upload
         # Frontend sends 'image' (single file), Model expects 'images' (list of URLs)
@@ -72,7 +72,12 @@ class ToolViewSet(viewsets.ModelViewSet):
             file_url = default_storage.url(file_path)
             images_list = [file_url]
             
-        serializer.save(shop=shop, images=images_list)
+        quantity_available = serializer.validated_data.get('quantity_available', 1)
+        serializer.save(
+            shop=shop, 
+            images=images_list,
+            quantity_total=quantity_available
+        )
     
     @action(detail=False, methods=['get'])
     def nearby(self, request):
