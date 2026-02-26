@@ -40,20 +40,13 @@ class ToolViewSet(viewsets.ModelViewSet):
         
         user = self.request.user
         
-        # Check if user is a provider
-        if user.user_type != 'provider':
+        # Check if user is a provider or superuser
+        if user.user_type != 'provider' and not user.is_superuser:
             raise serializers.ValidationError("Only providers can create tools")
-        
-        # Check active subscription
-        has_subscription = user.subscriptions.filter(
-            status='active', 
-            end_date__gt=timezone.now()
-        ).exists()
-        
-        if not (user.is_superuser or has_subscription):
-            raise serializers.ValidationError({
-                "subscription": "Active subscription required (> 200 INR/month) to list tools."
-            })
+            
+        # We NO LONGER check for a subscription here. 
+        # Any provider can create a tool, but it will only be VISIBLE in the 
+        # public listings if they have an active subscription (handled in get_queryset).
         
         # Get user's first shop or require shop_id
         shop = user.shops.first()

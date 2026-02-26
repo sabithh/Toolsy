@@ -28,6 +28,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         return null;
     }
 
+    // Redirect admins immediately from the layout to prevent flashing
+    if (user.is_superuser) {
+        router.push('/admin');
+        return null;
+    }
+
     // Only for providers
     // If renter tries to access dashboard? usually they have nothing there or just bookings.
     // Assuming Dashboard is mainly for Providers based on previous context.
