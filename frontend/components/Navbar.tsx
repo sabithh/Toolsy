@@ -9,13 +9,14 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 import Modal from '@/components/ui/Modal';
-import { Search, Calendar, LayoutDashboard, LogOut, LogIn, UserPlus, Plus } from 'lucide-react';
+import { Search, Calendar, LayoutDashboard, LogOut, LogIn, UserPlus, Plus, Menu, X } from 'lucide-react';
 
 export default function Navbar() {
     const { user, isAuthenticated, logout } = useAuth();
-    const router = useRouter(); // Navbar doesn't use router yet, might need to import it
+    const router = useRouter();
     const { showToast } = useToast();
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const handleLogoutConfirm = () => {
         logout();
@@ -59,8 +60,8 @@ export default function Navbar() {
                                 </span>
                             </Link>
 
-                            {/* Nav Links */}
-                            <div className="flex items-center gap-6">
+                            {/* Desktop Nav Links */}
+                            <div className="hidden lg:flex items-center gap-6">
                                 {/* Tools Button */}
                                 <Link
                                     href="/tools"
@@ -141,8 +142,112 @@ export default function Navbar() {
                                     </>
                                 )}
                             </div>
+
+                            {/* Mobile Menu Toggle */}
+                            <button
+                                className="lg:hidden flex items-center p-2 text-black"
+                                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                            >
+                                {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+                            </button>
                         </div>
                     </div>
+
+                    {/* Mobile Side Menu */}
+                    {isMobileMenuOpen && (
+                        <div className="lg:hidden bg-[#DC2626] border-t border-black/10 absolute top-full left-0 right-0 shadow-xl overflow-y-auto max-h-[calc(100vh-80px)]">
+                            <div className="flex flex-col p-4 gap-4">
+                                <Link
+                                    href="/tools"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                    className="flex items-center gap-3 p-4 border border-black/20 text-black font-bold uppercase tracking-wider hover:bg-black hover:text-white transition-colors"
+                                >
+                                    <Search size={20} />
+                                    <span>Tools</span>
+                                </Link>
+
+                                {isAuthenticated ? (
+                                    <>
+                                        {!user?.is_superuser && (
+                                            <Link
+                                                href="/bookings"
+                                                onClick={() => setIsMobileMenuOpen(false)}
+                                                className="flex items-center gap-3 p-4 border border-black/20 text-black font-bold uppercase tracking-wider hover:bg-black hover:text-white transition-colors"
+                                            >
+                                                <Calendar size={20} />
+                                                <span>Bookings</span>
+                                            </Link>
+                                        )}
+
+                                        {user?.is_superuser ? (
+                                            <Link
+                                                href="/admin"
+                                                onClick={() => setIsMobileMenuOpen(false)}
+                                                className="flex items-center gap-3 p-4 border border-black/20 text-black font-bold uppercase tracking-wider hover:bg-black hover:text-white transition-colors"
+                                            >
+                                                <LayoutDashboard size={20} />
+                                                <span>Admin</span>
+                                            </Link>
+                                        ) : user?.user_type === 'provider' && (
+                                            <>
+                                                <Link
+                                                    href="/tools/new"
+                                                    onClick={() => setIsMobileMenuOpen(false)}
+                                                    className="flex items-center gap-3 p-4 border border-black flex-1 text-black font-bold uppercase tracking-wider hover:bg-black hover:text-white transition-colors"
+                                                >
+                                                    <Plus size={20} />
+                                                    <span>Deploy Tool</span>
+                                                </Link>
+                                                <Link
+                                                    href="/dashboard"
+                                                    onClick={() => setIsMobileMenuOpen(false)}
+                                                    className="flex items-center gap-3 p-4 border border-black/20 text-black font-bold uppercase tracking-wider hover:bg-black hover:text-white transition-colors"
+                                                >
+                                                    <LayoutDashboard size={20} />
+                                                    <span>Dashboard</span>
+                                                </Link>
+                                            </>
+                                        )}
+
+                                        <div className="p-4 border border-black/20">
+                                            <p className="font-bold text-black/60 uppercase tracking-wide mb-4">
+                                                Welcome, {user?.username}
+                                            </p>
+                                            <button
+                                                onClick={() => {
+                                                    setIsMobileMenuOpen(false);
+                                                    setIsLogoutModalOpen(true);
+                                                }}
+                                                className="flex items-center gap-3 w-full p-4 bg-black text-white font-bold uppercase tracking-wider"
+                                            >
+                                                <LogOut size={20} />
+                                                <span>Logout</span>
+                                            </button>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Link
+                                            href="/login"
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                            className="flex items-center gap-3 p-4 border border-black/20 text-black font-bold uppercase tracking-wider hover:bg-black/5 transition-colors"
+                                        >
+                                            <LogIn size={20} />
+                                            <span>Login</span>
+                                        </Link>
+                                        <Link
+                                            href="/register"
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                            className="flex items-center gap-3 p-4 bg-black text-white font-bold uppercase tracking-wider"
+                                        >
+                                            <UserPlus size={20} />
+                                            <span>Join Now</span>
+                                        </Link>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </nav>
         </>

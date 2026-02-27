@@ -153,18 +153,18 @@ export default function BookingsPage() {
                 />
             )}
             <div className="container-custom">
-                <div className="flex justify-between items-end mb-16 border-b border-black pb-8">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-16 border-b border-black pb-8 gap-6">
                     <div>
-                        <h1 className="text-6xl font-black uppercase tracking-tighter leading-none mb-2 text-black">
+                        <h1 className="text-4xl sm:text-6xl font-black uppercase tracking-tighter leading-none mb-2 text-black">
                             {isRenter ? 'Mission' : 'Shop'} <span className="text-white">Logs</span>
                         </h1>
-                        <p className="text-black/60 font-mono text-sm uppercase tracking-widest">
+                        <p className="text-black/60 font-mono text-xs sm:text-sm uppercase tracking-widest break-all">
                             // DATABASE_ID: {user?.username}
                         </p>
                     </div>
                     <Link
                         href={isRenter ? "/tools" : "/tools/new"}
-                        className="px-8 py-4 bg-black text-white font-black uppercase tracking-widest hover:bg-white hover:text-black transition-colors border-2 border-black"
+                        className="w-full sm:w-auto text-center px-8 py-4 bg-black text-white font-black uppercase tracking-widest hover:bg-white hover:text-black transition-colors border-2 border-black"
                     >
                         {isRenter ? 'New Requisition' : 'Deploy Unit'}
                     </Link>
