@@ -156,6 +156,9 @@ class APIClient {
         return this.request(`/api/tools/${id}/`);
     }
 
+    // --- CATEGORIES ---
+
+    // --- TOOLS ---
     async createTool(token: string, data: any) {
         // Handle multipart/form-data for image uploads if needed, 
         // but often JSON is fine if images are handled separately or base64. 
