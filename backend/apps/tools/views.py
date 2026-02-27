@@ -22,6 +22,23 @@ class ToolCategoryViewSet(viewsets.ReadOnlyModelViewSet):
 class ToolViewSet(viewsets.ModelViewSet):
     """ViewSet for Tool CRUD operations"""
     
+    queryset = Tool.objects.all()
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = ['category', 'condition', 'shop', 'is_available']
+    search_fields = ['name', 'description', 'brand', 'model_number']
+    ordering_fields = ['price_per_day', 'created_at']
+    ordering = ['-created_at']
+    
+    def get_serializer_class(self):
+        if self.action in ['create', 'update', 'partial_update']:
+            return ToolCreateSerializer
+        return ToolSerializer
+
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve', 'nearby']:
+            return [AllowAny()]
+        return [IsAuthenticated()]
+    
     def get_queryset(self):
         """
         Get all available tools from subscribed providers (or admins).
