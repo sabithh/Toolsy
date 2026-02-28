@@ -13,17 +13,24 @@ export default function UsersPage() {
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
+
+    // Debounce search — wait 400ms after user stops typing before fetching
+    useEffect(() => {
+        const timer = setTimeout(() => setDebouncedSearch(search), 400);
+        return () => clearTimeout(timer);
+    }, [search]);
 
     useEffect(() => {
         if (accessToken) {
             loadUsers();
         }
-    }, [accessToken, search]);
+    }, [accessToken, debouncedSearch]);
 
     const loadUsers = async () => {
         try {
             setLoading(true);
-            const data = await api.getAdminUsers(accessToken!, search);
+            const data = await api.getAdminUsers(accessToken!, debouncedSearch);
             setUsers(data.results || data);
         } catch (error) {
             console.error('Failed to load users', error);
