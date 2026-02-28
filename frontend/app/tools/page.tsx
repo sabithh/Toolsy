@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { api } from '@/lib/api';
-import { Search, MapPin, Package, IndianRupee, ShieldCheck } from 'lucide-react';
+import { Search, MapPin, Package, IndianRupee, ShieldCheck, Crosshair, Loader2 } from 'lucide-react';
 import TiltCard from '@/components/ui/TiltCard';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { getImageUrl } from '@/lib/utils'; // Added import
@@ -29,6 +29,8 @@ export default function ToolsPage() {
     const [tools, setTools] = useState<Tool[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
+    const [isNearbyLoading, setIsNearbyLoading] = useState(false);
+    const [isNearbyActive, setIsNearbyActive] = useState(false);
 
     useEffect(() => {
         loadTools();
@@ -44,6 +46,39 @@ export default function ToolsPage() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleNearbyToggle = () => {
+        if (isNearbyActive) {
+            setIsNearbyActive(false);
+            loadTools();
+            return;
+        }
+
+        if (!navigator.geolocation) {
+            alert('Geolocation is not supported by your browser');
+            return;
+        }
+
+        setIsNearbyLoading(true);
+        navigator.geolocation.getCurrentPosition(
+            async (position) => {
+                try {
+                    const data = await api.getNearbyTools(position.coords.latitude, position.coords.longitude);
+                    setTools(Array.isArray(data) ? data : (data as any).results || []);
+                    setIsNearbyActive(true);
+                } catch (err) {
+                    console.error('Failed to load nearby tools');
+                    alert('Failed to find nearby tools');
+                } finally {
+                    setIsNearbyLoading(false);
+                }
+            },
+            (error) => {
+                setIsNearbyLoading(false);
+                alert('Please allow location access to find nearby tools.');
+            }
+        );
     };
 
     const filteredTools = tools.filter(tool =>
@@ -82,7 +117,18 @@ export default function ToolsPage() {
                             </div>
                         </div>
                         <div className="flex gap-4">
-                            <button className="px-8 py-4 bg-black border border-black text-white font-bold uppercase tracking-wider hover:bg-white hover:text-black hover:border-black transition-colors flex items-center gap-2">
+                            <button
+                                onClick={handleNearbyToggle}
+                                disabled={isNearbyLoading}
+                                className={`px-8 py-4 border border-black font-bold uppercase tracking-wider transition-colors flex items-center gap-2 ${isNearbyActive
+                                        ? 'bg-black text-white hover:bg-[#DC2626] hover:text-black hover:border-black'
+                                        : 'bg-transparent text-black hover:bg-black hover:text-white'
+                                    }`}
+                            >
+                                {isNearbyLoading ? <Loader2 size={18} className="animate-spin" /> : <Crosshair size={18} />}
+                                {isNearbyActive ? 'Reset' : 'Near Me'}
+                            </button>
+                            <button className="px-8 py-4 bg-black border border-black text-white font-bold uppercase tracking-wider hover:bg-white hover:text-black hover:border-black transition-colors flex items-center gap-2 hidden md:flex">
                                 <Package size={18} /> Available
                             </button>
                         </div>

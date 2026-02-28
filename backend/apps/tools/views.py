@@ -139,6 +139,7 @@ class ToolViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
+    @action(detail=False, methods=['get'])
     def nearby(self, request):
         """Get tools from nearby shops"""
         lat = request.query_params.get('lat')
@@ -160,11 +161,11 @@ class ToolViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
-        # Filter by shop location
+        # Filter by shop location using get_queryset() to maintain subscription/availability rules
         lat_range = radius / 111.0
         lng_range = radius / (111.0 * abs(lat))
         
-        tools = self.queryset.filter(
+        tools = self.get_queryset().filter(
             shop__location_lat__gte=lat - lat_range,
             shop__location_lat__lte=lat + lat_range,
             shop__location_lng__gte=lng - lng_range,
