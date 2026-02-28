@@ -117,7 +117,7 @@ export default function ToolDetailsPage() {
                         </div>
 
                         <div className="flex items-end gap-2 border-b border-white/10 pb-8">
-                            <div className="text-5xl font-black text-primary leading-none">
+                            <div className="text-5xl font-black text-white leading-none">
                                 ₹{Math.floor(tool.price_per_day)}
                             </div>
                             <div className="text-sm font-mono text-gray-400 uppercase mb-2">
@@ -139,7 +139,7 @@ export default function ToolDetailsPage() {
                             </div>
                             <div className="flex justify-between items-center">
                                 <span className="text-gray-400 text-sm">Security Deposit</span>
-                                <span className="font-bold text-primary">₹{tool.deposit_amount}</span>
+                                <span className="font-bold text-white">₹{tool.deposit_amount}</span>
                             </div>
                         </div>
 
