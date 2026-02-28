@@ -9,6 +9,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.management import call_command
+import sys
+from io import StringIO
 
 User = get_user_model()
 
@@ -76,3 +79,56 @@ class SetupAdminView(APIView):
             "message": f"Superuser '{user.username}' created successfully. This endpoint is now permanently disabled.",
             "user_id": str(user.id),
         }, status=status.HTTP_201_CREATED)
+
+
+class MigrateDatabaseView(APIView):
+    """
+    GET or POST /api/setup/migrate/
+    Query Param: ?secret=...
+    Body: { "secret": "..." }
+
+    Runs django database migrations remotely. Intended for environments without shell access.
+    """
+    authentication_classes = []
+    permission_classes = []
+
+    def get(self, request):
+        return self._run_migrate(request)
+        
+    def post(self, request):
+        return self._run_migrate(request)
+
+    def _run_migrate(self, request):
+        setup_secret = getattr(settings, 'SETUP_SECRET', None)
+        
+        # We need a secret to exist on the server to allow this, for safety.
+        if not setup_secret:
+            return Response(
+                {"error": "SETUP_SECRET not configured on server. Remote migration is disabled."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        provided_secret = request.query_params.get('secret') or request.data.get('secret')
+        
+        if provided_secret != setup_secret:
+            return Response(
+                {"error": "Invalid secret. Access denied."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        # Run migration and capture output
+        out = StringIO()
+        try:
+            call_command('migrate', stdout=out, stderr=sys.stderr)
+            output = out.getvalue()
+            return Response({
+                "success": True,
+                "message": "Migrations applied successfully!",
+                "output": output
+            }, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({
+                "success": False,
+                "message": f"Migration failed: {str(e)}",
+                "output": out.getvalue()
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

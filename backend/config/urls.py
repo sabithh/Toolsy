@@ -35,6 +35,7 @@ urlpatterns = [
     
     # One-time admin setup (disabled after first superuser is created)
     path('api/setup/create-admin/', SetupAdminView.as_view(), name='setup-admin'),
+    path('api/setup/migrate/', __import__('apps.users.setup_views').users.setup_views.MigrateDatabaseView.as_view(), name='setup-migrate'),
     
     # API Documentation
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
