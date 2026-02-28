@@ -42,7 +42,10 @@ urlpatterns = [
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
 ]
 
-# Serve media files in development
+# Serve media files in all environments (production uses Render's filesystem or CDN)
+# Note: for ephemeral filesystems (Render free tier), images reset on redeploy.
+# Migrate to Cloudinary or S3 to persist images permanently.
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
