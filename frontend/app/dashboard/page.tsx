@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/lib/api';
-import { Package, IndianRupee, Clock, AlertCircle, Plus, Settings, Tag, Lock } from 'lucide-react';
+import { Package, IndianRupee, Clock, AlertCircle, Plus, Settings, Tag, Lock, Pencil, Trash2 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/Skeleton';
 
 interface DashboardStats {
@@ -20,6 +20,7 @@ export default function DashboardPage() {
     const router = useRouter();
     const [loading, setLoading] = useState(true);
     const [myTools, setMyTools] = useState<any[]>([]);
+    const [deletingId, setDeletingId] = useState<string | null>(null);
     const [stats, setStats] = useState<DashboardStats>({
         totalRevenue: 0,
         activeRentals: 0,
@@ -76,9 +77,23 @@ export default function DashboardPage() {
             });
 
         } catch (err) {
-            console.error('Failed to load dashboard data', err);
+            console.error(err);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleDeleteTool = async (toolId: string, toolName: string) => {
+        if (!confirm(`Delete "${toolName}"? This cannot be undone.`)) return;
+        setDeletingId(toolId);
+        try {
+            await api.deleteTool(accessToken!, toolId);
+            setMyTools(prev => prev.filter(t => t.id !== toolId));
+            setStats(prev => ({ ...prev, totalInventory: prev.totalInventory - 1 }));
+        } catch {
+            alert('Failed to delete tool. Please try again.');
+        } finally {
+            setDeletingId(null);
         }
     };
 
@@ -273,15 +288,16 @@ export default function DashboardPage() {
                     ) : (
                         <div className="border border-black overflow-hidden">
                             {/* Table Header */}
-                            <div className="grid grid-cols-5 bg-black text-white px-6 py-3 text-xs font-bold uppercase tracking-widest">
+                            <div className="grid grid-cols-6 bg-black text-white px-6 py-3 text-xs font-bold uppercase tracking-widest">
                                 <div className="col-span-2">Unit Name</div>
                                 <div>Category</div>
                                 <div>Daily Rate</div>
                                 <div>Status</div>
+                                <div>Actions</div>
                             </div>
                             {/* Rows */}
                             {myTools.map((tool: any) => (
-                                <div key={tool.id} className="grid grid-cols-5 px-6 py-4 border-b border-black/10 bg-black/5 hover:bg-black/10 transition-colors items-center">
+                                <div key={tool.id} className="grid grid-cols-6 px-6 py-4 border-b border-black/10 bg-black/5 hover:bg-black/10 transition-colors items-center">
                                     <div className="col-span-2">
                                         <p className="font-bold uppercase text-black text-sm">{tool.name}</p>
                                         <p className="text-xs font-mono text-black/50">{tool.brand || '—'}</p>
@@ -300,11 +316,29 @@ export default function DashboardPage() {
                                             </span>
                                         )}
                                     </div>
+                                    <div className="flex items-center gap-2">
+                                        <Link
+                                            href={`/tools/edit/${tool.id}`}
+                                            className="p-2 bg-black/10 hover:bg-black hover:text-white text-black transition-colors"
+                                            title="Edit"
+                                        >
+                                            <Pencil size={14} />
+                                        </Link>
+                                        <button
+                                            onClick={() => handleDeleteTool(tool.id, tool.name)}
+                                            disabled={deletingId === tool.id}
+                                            className="p-2 bg-black/10 hover:bg-red-600 hover:text-white text-black transition-colors disabled:opacity-40"
+                                            title="Delete"
+                                        >
+                                            <Trash2 size={14} />
+                                        </button>
+                                    </div>
                                 </div>
                             ))}
                         </div>
                     )}
                 </div>
+
             </div>
         </div>
     );
