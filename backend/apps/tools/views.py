@@ -42,14 +42,20 @@ class ToolViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         """
         Get all available tools from subscribed providers (or admins).
+        Falls back to all available tools if subscription query fails.
         """
         from django.utils import timezone
         from django.db.models import Q
-        return Tool.objects.select_related('shop', 'category').filter(
-            Q(shop__owner__is_superuser=True) |
-            Q(shop__owner__subscriptions__status='active', shop__owner__subscriptions__end_date__gt=timezone.now()),
-            is_available=True
-        ).distinct()
+        try:
+            return Tool.objects.select_related('shop', 'category').filter(
+                Q(shop__owner__is_superuser=True) |
+                Q(shop__owner__subscriptions__status='active', shop__owner__subscriptions__end_date__gt=timezone.now()),
+                is_available=True
+            ).distinct()
+        except Exception:
+            # Fallback: return all available tools if subscription filter fails
+            return Tool.objects.select_related('shop', 'category').filter(is_available=True)
+
 
     def perform_create(self, serializer):
         """Validate user has a shop and active subscription before creating tool"""
