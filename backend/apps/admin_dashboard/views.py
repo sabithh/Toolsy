@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from django.contrib.auth import get_user_model
 from django.db.models import Count, Sum
 from django.utils import timezone
+from datetime import timedelta
 from apps.tools.models import Tool
 from apps.bookings.models import Booking
 from apps.users.serializers import UserProfileSerializer
@@ -32,7 +33,7 @@ class AdminStatsView(APIView):
             payment_status='paid'
         ).aggregate(total=Sum('total_amount'))['total'] or 0
 
-        thirty_days_ago = timezone.now() - timezone.timedelta(days=30)
+        thirty_days_ago = timezone.now() - timedelta(days=30)
         new_users = User.objects.filter(date_joined__gte=thirty_days_ago).count()
         new_bookings = Booking.objects.filter(created_at__gte=thirty_days_ago).count()
 
@@ -113,7 +114,7 @@ class AdminUserViewSet(viewsets.ModelViewSet):
                 user=user,
                 status=new_status,
                 start_date=timezone.now(),
-                end_date=timezone.now() + timezone.timedelta(days=30 * months) if new_status == 'active' else None,
+                end_date=timezone.now() + timedelta(days=30 * months) if new_status == 'active' else None,
                 amount=0,  # Admin grant — no charge
             )
             return Response({

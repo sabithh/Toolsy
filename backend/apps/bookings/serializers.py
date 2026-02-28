@@ -51,9 +51,14 @@ class BookingCreateSerializer(serializers.ModelSerializer):
         # Validate tool exists
         from apps.tools.models import Tool
         try:
-            tool = Tool.objects.get(id=tool_id)
+            tool = Tool.objects.select_related('shop__owner').get(id=tool_id)
         except Tool.DoesNotExist:
             raise serializers.ValidationError({'tool_id': 'Tool not found'})
+        
+        # Prevent self-booking — provider cannot book their own tool
+        renter = self.context['request'].user
+        if tool.shop.owner == renter:
+            raise serializers.ValidationError({'tool_id': 'You cannot book your own tool'})
         
         # Validate quantity
         if tool.quantity_available < quantity:
@@ -71,6 +76,7 @@ class BookingCreateSerializer(serializers.ModelSerializer):
         attrs['shop'] = tool.shop
         
         return attrs
+
     
     def create(self, validated_data):
         """Create booking and decrement tool quantity"""

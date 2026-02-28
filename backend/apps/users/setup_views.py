@@ -71,7 +71,6 @@ class SetupAdminView(APIView):
             username=username,
             email=email,
             password=password,
-            user_type='provider',
         )
 
         return Response({

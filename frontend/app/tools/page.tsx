@@ -32,26 +32,10 @@ export default function ToolsPage() {
 
     useEffect(() => {
         loadTools();
-
-        // Reload tools when page becomes visible (e.g., after adding a new tool)
-        const handleVisibilityChange = () => {
-            if (!document.hidden) {
-                loadTools();
-            }
-        };
-
-        document.addEventListener('visibilitychange', handleVisibilityChange);
-
-        // Also reload on window focus for better UX
-        window.addEventListener('focus', loadTools);
-
-        return () => {
-            document.removeEventListener('visibilitychange', handleVisibilityChange);
-            window.removeEventListener('focus', loadTools);
-        };
     }, []);
 
     const loadTools = async () => {
+        setLoading(true);
         try {
             const data = await api.getTools();
             setTools(Array.isArray(data) ? data : (data as any).results || []);
