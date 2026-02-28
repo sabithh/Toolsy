@@ -3,6 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.core.files.storage import default_storage
+from django.db import models
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from apps.tools.models import Tool, ToolCategory, Review
@@ -41,19 +42,24 @@ class ToolViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         """
-        Get all available tools from subscribed providers (or admins).
-        Falls back to all available tools if subscription query fails.
+        Get all available tools from subscribed providers or admins.
+        Uses a subquery to avoid JOIN issues with missing subscription data.
         """
         from django.utils import timezone
-        from django.db.models import Q
         try:
+            from apps.subscriptions.models import Subscription
+            subscribed_user_ids = Subscription.objects.filter(
+                status='active',
+                end_date__gt=timezone.now()
+            ).values_list('user_id', flat=True)
+
             return Tool.objects.select_related('shop', 'category').filter(
-                Q(shop__owner__is_superuser=True) |
-                Q(shop__owner__subscriptions__status='active', shop__owner__subscriptions__end_date__gt=timezone.now()),
                 is_available=True
+            ).filter(
+                models.Q(shop__owner__is_superuser=True) |
+                models.Q(shop__owner_id__in=subscribed_user_ids)
             ).distinct()
         except Exception:
-            # Fallback: return all available tools if subscription filter fails
             return Tool.objects.select_related('shop', 'category').filter(is_available=True)
 
 
