@@ -25,7 +25,7 @@ export default function SubscriptionBanner() {
 
         try {
             setLoading(true);
-            const token = localStorage.getItem('access_token');
+            const token = localStorage.getItem('accessToken');
             if (!token) throw new Error('Not authenticated');
 
             // 1. Create order
