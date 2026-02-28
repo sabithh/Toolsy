@@ -62,9 +62,12 @@ class APIClient {
 
         if (!response.ok) {
             const error = await response.json().catch(() => ({ detail: 'Request failed' }));
-            const errorMessage = error.detail || JSON.stringify(error); // Capture full validation errors
+            const errorMessage = error.detail || JSON.stringify(error);
             throw new Error(errorMessage || `HTTP ${response.status}`);
         }
+
+        // 204 No Content has no body — return null instead of crashing
+        if (response.status === 204) return null as T;
 
         return response.json();
     }

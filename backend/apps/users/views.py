@@ -14,6 +14,13 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     
+    def get_queryset(self):
+        """Restrict non-admins to only their own user data"""
+        user = self.request.user
+        if user.is_authenticated and (user.is_staff or user.is_superuser):
+            return User.objects.all()
+        return User.objects.filter(pk=user.pk)
+    
     def get_permissions(self):
         """Custom permissions based on action"""
         if self.action == 'create':

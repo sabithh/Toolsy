@@ -65,7 +65,8 @@ class ShopViewSet(viewsets.ModelViewSet):
         # Simple distance calculation (Haversine formula would be better)
         # For now, filtering by bounding box
         lat_range = radius / 111.0  # rough conversion km to degrees
-        lng_range = radius / (111.0 * abs(lat))
+        lng_range = radius / (111.0 * max(abs(lat), 0.0001))
+
         
         shops = self.queryset.filter(
             location_lat__gte=lat - lat_range,

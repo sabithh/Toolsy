@@ -57,20 +57,10 @@ export default function LoginPage() {
             </div>
 
             {/* Right Side - Form - Now Red with Black Text */}
-            <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-8 lg:p-24 bg-[#DC2626]">
-                <div className="max-w-md w-full mt-16 lg:mt-0">
-                    {/* Mobile Branding - Visible only on small screens */}
-                    <div className="lg:hidden mb-12">
-                        <h1 className="text-5xl font-black uppercase tracking-tighter mb-4 text-black">
-                            Toolsy
-                        </h1>
-                        <p className="text-sm font-bold uppercase tracking-widest text-black/60 border-l-2 border-black/20 pl-4">
-                            Access professional tools<br />without ownership.
-                        </p>
-                    </div>
-
+            <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-24 bg-[#DC2626]">
+                <div className="max-w-md w-full">
                     <div className="mb-12">
-                        <h2 className="text-3xl lg:text-4xl font-black uppercase tracking-widest mb-2 text-black">Login</h2>
+                        <h2 className="text-4xl font-black uppercase tracking-widest mb-2 text-black">Login</h2>
                         <div className="h-1 w-20 bg-black"></div>
                     </div>
 

@@ -65,28 +65,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     </div>
                 </aside>
 
-                {/* Mobile Bottom Navigation */}
-                <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-black border-t border-neutral-800 flex justify-around p-2">
-                    {navItems.map((item) => {
-                        const Icon = item.icon;
-                        const isActive = pathname === item.href;
-
-                        return (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                className={`flex flex-col items-center justify-center p-2 rounded-lg transition-all ${isActive ? 'text-blue-400' : 'text-gray-400 hover:text-white'
-                                    }`}
-                            >
-                                <Icon size={24} />
-                                <span className="text-[10px] mt-1 font-medium tracking-wide">{item.name}</span>
-                            </Link>
-                        );
-                    })}
-                </nav>
-
                 {/* Main Content */}
-                <main className="flex-1 md:ml-64 p-4 md:p-8 pb-20 md:pb-8">
+                <main className="flex-1 md:ml-64 p-8">
                     {children}
                 </main>
             </div>
