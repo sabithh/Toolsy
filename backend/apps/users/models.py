@@ -25,6 +25,9 @@ class User(AbstractUser):
     
     # Contact information
     phone = models.CharField(max_length=15, blank=True, null=True)
+    # Override email to enforce uniqueness (AbstractUser doesn't do this by default)
+    email = models.EmailField(unique=True)
+
     
     # Profile
     profile_image = models.ImageField(

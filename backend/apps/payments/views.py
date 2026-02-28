@@ -48,9 +48,10 @@ class RazorpayWebhookView(APIView):
                     
                     if booking.payment_status != 'paid':
                         booking.payment_status = 'paid'
+                        booking.status = 'active'  # Promote to active, matching verify_payment flow
                         booking.razorpay_payment_id = payment_id
-                        booking.save()
-                        logger.info(f"Payment verified for booking {booking.id}")
+                        booking.save(update_fields=['payment_status', 'status', 'razorpay_payment_id'])
+                        logger.info(f"Payment captured and booking {booking.id} activated via webhook")
                         
                 except Booking.DoesNotExist:
                     logger.warning(f"Booking not found for order_id: {order_id}")

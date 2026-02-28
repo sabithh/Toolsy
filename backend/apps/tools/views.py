@@ -104,6 +104,28 @@ class ToolViewSet(viewsets.ModelViewSet):
             quantity_total=quantity_available
         )
 
+    def _check_ownership(self, tool):
+        """Raise PermissionDenied if the requesting user does not own this tool's shop."""
+        from rest_framework.exceptions import PermissionDenied
+        user = self.request.user
+        if not user.is_staff and tool.shop.owner != user:
+            raise PermissionDenied("You do not have permission to modify this tool.")
+
+    def perform_update(self, serializer):
+        self._check_ownership(serializer.instance)
+        # Handle optional image upload on update
+        image = self.request.FILES.get('image')
+        if image:
+            file_path = default_storage.save(f'tools/{image.name}', image)
+            file_url = default_storage.url(file_path)
+            serializer.save(images=[file_url])
+        else:
+            serializer.save()
+
+    def perform_destroy(self, instance):
+        self._check_ownership(instance)
+        instance.delete()
+
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
     def my_tools(self, request):
         """Get all tools belonging to the logged-in provider's shops (ignores subscription filter)."""

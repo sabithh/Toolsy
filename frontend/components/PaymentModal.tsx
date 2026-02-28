@@ -57,13 +57,16 @@ export default function PaymentModal({ booking, isOpen, onClose, onSuccess }: Pa
                         });
 
                         showToast('Payment successful! Booking activated.', 'success');
+                        setLoading(false);
                         onSuccess();
                         onClose();
                     } catch (error) {
                         console.error('Verification failed', error);
                         showToast('Payment verification failed', 'error');
+                        setLoading(false);
                     }
                 },
+
                 onError: (error) => {
                     console.error('Payment failed', error);
                     showToast(error.message || 'Payment failed', 'error');
