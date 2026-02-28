@@ -121,12 +121,13 @@ class Booking(models.Model):
     def save(self, *args, **kwargs):
         """Calculate total amount and validate dates"""
         if self.start_datetime and self.end_datetime:
-            # Calculate duration
+            # Calculate duration in hours
             duration = (self.end_datetime - self.start_datetime).total_seconds() / 3600
-            self.duration_hours = int(duration)
+            self.duration_hours = max(1, int(duration))
             
-            # Calculate total
-            self.total_amount = self.rental_price + self.deposit_amount
+            # rental_price is per-unit; multiply by quantity, then add deposit
+            quantity = self.quantity or 1
+            self.total_amount = (self.rental_price * quantity) + self.deposit_amount
         
         super().save(*args, **kwargs)
 

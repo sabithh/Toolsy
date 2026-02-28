@@ -15,7 +15,6 @@ class ShopSerializer(serializers.ModelSerializer):
             'id', 'owner', 'name', 'description', 'address',
             'location_lat', 'location_lng', 'phone', 'email',
             'business_hours', 'rating_average', 'total_ratings',
-            'subscription_tier', 'subscription_expires_at',
             'is_active', 'images', 'created_at', 'updated_at',
             'distance'
         ]
