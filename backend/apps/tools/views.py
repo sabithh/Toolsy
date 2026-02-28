@@ -172,12 +172,32 @@ class ToolViewSet(viewsets.ModelViewSet):
             shop__location_lng__lte=lng + lng_range
         )
         
-        page = self.paginate_queryset(tools)
+        # Calculate actual distance using Haversine formula and sort
+        import math
+        def get_distance(tool):
+            lat2 = tool.shop.location_lat
+            lon2 = tool.shop.location_lng
+            if lat2 is None or lon2 is None:
+                return float('inf')
+                
+            R = 6371  # Earth radius in km
+            dLat = math.radians(lat2 - lat)
+            dLon = math.radians(lon2 - lng)
+            a = math.sin(dLat/2) * math.sin(dLat/2) + \
+                math.cos(math.radians(lat)) * math.cos(math.radians(lat2)) * \
+                math.sin(dLon/2) * math.sin(dLon/2)
+            c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+            return R * c
+            
+        tools_list = list(tools)
+        tools_list.sort(key=get_distance)
+        
+        page = self.paginate_queryset(tools_list)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
         
-        serializer = self.get_serializer(tools, many=True)
+        serializer = self.get_serializer(tools_list, many=True)
         return Response(serializer.data)
 
 
