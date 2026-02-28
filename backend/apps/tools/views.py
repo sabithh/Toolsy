@@ -48,10 +48,11 @@ class ToolViewSet(viewsets.ModelViewSet):
         from django.utils import timezone
         try:
             from apps.subscriptions.models import Subscription
-            subscribed_user_ids = Subscription.objects.filter(
+            # Evaluate eagerly so the except block catches missing table errors
+            subscribed_user_ids = list(Subscription.objects.filter(
                 status='active',
                 end_date__gt=timezone.now()
-            ).values_list('user_id', flat=True)
+            ).values_list('user_id', flat=True))
 
             return Tool.objects.select_related('shop', 'category').filter(
                 is_available=True
@@ -60,6 +61,7 @@ class ToolViewSet(viewsets.ModelViewSet):
                 models.Q(shop__owner_id__in=subscribed_user_ids)
             ).distinct()
         except Exception:
+            # Fallback: show all available tools if subscriptions table missing
             return Tool.objects.select_related('shop', 'category').filter(is_available=True)
 
 
