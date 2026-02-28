@@ -2,12 +2,21 @@
 
 import { useAuth } from '@/contexts/AuthContext';
 import SubscriptionBanner from '@/components/provider/SubscriptionBanner';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const { user, isLoading } = useAuth();
     const router = useRouter();
+
+    useEffect(() => {
+        if (isLoading) return;
+        if (!user) {
+            router.push('/login');
+        } else if (user.is_superuser) {
+            router.push('/admin');
+        }
+    }, [user, isLoading, router]);
 
     if (isLoading) return (
         <div className="min-h-screen bg-black px-6 py-10 animate-pulse">
@@ -23,20 +32,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
     );
 
-    if (!user) {
-        router.push('/login');
-        return null;
-    }
-
-    // Redirect admins immediately from the layout to prevent flashing
-    if (user.is_superuser) {
-        router.push('/admin');
-        return null;
-    }
-
-    // Only for providers
-    // If renter tries to access dashboard? usually they have nothing there or just bookings.
-    // Assuming Dashboard is mainly for Providers based on previous context.
+    if (!user || user.is_superuser) return null;
 
     return (
         <div className="container-custom py-8 min-h-screen">

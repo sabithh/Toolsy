@@ -103,4 +103,8 @@ class Shop(models.Model):
             self.rating_average = reviews.aggregate(
                 avg=models.Avg('rating')
             )['avg'] or 0.00
-            self.save(update_fields=['rating_average', 'total_ratings'])
+        else:
+            # Reset to zero when last review is deleted
+            self.total_ratings = 0
+            self.rating_average = 0.00
+        self.save(update_fields=['rating_average', 'total_ratings'])
