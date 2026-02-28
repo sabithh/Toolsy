@@ -9,6 +9,9 @@ import { ArrowLeft, MapPin, Star, ShieldCheck, Package, AlertCircle } from 'luci
 import Link from 'next/link';
 import BookingModal from '@/components/BookingModal';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { useToast } from '@/contexts/ToastContext';
+import Modal from '@/components/ui/Modal';
+import { Edit2, Trash2 } from 'lucide-react';
 
 export default function ToolDetailsPage() {
     const { id } = useParams();
@@ -16,8 +19,11 @@ export default function ToolDetailsPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
     const { user } = useAuth();
     const router = useRouter();
+    const { showToast } = useToast();
 
     useEffect(() => {
         if (id) {
@@ -34,6 +40,22 @@ export default function ToolDetailsPage() {
             console.error(err);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleDeleteTool = async () => {
+        try {
+            setIsDeleting(true);
+            const token = localStorage.getItem('accessToken');
+            if (!token) throw new Error('Not authenticated');
+
+            await api.deleteTool(token, tool.id);
+            showToast('Tool deleted successfully', 'success');
+            router.push('/dashboard');
+        } catch (error: any) {
+            showToast(error.message || 'Failed to delete tool', 'error');
+            setIsDeleting(false);
+            setIsDeleteModalOpen(false);
         }
     };
 
@@ -144,17 +166,38 @@ export default function ToolDetailsPage() {
                         </div>
 
                         <div className="pt-4">
-                            <button
-                                onClick={() => setIsBookingModalOpen(true)}
-                                disabled={tool.quantity_available <= 0}
-                                className="w-full py-5 bg-white text-black hover:bg-gray-200 font-black uppercase tracking-widest text-lg rounded-xl transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
-                            >
-                                <ShieldCheck className="w-6 h-6" />
-                                {tool.quantity_available > 0 ? 'Book This Tool' : 'Currently Unavailable'}
-                            </button>
-                            <p className="text-center text-xs text-gray-500 mt-4 uppercase tracking-wider">
-                                Secure booking • Verified Shop • Instant Confirmation
-                            </p>
+                            {user?.id === tool.shop?.owner?.id ? (
+                                <div className="flex gap-4">
+                                    <button
+                                        onClick={() => router.push(`/tools/edit/${tool.id}`)}
+                                        className="flex-1 py-5 bg-black text-white border border-white/20 hover:bg-white hover:text-black font-black uppercase tracking-widest text-lg transition-all flex items-center justify-center gap-3"
+                                    >
+                                        <Edit2 className="w-6 h-6" />
+                                        Edit Unit
+                                    </button>
+                                    <button
+                                        onClick={() => setIsDeleteModalOpen(true)}
+                                        className="flex-1 py-5 bg-[#DC2626] text-white hover:bg-red-700 font-black uppercase tracking-widest text-lg transition-all shadow-[0_0_20px_rgba(220,38,38,0.2)] hover:shadow-[0_0_30px_rgba(220,38,38,0.4)] flex items-center justify-center gap-3"
+                                    >
+                                        <Trash2 className="w-6 h-6" />
+                                        Decommission
+                                    </button>
+                                </div>
+                            ) : (
+                                <>
+                                    <button
+                                        onClick={() => setIsBookingModalOpen(true)}
+                                        disabled={tool.quantity_available <= 0}
+                                        className="w-full py-5 bg-white text-black hover:bg-gray-200 font-black uppercase tracking-widest text-lg rounded-xl transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                                    >
+                                        <ShieldCheck className="w-6 h-6" />
+                                        {tool.quantity_available > 0 ? 'Book This Tool' : 'Currently Unavailable'}
+                                    </button>
+                                    <p className="text-center text-xs text-gray-500 mt-4 uppercase tracking-wider">
+                                        Secure booking • Verified Shop • Instant Confirmation
+                                    </p>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -165,6 +208,18 @@ export default function ToolDetailsPage() {
                 tool={tool}
                 isOpen={isBookingModalOpen}
                 onClose={() => setIsBookingModalOpen(false)}
+            />
+
+            {/* Delete Confirmation Modal */}
+            <Modal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                onConfirm={handleDeleteTool}
+                title="Decommission Tool"
+                description={`Are you sure you want to permanently remove ${tool?.name} from your inventory? This action cannot be undone and will cancel any pending requests.`}
+                confirmText={isDeleting ? "DECOMMISSIONING..." : "CONFIRM DELETION"}
+                cancelText="CANCEL"
+                variant="danger"
             />
         </div>
     );
