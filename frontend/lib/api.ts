@@ -156,6 +156,10 @@ class APIClient {
         return this.request(`/api/tools/${id}/`);
     }
 
+    async getMyTools(token: string) {
+        return this.request('/api/tools/my_tools/', { token });
+    }
+
     // --- CATEGORIES ---
 
     // --- TOOLS ---

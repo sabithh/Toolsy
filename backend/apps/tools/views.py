@@ -89,8 +89,20 @@ class ToolViewSet(viewsets.ModelViewSet):
             images=images_list,
             quantity_total=quantity_available
         )
-    
-    @action(detail=False, methods=['get'])
+
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
+    def my_tools(self, request):
+        """Get all tools belonging to the logged-in provider's shops (ignores subscription filter)."""
+        shops = request.user.shops.all()
+        tools = Tool.objects.select_related('shop', 'category').filter(shop__in=shops)
+        page = self.paginate_queryset(tools)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(tools, many=True)
+        return Response(serializer.data)
+
+
     def nearby(self, request):
         """Get tools from nearby shops"""
         lat = request.query_params.get('lat')

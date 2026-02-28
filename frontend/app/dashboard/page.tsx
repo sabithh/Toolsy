@@ -60,14 +60,9 @@ export default function DashboardPage() {
             const active = bookings.filter((b: any) => b.status === 'active' || b.status === 'confirmed').length;
             const pending = bookings.filter((b: any) => b.status === 'pending').length;
 
-            // Fetch Tools to get inventory count
-            const toolsData = await api.getTools();
+            // Fetch provider's own tools (ignores subscription filter)
+            const toolsData = await api.getMyTools(accessToken!);
             const tools = Array.isArray(toolsData) ? toolsData : (toolsData as any).results || [];
-
-            // Filter tools by current user's shop if possible, or just user ownership
-            // Since API might return all tools, we filter by 'owner' if available or just show total for now
-            // Ideally backend filters this, but for now let's just count total system tools or assume backend filters for 'me'
-            // We'll trust the API returns relevant tools or just count them all as a proxy for 'Network Size'
             const inventoryCount = tools.length;
 
             setStats({
@@ -89,14 +84,14 @@ export default function DashboardPage() {
             <div className="min-h-screen bg-black text-white py-24">
                 <div className="container-custom">
                     {/* Header Skeleton */}
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 border-b-4 border-white/10 pb-8">
+                    <div className="flex flex-col md:flex-row justify-between items-end mb-16 border-b-4 border-white/10 pb-8">
                         <div>
                             <Skeleton className="w-32 h-6 mb-2" />
                             <Skeleton className="w-96 h-24" />
                         </div>
-                        <div className="flex gap-4 mt-8 md:mt-0 w-full md:w-auto">
-                            <Skeleton className="w-full md:w-40 h-14" />
-                            <Skeleton className="w-full md:w-32 h-14" />
+                        <div className="flex gap-4 mt-8 md:mt-0">
+                            <Skeleton className="w-40 h-14" />
+                            <Skeleton className="w-32 h-14" />
                         </div>
                     </div>
 
@@ -143,7 +138,7 @@ export default function DashboardPage() {
         <div className="min-h-screen bg-[#DC2626] text-black py-24">
             <div className="container-custom">
                 {/* Header */}
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 border-b-4 border-black pb-8">
+                <div className="flex flex-col md:flex-row justify-between items-end mb-16 border-b-4 border-black pb-8">
                     <div>
                         <div className="flex items-center gap-4 mb-2">
                             <span className="px-3 py-1 bg-black text-[#DC2626] text-xs font-black uppercase tracking-widest">
@@ -157,11 +152,11 @@ export default function DashboardPage() {
                             Command<br />Center
                         </h1>
                     </div>
-                    <div className="flex gap-4 mt-8 md:mt-0 w-full md:w-auto flex-col sm:flex-row">
-                        <Link href="/tools/new" className="px-8 py-4 border border-black text-black font-bold uppercase tracking-widest hover:bg-black hover:text-white transition-colors flex items-center justify-center gap-2 w-full md:w-auto">
+                    <div className="flex gap-4 mt-8 md:mt-0">
+                        <Link href="/tools/new" className="px-8 py-4 border border-black text-black font-bold uppercase tracking-widest hover:bg-black hover:text-white transition-colors flex items-center gap-2">
                             <Plus size={20} /> Deploy Unit
                         </Link>
-                        <Link href="/shops/manage" className="px-8 py-4 bg-black text-white font-black uppercase tracking-widest hover:bg-white hover:text-black hover:border hover:border-black transition-colors flex items-center justify-center gap-2 w-full md:w-auto">
+                        <Link href="/shops/manage" className="px-8 py-4 bg-black text-white font-black uppercase tracking-widest hover:bg-white hover:text-black hover:border hover:border-black transition-colors flex items-center gap-2">
                             <Settings size={20} /> Config
                         </Link>
                     </div>
