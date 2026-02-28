@@ -5,8 +5,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/lib/api';
-import { Package, IndianRupee, Clock, AlertCircle, Plus, Settings, Tag, Lock, Pencil, Trash2 } from 'lucide-react';
+import { Package, IndianRupee, Clock, AlertCircle, Plus, Settings, Tag, Lock, Pencil, Trash2, Activity, CheckCircle } from 'lucide-react';
 import { Skeleton } from '@/components/ui/Skeleton';
+import Modal from '@/components/ui/Modal';
 
 interface DashboardStats {
     totalRevenue: number;
@@ -27,6 +28,8 @@ export default function DashboardPage() {
         totalInventory: 0,
         pendingRequests: 0,
     });
+    // State for the delete confirmation modal
+    const [toolToDelete, setToolToDelete] = useState<{ id: string, name: string } | null>(null);
 
     useEffect(() => {
         if (!loading && !isAuthenticated) {
@@ -83,13 +86,19 @@ export default function DashboardPage() {
         }
     };
 
-    const handleDeleteTool = async (toolId: string, toolName: string) => {
-        if (!confirm(`Delete "${toolName}"? This cannot be undone.`)) return;
-        setDeletingId(toolId);
+    const handleDeleteClick = (toolId: string, toolName: string) => {
+        setToolToDelete({ id: toolId, name: toolName });
+    };
+
+    const confirmDeleteTool = async () => {
+        if (!toolToDelete) return;
+
+        setDeletingId(toolToDelete.id);
         try {
-            await api.deleteTool(accessToken!, toolId);
-            setMyTools(prev => prev.filter(t => t.id !== toolId));
+            await api.deleteTool(accessToken!, toolToDelete.id);
+            setMyTools(prev => prev.filter(t => t.id !== toolToDelete.id));
             setStats(prev => ({ ...prev, totalInventory: prev.totalInventory - 1 }));
+            setToolToDelete(null); // Close modal
         } catch {
             alert('Failed to delete tool. Please try again.');
         } finally {
@@ -325,12 +334,16 @@ export default function DashboardPage() {
                                             <Pencil size={14} />
                                         </Link>
                                         <button
-                                            onClick={() => handleDeleteTool(tool.id, tool.name)}
+                                            onClick={() => handleDeleteClick(tool.id, tool.name)}
                                             disabled={deletingId === tool.id}
-                                            className="p-2 bg-black/10 hover:bg-red-600 hover:text-white text-black transition-colors disabled:opacity-40"
+                                            className="p-2 border border-white/20 text-red-500 hover:bg-red-500/10 hover:border-red-500 transition-colors"
                                             title="Delete"
                                         >
-                                            <Trash2 size={14} />
+                                            {deletingId === tool.id ? (
+                                                <div className="w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+                                            ) : (
+                                                <Trash2 size={16} />
+                                            )}
                                         </button>
                                     </div>
                                 </div>
@@ -340,6 +353,19 @@ export default function DashboardPage() {
                 </div>
 
             </div>
+
+            {toolToDelete && (
+                <Modal
+                    isOpen={!!toolToDelete}
+                    onClose={() => setToolToDelete(null)}
+                    onConfirm={confirmDeleteTool}
+                    title="Confirm Deletion"
+                    description={`Are you sure you want to delete "${toolToDelete.name}"? This action cannot be undone.`}
+                    confirmText={deletingId === toolToDelete.id ? 'DELETING...' : 'DELETE'}
+                    cancelText="CANCEL"
+                    variant="danger"
+                />
+            )}
         </div>
     );
 }
