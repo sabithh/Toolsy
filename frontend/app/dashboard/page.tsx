@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/lib/api';
-import { Package, IndianRupee, Clock, AlertCircle, Plus, Settings } from 'lucide-react';
+import { Package, IndianRupee, Clock, AlertCircle, Plus, Settings, Tag, Lock } from 'lucide-react';
 import { Skeleton } from '@/components/ui/Skeleton';
 
 interface DashboardStats {
@@ -19,6 +19,7 @@ export default function DashboardPage() {
     const { user, isAuthenticated, isRenter, accessToken, hasShop } = useAuth();
     const router = useRouter();
     const [loading, setLoading] = useState(true);
+    const [myTools, setMyTools] = useState<any[]>([]);
     const [stats, setStats] = useState<DashboardStats>({
         totalRevenue: 0,
         activeRentals: 0,
@@ -64,6 +65,8 @@ export default function DashboardPage() {
             const toolsData = await api.getMyTools(accessToken!);
             const tools = Array.isArray(toolsData) ? toolsData : (toolsData as any).results || [];
             const inventoryCount = tools.length;
+            setMyTools(tools);
+
 
             setStats({
                 totalRevenue: revenue,
@@ -246,6 +249,61 @@ export default function DashboardPage() {
                             </div>
                         </div>
                     </div>
+                </div>
+                {/* My Fleet Inventory */}
+                <div className="mt-16">
+                    <div className="flex justify-between items-center mb-6">
+                        <h2 className="text-2xl font-black uppercase tracking-widest flex items-center gap-4 text-black">
+                            <span className="w-4 h-4 bg-black"></span>
+                            My Fleet
+                        </h2>
+                        <Link href="/tools/new" className="text-xs font-bold uppercase tracking-widest text-black/60 hover:text-black">
+                            + Add Unit
+                        </Link>
+                    </div>
+
+                    {myTools.length === 0 ? (
+                        <div className="border-2 border-dashed border-black/30 bg-black/10 p-12 text-center">
+                            <Package size={40} className="mx-auto mb-4 text-black/30" />
+                            <p className="font-mono text-black/50 uppercase text-sm">No units deployed yet</p>
+                            <Link href="/tools/new" className="mt-4 inline-block px-6 py-3 bg-black text-white font-bold uppercase tracking-widest text-sm hover:bg-white hover:text-black border border-black transition-colors">
+                                Deploy First Unit
+                            </Link>
+                        </div>
+                    ) : (
+                        <div className="border border-black overflow-hidden">
+                            {/* Table Header */}
+                            <div className="grid grid-cols-5 bg-black text-white px-6 py-3 text-xs font-bold uppercase tracking-widest">
+                                <div className="col-span-2">Unit Name</div>
+                                <div>Category</div>
+                                <div>Daily Rate</div>
+                                <div>Status</div>
+                            </div>
+                            {/* Rows */}
+                            {myTools.map((tool: any) => (
+                                <div key={tool.id} className="grid grid-cols-5 px-6 py-4 border-b border-black/10 bg-black/5 hover:bg-black/10 transition-colors items-center">
+                                    <div className="col-span-2">
+                                        <p className="font-bold uppercase text-black text-sm">{tool.name}</p>
+                                        <p className="text-xs font-mono text-black/50">{tool.brand || '—'}</p>
+                                    </div>
+                                    <div className="text-xs text-black/70 uppercase font-mono">
+                                        <Tag size={12} className="inline mr-1" />
+                                        {tool.category?.name || 'Uncategorized'}
+                                    </div>
+                                    <div className="font-black text-black">₹{tool.price_per_day}/day</div>
+                                    <div>
+                                        {tool.is_available ? (
+                                            <span className="px-2 py-1 bg-green-500 text-white text-xs font-bold uppercase">Active</span>
+                                        ) : (
+                                            <span className="px-2 py-1 bg-black/30 text-black text-xs font-bold uppercase flex items-center gap-1 w-fit">
+                                                <Lock size={10} /> Inactive
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
