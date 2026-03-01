@@ -7,6 +7,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from django.db.models import Q
 from apps.shops.models import Shop
 from .serializers import ShopSerializer, ShopCreateSerializer, ShopDetailSerializer
+import math
 
 
 class ShopViewSet(viewsets.ModelViewSet):
@@ -64,8 +65,8 @@ class ShopViewSet(viewsets.ModelViewSet):
         
         # Simple distance calculation (Haversine formula would be better)
         # For now, filtering by bounding box
-        lat_range = radius / 111.0  # rough conversion km to degrees
-        lng_range = radius / (111.0 * max(abs(lat), 0.0001))
+        lat_range = radius / 111.0
+        lng_range = radius / (111.0 * max(abs(math.cos(math.radians(lat))), 0.0001))
 
         
         shops = self.queryset.filter(
@@ -78,15 +79,9 @@ class ShopViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(shops, many=True)
         return Response(serializer.data)
     
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
     def my_shops(self, request):
         """Get current user's shops"""
-        if not request.user.is_authenticated:
-            return Response(
-                {'error': 'Authentication required'},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
-        
         shops = Shop.objects.filter(owner=request.user)
         serializer = self.get_serializer(shops, many=True)
         return Response(serializer.data)

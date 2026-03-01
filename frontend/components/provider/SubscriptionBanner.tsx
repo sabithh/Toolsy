@@ -34,15 +34,7 @@ export default function SubscriptionBanner() {
             // 2. Open Razorpay
             const options = {
                 key: order.key,
-                amount: order.amount * 100, // Conversion if needed, but backend sends amount. Backend order.amount is in INR. Razorpay expects paise?
-                // Wait, in `create_razorpay_order` service, we usually send amount in paise.
-                // But my `api.createSubscriptionOrder` returns `amount`.
-                // Let's assume standard Razorpay flow.
-                // Actually `razorpay.ts` helper `openRazorpayCheckout` takes options.
-                // But here I'm constructing options manually to handle verify specifically for subscription?
-                // Or I can abstract it.
-                // Let's use the raw window.Razorpay for custom recurring flow if needed, but this is one-time for 30 days.
-                // So standard checkout.
+                amount: order.amount, // Backend already returns amount in paise
                 currency: 'INR',
                 name: 'Toolsy Provider Subscription',
                 description: '30 Days Access to List Tools',

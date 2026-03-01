@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.conf import settings
 from apps.bookings.models import Booking
+from apps.payments.services import _get_client
 import razorpay
 import json
 import logging
@@ -23,11 +24,13 @@ class RazorpayWebhookView(APIView):
         if not webhook_signature:
             return Response({'error': 'Missing signature'}, status=status.HTTP_400_BAD_REQUEST)
 
-        client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+        if not webhook_secret:
+            logger.error("RAZORPAY_WEBHOOK_SECRET not configured")
+            return Response({'error': 'Webhook not configured'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         try:
-            # Verify webhook signature
-            client.utility.verify_webhook_signature(
+            # Verify webhook signature using shared lazy client
+            _get_client().utility.verify_webhook_signature(
                 request.body.decode('utf-8'),
                 webhook_signature,
                 webhook_secret

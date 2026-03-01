@@ -10,6 +10,7 @@ from apps.tools.models import Tool, ToolCategory, Review
 from .serializers import (
     ToolSerializer, ToolCreateSerializer, ToolCategorySerializer, ReviewSerializer
 )
+import math  # Must be top-level — used in nearby() before any local import
 
 
 class ToolCategoryViewSet(viewsets.ReadOnlyModelViewSet):
@@ -173,7 +174,6 @@ class ToolViewSet(viewsets.ModelViewSet):
         )
         
         # Calculate actual distance using Haversine formula and sort
-        import math
         def get_distance(tool):
             lat2 = tool.shop.location_lat
             lon2 = tool.shop.location_lng
@@ -211,3 +211,10 @@ class ReviewViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         """Create review with current user"""
         serializer.save(reviewer=self.request.user)
+
+    def perform_destroy(self, instance):
+        """Only the reviewer (or staff) can delete their own review."""
+        from rest_framework.exceptions import PermissionDenied
+        if instance.reviewer != self.request.user and not self.request.user.is_staff:
+            raise PermissionDenied("You can only delete your own reviews.")
+        instance.delete()
