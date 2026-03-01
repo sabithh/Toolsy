@@ -130,14 +130,14 @@ class AdminUserViewSet(viewsets.ModelViewSet):
     def toggle_verify(self, request, pk=None):
         user = self.get_object()
         user.is_verified = not user.is_verified
-        user.save()
+        user.save(update_fields=['is_verified'])
         return Response({'status': 'ok', 'is_verified': user.is_verified})
 
     @action(detail=True, methods=['post'])
     def toggle_active(self, request, pk=None):
         user = self.get_object()
         user.is_active = not user.is_active
-        user.save()
+        user.save(update_fields=['is_active'])
         return Response({'status': 'ok', 'is_active': user.is_active})
 
 

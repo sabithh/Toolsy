@@ -66,6 +66,13 @@ class BookingCreateSerializer(serializers.ModelSerializer):
                 'quantity': f'Only {tool.quantity_available} available'
             })
         
+        # Validate dates are not in the past
+        from django.utils import timezone
+        if start_time < timezone.now():
+            raise serializers.ValidationError({
+                'start_datetime': 'Start date cannot be in the past'
+            })
+        
         # Validate dates
         if start_time >= end_time:
             raise serializers.ValidationError({
@@ -79,13 +86,23 @@ class BookingCreateSerializer(serializers.ModelSerializer):
 
     
     def create(self, validated_data):
-        """Create booking and decrement tool quantity"""
+        """Create booking and atomically decrement tool quantity"""
         tool_id = validated_data.pop('tool_id')
         tool = validated_data['tool']
+        quantity = validated_data['quantity']
         
-        # Decrement quantity
-        tool.quantity_available -= validated_data['quantity']
-        tool.save(update_fields=['quantity_available'])
+        # Atomic decrement to prevent race conditions (double-booking)
+        from django.db.models import F
+        from apps.tools.models import Tool
+        updated = Tool.objects.filter(
+            id=tool.id,
+            quantity_available__gte=quantity
+        ).update(quantity_available=F('quantity_available') - quantity)
+        
+        if not updated:
+            raise serializers.ValidationError({
+                'quantity': 'Tool is no longer available in requested quantity'
+            })
         
         # Create booking
         validated_data['renter'] = self.context['request'].user

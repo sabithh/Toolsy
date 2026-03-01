@@ -2,7 +2,16 @@ import razorpay
 from django.conf import settings
 from rest_framework.exceptions import ValidationError
 
-client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+_client = None
+
+def _get_client():
+    """Lazy-initialize Razorpay client to avoid import-time crashes when keys are empty."""
+    global _client
+    if _client is None:
+        if not settings.RAZORPAY_KEY_ID or not settings.RAZORPAY_KEY_SECRET:
+            raise ValidationError("Razorpay credentials not configured on the server.")
+        _client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+    return _client
 
 def create_razorpay_order(booking):
     """
@@ -22,8 +31,10 @@ def create_razorpay_order(booking):
                 'renter_id': str(booking.renter.id)
             }
         }
-        order = client.order.create(data=data)
+        order = _get_client().order.create(data=data)
         return order
+    except ValidationError:
+        raise
     except Exception as e:
         raise ValidationError(f"Error creating Razorpay order: {str(e)}")
 
@@ -37,7 +48,7 @@ def verify_payment_signature(razorpay_order_id, razorpay_payment_id, razorpay_si
             'razorpay_payment_id': razorpay_payment_id,
             'razorpay_signature': razorpay_signature
         }
-        client.utility.verify_payment_signature(params_dict)
+        _get_client().utility.verify_payment_signature(params_dict)
         return True
     except razorpay.errors.SignatureVerificationError:
         return False
@@ -54,8 +65,7 @@ def process_refund(payment_id, amount=None):
         if amount:
             data['amount'] = int(amount * 100)  # Convert to paise
             
-        return client.payment.refund(payment_id, data)
+        return _get_client().payment.refund(payment_id, data)
     except Exception as e:
-        # Log error here
-        print(f"Refund error: {str(e)}")
-        return None
+        raise ValidationError(f"Refund error: {str(e)}")
+

@@ -91,9 +91,6 @@ class MigrateDatabaseView(APIView):
     authentication_classes = []
     permission_classes = []
 
-    def get(self, request):
-        return self._run_migrate(request)
-        
     def post(self, request):
         return self._run_migrate(request)
 
