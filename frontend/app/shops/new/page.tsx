@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
@@ -13,9 +13,11 @@ export default function CreateShopPage() {
     const { showToast } = useToast();
 
     // Redirect if already has shop
-    if (hasShop) {
-        router.push('/dashboard');
-    }
+    useEffect(() => {
+        if (hasShop) {
+            router.push('/dashboard');
+        }
+    }, [hasShop, router]);
 
     const [formData, setFormData] = useState({
         name: '',

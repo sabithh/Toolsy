@@ -10,17 +10,24 @@ export default function BookingsPage() {
     const [bookings, setBookings] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
+
+    // Debounce search — wait 400ms after user stops typing
+    useEffect(() => {
+        const timer = setTimeout(() => setDebouncedSearch(search), 400);
+        return () => clearTimeout(timer);
+    }, [search]);
 
     useEffect(() => {
         if (accessToken) {
             loadBookings();
         }
-    }, [accessToken, search]);
+    }, [accessToken, debouncedSearch]);
 
     const loadBookings = async () => {
         try {
             setLoading(true);
-            const data = await api.getAdminBookings(accessToken!, search);
+            const data = await api.getAdminBookings(accessToken!, debouncedSearch);
             setBookings(data.results || data);
         } catch (error) {
             console.error('Failed to load bookings', error);
@@ -66,10 +73,10 @@ export default function BookingsPage() {
                                         {booking.id.slice(0, 8)}...
                                     </td>
                                     <td className="px-6 py-4 font-medium text-white">
-                                        {booking.tool_details?.name || 'Unknown Tool'}
+                                        {booking.tool?.name || 'Unknown Tool'}
                                     </td>
                                     <td className="px-6 py-4 text-gray-300">
-                                        {booking.renter_details?.username || 'Unknown User'}
+                                        {booking.renter?.username || 'Unknown User'}
                                     </td>
                                     <td className="px-6 py-4 text-gray-400 text-xs">
                                         <div>{new Date(booking.start_datetime).toLocaleDateString()}</div>
@@ -77,15 +84,15 @@ export default function BookingsPage() {
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className={`px-2 py-1 rounded text-xs font-medium ${booking.status === 'confirmed' ? 'bg-green-500/10 text-green-400' :
-                                                booking.status === 'pending' ? 'bg-yellow-500/10 text-yellow-400' :
-                                                    'bg-gray-500/10 text-gray-400'
+                                            booking.status === 'pending' ? 'bg-yellow-500/10 text-yellow-400' :
+                                                'bg-gray-500/10 text-gray-400'
                                             }`}>
                                             {booking.status?.toUpperCase()}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className={`px-2 py-1 rounded text-xs font-medium ${booking.payment_status === 'paid' ? 'bg-green-500/10 text-green-400' :
-                                                'bg-red-500/10 text-red-400'
+                                            'bg-red-500/10 text-red-400'
                                             }`}>
                                             {booking.payment_status?.toUpperCase()}
                                         </span>
