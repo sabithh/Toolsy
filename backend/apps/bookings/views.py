@@ -2,7 +2,7 @@ from rest_framework import viewsets, status
 from django.conf import settings
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from apps.bookings.models import Booking, Notification
@@ -46,39 +46,6 @@ class BookingViewSet(viewsets.ModelViewSet):
             return BookingCreateSerializer
         return BookingSerializer
     
-    @action(detail=False, methods=['get'], permission_classes=[AllowAny])
-    def nearby(self, request):
-        """
-        Find nearby shops/tools based on latitude and longitude.
-        This is a placeholder for actual geospatial query logic.
-        """
-        latitude = request.query_params.get('lat')
-        longitude = request.query_params.get('lon')
-        radius = request.query_params.get('radius', 5) # default to 5km
-        
-        if not latitude or not longitude:
-            return Response(
-                {'error': 'Latitude and longitude are required'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        try:
-            latitude = float(latitude)
-            longitude = float(longitude)
-            radius = float(radius)
-        except ValueError:
-            return Response(
-                {'error': 'Latitude, longitude, and radius must be numbers'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        # Placeholder for actual geospatial query
-        # Example: Filter shops based on distance from (latitude, longitude)
-        # For now, just return an empty list or a dummy response
-        return Response({
-            'message': f'Searching for nearby items within {radius}km of ({latitude}, {longitude})',
-            'results': []
-        })
 
     @action(detail=True, methods=['post'])
     def confirm(self, request, pk=None):
@@ -130,10 +97,13 @@ class BookingViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
-        # Only restore quantity if booking was confirmed/active (quantity was actually held)
+        # Atomically restore quantity if booking was confirmed/active
         if booking.status in ['confirmed', 'active']:
-            booking.tool.quantity_available += booking.quantity
-            booking.tool.save(update_fields=['quantity_available'])
+            from django.db.models import F
+            from apps.tools.models import Tool
+            Tool.objects.filter(id=booking.tool_id).update(
+                quantity_available=F('quantity_available') + booking.quantity
+            )
         
         booking.status = 'cancelled'
         booking.save(update_fields=['status'])
