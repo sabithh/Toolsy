@@ -163,7 +163,7 @@ class ToolViewSet(viewsets.ModelViewSet):
         
         # Filter by shop location using get_queryset() to maintain subscription/availability rules
         lat_range = radius / 111.0
-        lng_range = radius / (111.0 * abs(lat))
+        lng_range = radius / (111.0 * max(abs(math.cos(math.radians(lat))), 0.0001))
         
         tools = self.get_queryset().filter(
             shop__location_lat__gte=lat - lat_range,
