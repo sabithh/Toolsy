@@ -47,13 +47,16 @@ class ToolViewSet(viewsets.ModelViewSet):
         Uses a subquery to avoid JOIN issues with missing subscription data.
         """
         from django.utils import timezone
+        
+        # We wrap in a try-except in case the subscriptions table is missing during migrations,
+        # but in normal operation we want to filter tightly.
         try:
             from apps.subscriptions.models import Subscription
-            # Evaluate eagerly so the except block catches missing table errors
-            subscribed_user_ids = list(Subscription.objects.filter(
+            # Get IDs of users with active subscriptions
+            subscribed_user_ids = Subscription.objects.filter(
                 status='active',
                 end_date__gt=timezone.now()
-            ).values_list('user_id', flat=True))
+            ).values_list('user_id', flat=True)
 
             return Tool.objects.select_related('shop', 'category').filter(
                 is_available=True
@@ -61,10 +64,9 @@ class ToolViewSet(viewsets.ModelViewSet):
                 models.Q(shop__owner__is_superuser=True) |
                 models.Q(shop__owner_id__in=subscribed_user_ids)
             ).distinct()
-        except Exception:
-            # Fallback: show all available tools if subscriptions table missing
-            return Tool.objects.select_related('shop', 'category').filter(is_available=True)
-
+        except:
+            # Fallback for migrations
+            return Tool.objects.none()
 
     def perform_create(self, serializer):
         """Validate user has a shop and active subscription before creating tool"""
