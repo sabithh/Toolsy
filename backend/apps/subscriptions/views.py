@@ -4,8 +4,7 @@ from django.conf import settings
 from django.utils import timezone
 from datetime import timedelta
 from .models import Subscription
-from apps.payments.services import verify_payment_signature
-import razorpay
+from apps.payments.services import verify_payment_signature, _get_client
 
 class CreateSubscriptionOrderView(views.APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -22,8 +21,7 @@ class CreateSubscriptionOrderView(views.APIView):
 
         amount = 200  # in INR
         try:
-            client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
-            order = client.order.create({
+            order = _get_client().order.create({
                 'amount': amount * 100,  # in paise
                 'currency': 'INR',
                 'notes': {'type': 'subscription', 'user_id': str(user.id)}
@@ -62,7 +60,7 @@ class VerifySubscriptionPaymentView(views.APIView):
                 sub.razorpay_payment_id = razorpay_payment_id
                 sub.start_date = timezone.now()
                 sub.end_date = timezone.now() + timedelta(days=30)
-                sub.save()
+                sub.save(update_fields=['status', 'razorpay_payment_id', 'start_date', 'end_date'])
                 return Response({'status': 'subscription activated'})
             else:
                 return Response({'error': 'Invalid signature'}, status=status.HTTP_400_BAD_REQUEST)

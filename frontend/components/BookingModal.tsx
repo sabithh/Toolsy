@@ -211,7 +211,7 @@ export default function BookingModal({ tool, isOpen, onClose }: BookingModalProp
                     <button
                         form="booking-form"
                         type="submit"
-                        disabled={loading || !startDate || !endDate}
+                        disabled={loading || !startDate || !endDate || duration <= 0}
                         className="w-full py-4 bg-primary hover:bg-red-700 text-white font-bold uppercase tracking-widest rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(220,38,38,0.3)] hover:shadow-[0_0_30px_rgba(220,38,38,0.5)]"
                     >
                         {loading ? (

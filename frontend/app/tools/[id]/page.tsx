@@ -14,7 +14,8 @@ import Modal from '@/components/ui/Modal';
 import { Edit2, Trash2 } from 'lucide-react';
 
 export default function ToolDetailsPage() {
-    const { id } = useParams();
+    const params = useParams();
+    const id = Array.isArray(params.id) ? params.id[0] : params.id;
     const [tool, setTool] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');

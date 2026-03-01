@@ -25,6 +25,7 @@ class BookingSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = [
             'id', 'renter', 'duration_hours', 'total_amount',
+            'razorpay_order_id', 'razorpay_payment_id',
             'created_at', 'updated_at'
         ]
 
