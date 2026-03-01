@@ -207,10 +207,10 @@ export default function BookingsPage() {
                                             </div>
 
                                             <h3 className="text-3xl font-black uppercase tracking-tight mb-2 text-white group-hover:text-[#DC2626] transition-colors">
-                                                {booking.tool.name}
+                                                {booking.tool?.name ?? '[Tool Removed]'}
                                             </h3>
                                             <div className="text-gray-500 font-bold uppercase tracking-wider text-sm mb-6">
-                                                Provider Node: {booking.shop.name}
+                                                Provider Node: {booking.shop?.name ?? '[Shop Removed]'}
                                             </div>
 
                                             <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-12 gap-y-6 font-mono text-xs text-gray-400">

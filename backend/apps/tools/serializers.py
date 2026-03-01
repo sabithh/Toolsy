@@ -55,8 +55,8 @@ class ReviewSerializer(serializers.ModelSerializer):
     """Serializer for Review model"""
     
     reviewer = serializers.StringRelatedField(read_only=True)
-    shop_name = serializers.CharField(source='shop.name', read_only=True)
-    tool_name = serializers.CharField(source='tool.name', read_only=True)
+    shop_name = serializers.CharField(source='shop.name', read_only=True, allow_null=True)
+    tool_name = serializers.CharField(source='tool.name', read_only=True, allow_null=True)
     
     class Meta:
         model = Review
