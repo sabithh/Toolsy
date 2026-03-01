@@ -83,7 +83,7 @@ export default function ToolsPage() {
 
     const filteredTools = tools.filter(tool =>
         tool.name.toLowerCase().includes(search.toLowerCase()) ||
-        tool.description.toLowerCase().includes(search.toLowerCase())
+        (tool.description || '').toLowerCase().includes(search.toLowerCase())
     );
 
 
@@ -121,8 +121,8 @@ export default function ToolsPage() {
                                 onClick={handleNearbyToggle}
                                 disabled={isNearbyLoading}
                                 className={`px-8 py-4 border border-black font-bold uppercase tracking-wider transition-colors flex items-center gap-2 ${isNearbyActive
-                                        ? 'bg-black text-white hover:bg-[#DC2626] hover:text-black hover:border-black'
-                                        : 'bg-transparent text-black hover:bg-black hover:text-white'
+                                    ? 'bg-black text-white hover:bg-[#DC2626] hover:text-black hover:border-black'
+                                    : 'bg-transparent text-black hover:bg-black hover:text-white'
                                     }`}
                             >
                                 {isNearbyLoading ? <Loader2 size={18} className="animate-spin" /> : <Crosshair size={18} />}
