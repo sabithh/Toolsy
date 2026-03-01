@@ -34,6 +34,7 @@ services:
       - DB_NAME=toolsy
       - DB_USER=toolsy_user
       - DB_PASSWORD=${DB_PASSWORD:-changeme_strong_password}
+      - DATABASE_URL=postgres://toolsy_user:${DB_PASSWORD:-changeme_strong_password}@db:5432/toolsy
 
   nginx:
     image: nginx:alpine

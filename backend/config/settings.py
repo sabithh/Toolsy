@@ -85,26 +85,21 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-# Database
 import dj_database_url
 
-if USE_POSTGIS:
-    # PostgreSQL with PostGIS (Production)
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=f"postgis://{config('DB_USER', default='postgres')}:{config('DB_PASSWORD', default='postgres')}@{config('DB_HOST', default='localhost')}:{config('DB_PORT', default='5432')}/{config('DB_NAME', default='toolsy')}",
-            conn_max_age=600
-        )
-    }
+# Database
+# If DATABASE_URL is provided, use that (e.g., PostgreSQL). Otherwise, fallback to SQLite.
+DATABASES = {
+    'default': dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
+}
+
+# In production, check if we need to explicitly set PostGIS extension
+if USE_POSTGIS and 'postgres' in DATABASES['default']['ENGINE']:
     DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
-else:
-    # SQLite (Local Development) or Standard Postgres via DATABASE_URL
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-            conn_max_age=600
-        )
-    }
 
 # Custom User Model
 AUTH_USER_MODEL = 'users.User'
