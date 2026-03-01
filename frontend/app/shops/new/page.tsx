@@ -7,6 +7,8 @@ import { useToast } from '@/contexts/ToastContext';
 import { api } from '@/lib/api';
 import { Store, MapPin, Phone, Mail } from 'lucide-react';
 
+import LocationPicker from '@/components/ui/LocationPicker';
+
 export default function CreateShopPage() {
     const router = useRouter();
     const { accessToken, hasShop } = useAuth();
@@ -129,6 +131,12 @@ export default function CreateShopPage() {
                                         Coordinates
                                     </h3>
                                 </div>
+
+                                <LocationPicker
+                                    lat={parseFloat(String(formData.location_lat || 0))}
+                                    lng={parseFloat(String(formData.location_lng || 0))}
+                                    onLocationChange={(lat: number, lng: number) => setFormData(prev => ({ ...prev, location_lat: lat, location_lng: lng }))}
+                                />
 
                                 <div className="space-y-2">
                                     <label className="block text-xs font-bold uppercase tracking-widest text-[#DC2626]">
