@@ -62,7 +62,7 @@ const LocationViewerHelper = ({ lat, lng, popupText }: LocationViewerProps) => {
 // Dynamic import wrapper
 const LocationViewerDynamic = dynamic(() => Promise.resolve(LocationViewerHelper), {
     loading: () => (
-        <div className="w-full h-full bg-[#111] animate-pulse flex items-center justify-center border border-white/20">
+        <div className="w-full h-full animate-pulse flex items-center justify-center border border-white/20">
             <span className="text-white/30 font-mono">LOADING MAP DATA...</span>
         </div>
     ),

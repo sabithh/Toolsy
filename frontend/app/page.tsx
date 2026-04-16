@@ -1,167 +1,219 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
-import { MapPin, Zap, CreditCard, UserCheck, SearchCheck, Package } from 'lucide-react';
+import { MapPin, Zap, CreditCard, UserCheck, SearchCheck, ShoppingBag, Tag } from 'lucide-react';
 import ScrollReveal from '@/components/ui/ScrollReveal';
 
 export default function Home() {
   return (
     <div className="min-h-screen relative overflow-hidden pt-20">
-      {/* Animated Red Background */}
-      <div className="fixed inset-0 z-0 bg-[#DC2626]">
-        {/* Grid Pattern in Black */}
-        <div className="absolute inset-0 opacity-10"
-          style={{
-            backgroundImage: `linear-gradient(#000 1px, transparent 1px),
-                             linear-gradient(90deg, #000 1px, transparent 1px)`,
-            backgroundSize: '100px 100px'
-          }}
-        ></div>
-
-        {/* Subtle noise or darkening for depth */}
-        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-[#b91c1c]/20 to-black/10"></div>
-      </div>
-
       {/* Hero Section */}
       <section className="relative z-10 min-h-screen flex items-center justify-center px-4 py-20">
         <div className="container-custom">
           <div className="max-w-7xl mx-auto text-center">
 
-            {/* Massive Typography - Black on Red */}
+            {/* Badge */}
             <ScrollReveal>
-              <h1 className="text-8xl md:text-9xl font-black mb-12 leading-[0.8] tracking-tighter uppercase">
-                <span className="block text-black">Rent</span>
-                <span className="block text-white">Build</span>
-                <span className="block text-black">Create</span>
+              <div className="inline-flex items-center gap-2 px-4 py-2 mb-10 text-xs font-bold uppercase tracking-[4px]"
+                style={{ background: 'var(--bg-surface-2)', border: '1px solid var(--border)', borderRadius: 20, color: 'var(--text-muted)' }}>
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#D20000', display: 'inline-block' }}></span>
+                Rent Anything · Kerala
+              </div>
+            </ScrollReveal>
+
+            {/* Headline */}
+            <ScrollReveal delay={0.1}>
+              <h1 className="font-black mb-10 leading-[0.85] tracking-tighter uppercase"
+                style={{ fontFamily: 'var(--font-bebas), sans-serif', fontSize: 'clamp(4.5rem, 14vw, 10rem)', color: 'var(--text-primary)' }}>
+                <span className="block">Rent</span>
+                <span className="block" style={{ color: '#D20000' }}>Anything</span>
+                <span className="block">Near You</span>
               </h1>
             </ScrollReveal>
 
             <ScrollReveal delay={0.2}>
-              <p className="text-xl md:text-2xl text-black/80 mb-16 max-w-2xl mx-auto uppercase tracking-widest font-bold">
-                Professional tools. Local shops.<br />
-                <span className="text-white">No ownership required.</span>
+              <p className="text-lg md:text-xl mb-14 max-w-xl mx-auto font-semibold uppercase tracking-widest"
+                style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-barlow), sans-serif', letterSpacing: '3px' }}>
+                Tools · Equipment · Gear<br />
+                <span style={{ color: 'var(--text-primary)' }}>From trusted owners near you.</span>
               </p>
             </ScrollReveal>
 
-            {/* CTA Buttons */}
-            <ScrollReveal delay={0.4}>
-              <div className="flex flex-col sm:flex-row gap-8 justify-center mb-24">
-                <Link href="/tools" className="group relative px-12 py-6 bg-black text-white font-black text-xl uppercase tracking-widest hover:bg-white hover:text-black transition-colors duration-300">
-                  <span className="relative z-10 flex items-center gap-3">
-                    Start Renting <SearchCheck size={24} />
-                  </span>
-                  <div className="absolute inset-0 border-2 border-black translate-x-2 translate-y-2 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform duration-300"></div>
+            {/* CTA */}
+            <ScrollReveal delay={0.35}>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-24">
+                <Link href="/tools"
+                  className="group flex items-center justify-center gap-3 px-10 py-5 font-black text-lg uppercase tracking-widest no-underline transition-all duration-200"
+                  style={{ background: '#D20000', color: 'white', borderRadius: 8, fontFamily: 'var(--font-bebas), sans-serif', letterSpacing: '0.1em' }}
+                  onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = '#B10000'}
+                  onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = '#D20000'}
+                >
+                  <SearchCheck size={22} /> Browse Items
                 </Link>
-                <Link href="/register" className="group relative px-12 py-6 border-2 border-black text-black font-black text-xl uppercase tracking-widest hover:bg-black hover:text-white transition-colors duration-300">
-                  <span className="relative z-10 flex items-center gap-3">
-                    List Tools <UserCheck size={24} />
-                  </span>
+                <Link href="/register"
+                  className="group flex items-center justify-center gap-3 px-10 py-5 font-black text-lg uppercase tracking-widest no-underline transition-all duration-200"
+                  style={{ background: 'transparent', color: 'var(--text-primary)', borderRadius: 8, border: '1px solid var(--border)', fontFamily: 'var(--font-bebas), sans-serif', letterSpacing: '0.1em' }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#D20000'; (e.currentTarget as HTMLElement).style.color = '#D20000'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--border)'; (e.currentTarget as HTMLElement).style.color = 'var(--text-primary)'; }}
+                >
+                  <Tag size={22} /> List Your Items
                 </Link>
               </div>
             </ScrollReveal>
 
-            {/* Stats - Black text on Red */}
-            <ScrollReveal delay={0.6}>
-              <div className="grid grid-cols-1 md:grid-cols-3 border-t border-b border-black/10 divide-y md:divide-y-0 md:divide-x divide-black/10">
-                <div className="py-12 px-6 group hover:bg-black/5 transition-colors">
-                  <div className="text-6xl font-black text-black mb-2 group-hover:text-white transition-colors">500+</div>
-                  <div className="text-sm text-black/60 uppercase tracking-[0.2em] font-bold">Tools Ready</div>
-                </div>
-                <div className="py-12 px-6 group hover:bg-black/5 transition-colors">
-                  <div className="text-6xl font-black text-black mb-2 group-hover:text-white transition-colors">100+</div>
-                  <div className="text-sm text-black/60 uppercase tracking-[0.2em] font-bold">Local Pro Shops</div>
-                </div>
-                <div className="py-12 px-6 group hover:bg-black/5 transition-colors">
-                  <div className="text-6xl font-black text-black mb-2 group-hover:text-white transition-colors">24/7</div>
-                  <div className="text-sm text-black/60 uppercase tracking-[0.2em] font-bold">Instant Booking</div>
-                </div>
+            {/* Stats */}
+            <ScrollReveal delay={0.5}>
+              <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x"
+                style={{ border: '1px solid var(--border)' }}>
+                {[
+                  { value: '500+', label: 'Items Available' },
+                  { value: '100+', label: 'Verified Owners' },
+                  { value: '24/7', label: 'Instant Booking' },
+                ].map((stat) => (
+                  <div key={stat.label} className="py-12 px-6 group"
+                    style={{ borderRight: '1px solid var(--border)' }}>
+                    <div className="text-5xl font-black mb-2 transition-colors"
+                      style={{ fontFamily: 'var(--font-bebas), sans-serif', color: 'var(--text-primary)' }}
+                      onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = '#D20000'}
+                      onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = 'var(--text-primary)'}
+                    >{stat.value}</div>
+                    <div className="text-xs font-bold uppercase tracking-[0.2em]" style={{ color: 'var(--text-muted)' }}>{stat.label}</div>
+                  </div>
+                ))}
               </div>
             </ScrollReveal>
           </div>
         </div>
-
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 opacity-50">
-          <div className="text-[10px] uppercase tracking-[0.3em] text-black">Scroll</div>
-          <div className="w-[1px] h-12 bg-gradient-to-b from-black to-transparent"></div>
-        </div>
       </section>
 
-      {/* Features Section - Black Contrast Section */}
-      <section className="relative z-10 py-32 border-t border-black/20 bg-black text-white">
+      {/* Features Section */}
+      <section className="relative z-10 py-32" style={{ borderTop: '1px solid var(--border)' }}>
         <div className="container-custom">
-          {/* Section Header */}
           <ScrollReveal>
-            <div className="mb-20 border-l-4 border-[#DC2626] pl-8">
-              <h2 className="text-6xl md:text-8xl font-black text-white uppercase tracking-tighter leading-none mb-4">
-                Why <span className="text-[#DC2626]">Toolsy?</span>
+            <div className="mb-20" style={{ borderLeft: '3px solid #D20000', paddingLeft: '1.5rem' }}>
+              <h2 className="font-black uppercase tracking-tighter leading-none mb-3"
+                style={{ fontFamily: 'var(--font-bebas), sans-serif', fontSize: 'clamp(3rem, 8vw, 6rem)', color: 'var(--text-primary)' }}>
+                Why <span style={{ color: '#D20000' }}>Vaadaka?</span>
               </h2>
-              <p className="text-xl text-gray-500 uppercase tracking-widest">
-                Engineered for builders
+              <p className="text-sm uppercase tracking-widest font-bold" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-barlow), sans-serif', letterSpacing: '4px' }}>
+                Rent anything · Earn from what you own
               </p>
             </div>
           </ScrollReveal>
 
-          {/* Feature Cards - Black on Black with Red borders/accents */}
-          <div className="grid md:grid-cols-3 gap-1">
-            {/* Feature 1 */}
+          <div className="grid md:grid-cols-3 gap-px" style={{ background: 'var(--border)' }}>
+            {[
+              { icon: MapPin, title: 'Near You', desc: 'Location-powered search finds items from owners within minutes of you. Real-time availability.' },
+              { icon: Zap, title: 'Instant Book', desc: 'Reserve in seconds. Chat with the owner. Pick up when ready. Smart scheduling.' },
+              { icon: CreditCard, title: 'No Upfront Cost', desc: 'No subscription. Owners pay only 2% commission per completed rental. Renters browse free.' },
+            ].map(({ icon: Icon, title, desc }, i) => (
+              <ScrollReveal key={title} delay={0.1 * (i + 1)}>
+                <div className="p-10 group transition-colors duration-300 h-full"
+                  style={{ background: 'var(--bg-surface)' }}
+                  onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = '#D20000'}
+                  onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = 'transparent'}>
+                  <div className="mb-6">
+                    <Icon size={40} style={{ color: '#D20000' }} />
+                  </div>
+                  <h3 className="text-xl font-black uppercase tracking-wider mb-3"
+                    style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-bebas), sans-serif', letterSpacing: '0.1em' }}>{title}</h3>
+                  <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>{desc}</p>
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section className="relative z-10 py-32" style={{ borderTop: '1px solid var(--border)' }}>
+        <div className="container-custom">
+          <ScrollReveal>
+            <div className="mb-16 text-center">
+              <h2 className="font-black uppercase tracking-tighter leading-none mb-3"
+                style={{ fontFamily: 'var(--font-bebas), sans-serif', fontSize: 'clamp(2.5rem, 6vw, 5rem)', color: 'var(--text-primary)' }}>
+                How It Works
+              </h2>
+            </div>
+          </ScrollReveal>
+
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {/* Renter */}
             <ScrollReveal delay={0.1}>
-              <div className="group relative p-12 bg-[#111] border border-white/10 hover:border-[#DC2626] transition-colors duration-300 h-full">
-                <div className="mb-8">
-                  <MapPin size={48} className="text-[#DC2626]" />
+              <div className="p-8 h-full" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 8 }}>
+                <div className="flex items-center gap-3 mb-6">
+                  <ShoppingBag size={28} style={{ color: '#D20000' }} />
+                  <h3 className="text-xl font-black uppercase tracking-wider" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-bebas), sans-serif' }}>
+                    I Want to Rent
+                  </h3>
                 </div>
-                <h3 className="text-2xl font-black text-white uppercase tracking-wider mb-4">GPS Search</h3>
-                <p className="text-gray-500 leading-relaxed font-mono text-sm">
-                  Location-powered search finds tools within minutes of you. Real-time availability updates.
-                </p>
+                <ol className="space-y-3 text-sm" style={{ color: 'var(--text-muted)' }}>
+                  <li className="flex gap-3"><span style={{ color: '#D20000', fontWeight: 700, minWidth: 20 }}>01</span> Browse listings near you</li>
+                  <li className="flex gap-3"><span style={{ color: '#D20000', fontWeight: 700, minWidth: 20 }}>02</span> Book the item online</li>
+                  <li className="flex gap-3"><span style={{ color: '#D20000', fontWeight: 700, minWidth: 20 }}>03</span> Chat with owner to coordinate</li>
+                  <li className="flex gap-3"><span style={{ color: '#D20000', fontWeight: 700, minWidth: 20 }}>04</span> Pick up, use, return</li>
+                </ol>
+                <Link href="/register"
+                  className="mt-8 flex items-center justify-center gap-2 py-3 font-bold text-sm uppercase tracking-widest no-underline transition-all duration-200"
+                  style={{ background: '#D20000', color: 'white', borderRadius: 6 }}
+                  onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = '#B10000'}
+                  onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = '#D20000'}
+                >
+                  Join as Renter
+                </Link>
               </div>
             </ScrollReveal>
 
-            {/* Feature 2 */}
+            {/* Owner */}
             <ScrollReveal delay={0.2}>
-              <div className="group relative p-12 bg-[#111] border border-white/10 hover:border-[#DC2626] transition-colors duration-300 h-full">
-                <div className="mb-8">
-                  <Zap size={48} className="text-[#DC2626]" />
+              <div className="p-8 h-full" style={{ background: 'var(--bg-surface)', border: '1px solid #D20000', borderRadius: 8 }}>
+                <div className="flex items-center gap-3 mb-6">
+                  <Tag size={28} style={{ color: '#D20000' }} />
+                  <h3 className="text-xl font-black uppercase tracking-wider" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-bebas), sans-serif' }}>
+                    I Want to List
+                  </h3>
                 </div>
-                <h3 className="text-2xl font-black text-white uppercase tracking-wider mb-4">Instant Book</h3>
-                <p className="text-gray-500 leading-relaxed font-mono text-sm">
-                  Reserve in seconds. Pick up when ready. Smart scheduling and inventory management.
-                </p>
-              </div>
-            </ScrollReveal>
-
-            {/* Feature 3 */}
-            <ScrollReveal delay={0.3}>
-              <div className="group relative p-12 bg-[#111] border border-white/10 hover:border-[#DC2626] transition-colors duration-300 h-full">
-                <div className="mb-8">
-                  <CreditCard size={48} className="text-[#DC2626]" />
-                </div>
-                <h3 className="text-2xl font-black text-white uppercase tracking-wider mb-4">Flex Payment</h3>
-                <p className="text-gray-500 leading-relaxed font-mono text-sm">
-                  Pay online securely or cash on return. Your choice, maximum convenience.
-                </p>
+                <ol className="space-y-3 text-sm" style={{ color: 'var(--text-muted)' }}>
+                  <li className="flex gap-3"><span style={{ color: '#D20000', fontWeight: 700, minWidth: 20 }}>01</span> Register as an owner</li>
+                  <li className="flex gap-3"><span style={{ color: '#D20000', fontWeight: 700, minWidth: 20 }}>02</span> List your items with photos & price</li>
+                  <li className="flex gap-3"><span style={{ color: '#D20000', fontWeight: 700, minWidth: 20 }}>03</span> Accept bookings, chat with renters</li>
+                  <li className="flex gap-3"><span style={{ color: '#D20000', fontWeight: 700, minWidth: 20 }}>04</span> Earn — only 2% commission</li>
+                </ol>
+                <Link href="/register?role=provider"
+                  className="mt-8 flex items-center justify-center gap-2 py-3 font-bold text-sm uppercase tracking-widest no-underline transition-all duration-200"
+                  style={{ background: 'transparent', color: '#D20000', border: '1px solid #D20000', borderRadius: 6 }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#D20000'; (e.currentTarget as HTMLElement).style.color = 'white'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = '#D20000'; }}
+                >
+                  Join as Owner
+                </Link>
               </div>
             </ScrollReveal>
           </div>
         </div>
       </section>
 
-      {/* Final CTA - Red again */}
-      <section className="relative z-10 py-32 bg-[#DC2626]">
+      {/* Final CTA */}
+      <section className="relative z-10 py-32" style={{ borderTop: '1px solid var(--border)', background: '#0D0D0D' }}>
         <div className="container-custom">
           <ScrollReveal>
-            <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-12">
+            <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-12">
               <div>
-                <h2 className="text-6xl md:text-8xl font-black text-black uppercase tracking-tighter leading-none mb-6">
-                  Ready to<br />Transform?
+                <h2 className="font-black uppercase tracking-tighter leading-none mb-4"
+                  style={{ fontFamily: 'var(--font-bebas), sans-serif', fontSize: 'clamp(3rem, 8vw, 6rem)', color: 'var(--text-primary)' }}>
+                  Ready to<br /><span style={{ color: '#D20000' }}>Vaadaka?</span>
                 </h2>
-                <p className="text-2xl text-white font-bold uppercase tracking-widest">
-                  Join the network today
+                <p className="text-lg font-bold uppercase tracking-widest" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-barlow), sans-serif', letterSpacing: '3px' }}>
+                  Join Kerala&apos;s rental network today
                 </p>
               </div>
-              <Link href="/register" className="bg-black text-white px-16 py-8 font-black text-2xl uppercase tracking-widest hover:bg-white hover:text-black transition-colors duration-300 flex items-center gap-4">
-                Get Started <UserCheck size={32} />
+              <Link href="/register"
+                className="flex items-center gap-3 px-14 py-6 font-black text-xl uppercase tracking-widest no-underline transition-all duration-200 whitespace-nowrap"
+                style={{ background: '#D20000', color: 'white', borderRadius: 8, fontFamily: 'var(--font-bebas), sans-serif' }}
+                onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = '#B10000'}
+                onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = '#D20000'}
+              >
+                Get Started <UserCheck size={28} />
               </Link>
             </div>
           </ScrollReveal>

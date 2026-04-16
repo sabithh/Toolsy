@@ -54,16 +54,16 @@ export default function CreateShopPage() {
     };
 
     return (
-        <div className="min-h-screen bg-[#DC2626] pt-24 pb-12 px-6">
+        <div className="min-h-screen pt-24 pb-12 px-6" style={{ background: 'var(--bg-primary)' }}>
             <div className="max-w-3xl mx-auto">
                 {/* Header */}
-                <div className="mb-12 border-l-4 border-black pl-8">
-                    <h1 className="text-6xl font-black uppercase tracking-tighter text-black mb-4">
-                        Initialize<br />
-                        <span className="text-white">Shop Node</span>
+                <div className="mb-10" style={{ borderLeft: '3px solid #D20000', paddingLeft: '1.25rem' }}>
+                    <h1 className="font-black uppercase tracking-tighter leading-none mb-2"
+                        style={{ fontFamily: 'var(--font-bebas), sans-serif', fontSize: 'clamp(2.5rem, 6vw, 4rem)', color: 'var(--text-primary)' }}>
+                        Set Up Your Shop
                     </h1>
-                    <p className="text-xl font-bold uppercase tracking-widest text-black/60">
-                        Establish your protocol presence
+                    <p className="text-sm font-bold uppercase tracking-widest" style={{ color: 'var(--text-muted)', letterSpacing: '3px' }}>
+                        Start listing items on Vaadaka
                     </p>
                 </div>
 
@@ -88,19 +88,19 @@ export default function CreateShopPage() {
                             {/* Basic Info Section */}
                             <div className="space-y-6">
                                 <div className="flex items-center gap-4 mb-8 border-b border-white/10 pb-4">
-                                    <Store className="text-[#DC2626]" size={24} />
+                                    <Store style={{ color: '#D20000' }} size={24} />
                                     <h3 className="text-xl font-bold uppercase tracking-widest text-white">
                                         Identity
                                     </h3>
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="block text-xs font-bold uppercase tracking-widest text-[#DC2626]">
+                                    <label className="block text-xs font-bold uppercase tracking-widest" style={{ color: '#D20000' }}>
                                         Shop Name
                                     </label>
                                     <input
                                         type="text"
-                                        className="w-full bg-[#111] border border-white/20 p-4 text-white placeholder-white/30 focus:outline-none focus:border-[#DC2626] transition-colors font-mono"
+                                        className="w-full p-4 font-mono outline-none transition-colors" style={{ background: 'var(--bg-surface-2)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text-primary)' }} onFocus={e => (e.target as HTMLElement).style.borderColor='#D20000'} onBlur={e => (e.target as HTMLElement).style.borderColor='var(--border)'}
                                         placeholder="ENTER DESIGNATION"
                                         value={formData.name}
                                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -109,12 +109,12 @@ export default function CreateShopPage() {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="block text-xs font-bold uppercase tracking-widest text-[#DC2626]">
+                                    <label className="block text-xs font-bold uppercase tracking-widest" style={{ color: '#D20000' }}>
                                         Description
                                     </label>
                                     <textarea
                                         rows={4}
-                                        className="w-full bg-[#111] border border-white/20 p-4 text-white placeholder-white/30 focus:outline-none focus:border-[#DC2626] transition-colors font-mono"
+                                        className="w-full p-4 font-mono outline-none transition-colors" style={{ background: 'var(--bg-surface-2)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text-primary)' }} onFocus={e => (e.target as HTMLElement).style.borderColor='#D20000'} onBlur={e => (e.target as HTMLElement).style.borderColor='var(--border)'}
                                         placeholder="OPERATIONAL PARAMETERS..."
                                         value={formData.description}
                                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -126,7 +126,7 @@ export default function CreateShopPage() {
                             {/* Location Section */}
                             <div className="space-y-6 pt-8">
                                 <div className="flex items-center gap-4 mb-8 border-b border-white/10 pb-4">
-                                    <MapPin className="text-[#DC2626]" size={24} />
+                                    <MapPin style={{ color: '#D20000' }} size={24} />
                                     <h3 className="text-xl font-bold uppercase tracking-widest text-white">
                                         Coordinates
                                     </h3>
@@ -139,12 +139,12 @@ export default function CreateShopPage() {
                                 />
 
                                 <div className="space-y-2">
-                                    <label className="block text-xs font-bold uppercase tracking-widest text-[#DC2626]">
+                                    <label className="block text-xs font-bold uppercase tracking-widest" style={{ color: '#D20000' }}>
                                         Physical Address
                                     </label>
                                     <input
                                         type="text"
-                                        className="w-full bg-[#111] border border-white/20 p-4 text-white placeholder-white/30 focus:outline-none focus:border-[#DC2626] transition-colors font-mono"
+                                        className="w-full p-4 font-mono outline-none transition-colors" style={{ background: 'var(--bg-surface-2)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text-primary)' }} onFocus={e => (e.target as HTMLElement).style.borderColor='#D20000'} onBlur={e => (e.target as HTMLElement).style.borderColor='var(--border)'}
                                         placeholder="SECTOR / ZONE / UNIT"
                                         value={formData.address}
                                         onChange={(e) => setFormData({ ...formData, address: e.target.value })}
@@ -156,7 +156,7 @@ export default function CreateShopPage() {
                             {/* Contact Section */}
                             <div className="space-y-6 pt-8">
                                 <div className="flex items-center gap-4 mb-8 border-b border-white/10 pb-4">
-                                    <Phone className="text-[#DC2626]" size={24} />
+                                    <Phone style={{ color: '#D20000' }} size={24} />
                                     <h3 className="text-xl font-bold uppercase tracking-widest text-white">
                                         Comms
                                     </h3>
@@ -164,15 +164,15 @@ export default function CreateShopPage() {
 
                                 <div className="grid md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
-                                        <label className="block text-xs font-bold uppercase tracking-widest text-[#DC2626]">
+                                        <label className="block text-xs font-bold uppercase tracking-widest" style={{ color: '#D20000' }}>
                                             Ext. Link (Phone)
                                         </label>
                                         <div className="relative">
                                             <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={16} />
                                             <input
                                                 type="tel"
-                                                className="w-full bg-[#111] border border-white/20 p-4 pl-12 text-white placeholder-white/30 focus:outline-none focus:border-[#DC2626] transition-colors font-mono"
-                                                placeholder="+1 (000) 000-0000"
+                                                className="w-full p-4 pl-12 font-mono outline-none transition-colors" style={{ background: 'var(--bg-surface-2)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text-primary)' }} onFocus={e => (e.target as HTMLElement).style.borderColor='#D20000'} onBlur={e => (e.target as HTMLElement).style.borderColor='var(--border)'}
+                                                placeholder="+91 00000 00000"
                                                 value={formData.phone}
                                                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                                                 required
@@ -181,15 +181,15 @@ export default function CreateShopPage() {
                                     </div>
 
                                     <div className="space-y-2">
-                                        <label className="block text-xs font-bold uppercase tracking-widest text-[#DC2626]">
+                                        <label className="block text-xs font-bold uppercase tracking-widest" style={{ color: '#D20000' }}>
                                             Net Link (Email)
                                         </label>
                                         <div className="relative">
                                             <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" size={16} />
                                             <input
                                                 type="email"
-                                                className="w-full bg-[#111] border border-white/20 p-4 pl-12 text-white placeholder-white/30 focus:outline-none focus:border-[#DC2626] transition-colors font-mono"
-                                                placeholder="NODE@GRID.NET"
+                                                className="w-full p-4 pl-12 font-mono outline-none transition-colors" style={{ background: 'var(--bg-surface-2)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text-primary)' }} onFocus={e => (e.target as HTMLElement).style.borderColor='#D20000'} onBlur={e => (e.target as HTMLElement).style.borderColor='var(--border)'}
+                                                placeholder="shop@vaadaka.in"
                                                 value={formData.email}
                                                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                                 required
@@ -202,7 +202,10 @@ export default function CreateShopPage() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full bg-[#DC2626] hover:bg-white text-black font-black uppercase tracking-widest py-6 text-xl transition-all duration-300 border-2 border-[#DC2626] hover:border-white mt-12"
+                                className="w-full font-black uppercase tracking-widest py-6 text-xl transition-all duration-300 mt-12"
+                                style={{ background: '#D20000', color: 'white', border: 'none', borderRadius: 6 }}
+                                onMouseEnter={e => { if (!loading) (e.currentTarget as HTMLElement).style.background = '#B10000'; }}
+                                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = '#D20000'; }}
                             >
                                 {loading ? 'INITIALIZING...' : 'ESTABLISH PROTOCOL'}
                             </button>

@@ -139,8 +139,8 @@ export default function EditToolPage({ params }: { params: Promise<{ id: string 
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#DC2626] flex items-center justify-center">
-                <Loader2 size={48} className="animate-spin text-black" />
+            <div className="min-h-screen pt-24 flex items-center justify-center" style={{ background: 'var(--bg-primary)' }}>
+                <div className="w-6 h-6 border-2 rounded-full animate-spin" style={{ borderColor: '#D20000', borderTopColor: 'transparent' }} />
             </div>
         );
     }
@@ -148,36 +148,40 @@ export default function EditToolPage({ params }: { params: Promise<{ id: string 
     if (!user) return null;
 
     return (
-        <div className="min-h-screen bg-[#DC2626] text-black py-24">
+        <div className="min-h-screen pt-24 pb-12" style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
             <div className="container-custom max-w-4xl">
                 {/* Header */}
-                <div className="mb-12">
-                    <Link href={`/tools/${resolvedParams.id}`} className="inline-flex items-center gap-2 text-black font-bold uppercase tracking-widest hover:text-white transition-colors mb-6">
-                        <ArrowLeft size={16} /> Abort / Return
+                <div className="mb-10">
+                    <Link href={`/tools/${resolvedParams.id}`} className="inline-flex items-center gap-2 font-bold uppercase tracking-widest transition-colors mb-6 no-underline text-sm"
+                        style={{ color: 'var(--text-muted)' }}
+                        onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = 'var(--text-primary)'}
+                        onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = 'var(--text-muted)'}>
+                        <ArrowLeft size={16} /> Back to Item
                     </Link>
-                    <h1 className="text-6xl md:text-7xl font-black uppercase tracking-tighter leading-none mb-4">
-                        Edit<br />Unit Config
+                    <h1 className="font-black uppercase tracking-tighter leading-none mb-2"
+                        style={{ fontFamily: 'var(--font-bebas), sans-serif', fontSize: 'clamp(2.5rem, 7vw, 4.5rem)', color: 'var(--text-primary)' }}>
+                        Edit Item
                     </h1>
-                    <p className="text-xl font-mono opacity-60 uppercase">
-                        // MODIFY HARDWARE PARAMETERS
+                    <p className="text-sm font-bold uppercase tracking-widest" style={{ color: 'var(--text-muted)', letterSpacing: '3px' }}>
+                        Update your listing details
                     </p>
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-8">
                     {/* Form Section */}
                     <div className="md:col-span-2">
-                        <form onSubmit={handleSubmit} className="bg-black p-8 border border-black space-y-6">
+                        <form onSubmit={handleSubmit} className="p-8 space-y-6" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 8 }}>
 
                             {/* Name */}
                             <div className="space-y-2">
-                                <label className="text-xs font-bold text-white uppercase tracking-widest flex items-center gap-2">
-                                    <Tag size={14} className="text-[#DC2626]" /> Unit Designation (Name)
+                                <label className="text-xs font-bold uppercase tracking-widest flex items-center gap-2" style={{ color: 'var(--text-muted)' }}>
+                                    <Tag size={14} style={{ color: '#D20000' }} /> Unit Designation (Name)
                                 </label>
                                 <input
                                     type="text"
                                     name="name"
                                     required
-                                    className="w-full bg-[#111] border border-white/20 p-4 text-white font-bold uppercase tracking-wide focus:border-[#DC2626] outline-none transition-colors"
+                                    className="w-full p-4 font-bold uppercase tracking-wide outline-none transition-colors" style={{ background: 'var(--bg-surface-2)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text-primary)' }} onFocus={e => (e.target as HTMLElement).style.borderColor='#D20000'} onBlur={e => (e.target as HTMLElement).style.borderColor='var(--border)'}
                                     placeholder="e.g. MAKITA IMPACT DRILL X2"
                                     value={formData.name}
                                     onChange={handleChange}
@@ -186,14 +190,14 @@ export default function EditToolPage({ params }: { params: Promise<{ id: string 
 
                             {/* Description */}
                             <div className="space-y-2">
-                                <label className="text-xs font-bold text-white uppercase tracking-widest flex items-center gap-2">
+                                <label className="text-xs font-bold uppercase tracking-widest flex items-center gap-2" style={{ color: 'var(--text-muted)' }}>
                                     Description
                                 </label>
                                 <textarea
                                     name="description"
                                     required
                                     rows={4}
-                                    className="w-full bg-[#111] border border-white/20 p-4 text-gray-400 font-mono text-sm focus:border-[#DC2626] outline-none transition-colors"
+                                    className="w-full p-4 font-mono text-sm outline-none transition-colors" style={{ background: 'var(--bg-surface-2)', border: '1px solid var(--border)', borderRadius: 6, color: '#999999' }} onFocus={e => (e.target as HTMLElement).style.borderColor='#D20000'} onBlur={e => (e.target as HTMLElement).style.borderColor='var(--border)'}
                                     placeholder="Technical specifications, condition report, included accessories..."
                                     value={formData.description}
                                     onChange={handleChange}
@@ -203,22 +207,22 @@ export default function EditToolPage({ params }: { params: Promise<{ id: string 
                             {/* Grid: Price & Deposit */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <label className="text-xs font-bold text-white uppercase tracking-widest flex items-center gap-2">
-                                        <DollarSign size={14} className="text-[#DC2626]" /> Daily Rate
+                                    <label className="text-xs font-bold uppercase tracking-widest flex items-center gap-2" style={{ color: 'var(--text-muted)' }}>
+                                        <DollarSign size={14} style={{ color: '#D20000' }} /> Daily Rate
                                     </label>
                                     <input
                                         type="number"
                                         name="price_per_day"
                                         required
                                         min="0"
-                                        className="w-full bg-[#111] border border-white/20 p-4 text-white font-bold font-mono focus:border-[#DC2626] outline-none transition-colors"
+                                        className="w-full p-4 font-bold font-mono outline-none transition-colors" style={{ background: 'var(--bg-surface-2)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text-primary)' }} onFocus={e => (e.target as HTMLElement).style.borderColor='#D20000'} onBlur={e => (e.target as HTMLElement).style.borderColor='var(--border)'}
                                         placeholder="0.00"
                                         value={formData.price_per_day}
                                         onChange={handleChange}
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-xs font-bold text-white uppercase tracking-widest flex items-center gap-2">
+                                    <label className="text-xs font-bold uppercase tracking-widest flex items-center gap-2" style={{ color: 'var(--text-muted)' }}>
                                         Security Deposit
                                     </label>
                                     <input
@@ -226,7 +230,7 @@ export default function EditToolPage({ params }: { params: Promise<{ id: string 
                                         name="deposit_amount"
                                         required
                                         min="0"
-                                        className="w-full bg-[#111] border border-white/20 p-4 text-white font-bold font-mono focus:border-[#DC2626] outline-none transition-colors"
+                                        className="w-full p-4 font-bold font-mono outline-none transition-colors" style={{ background: 'var(--bg-surface-2)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text-primary)' }} onFocus={e => (e.target as HTMLElement).style.borderColor='#D20000'} onBlur={e => (e.target as HTMLElement).style.borderColor='var(--border)'}
                                         placeholder="0.00"
                                         value={formData.deposit_amount}
                                         onChange={handleChange}
@@ -237,26 +241,26 @@ export default function EditToolPage({ params }: { params: Promise<{ id: string 
                             {/* Grid: Qty & Category */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <label className="text-xs font-bold text-white uppercase tracking-widest flex items-center gap-2">
-                                        <Package size={14} className="text-[#DC2626]" /> Quantity
+                                    <label className="text-xs font-bold uppercase tracking-widest flex items-center gap-2" style={{ color: 'var(--text-muted)' }}>
+                                        <Package size={14} style={{ color: '#D20000' }} /> Quantity
                                     </label>
                                     <input
                                         type="number"
                                         name="quantity_available"
                                         required
                                         min="1"
-                                        className="w-full bg-[#111] border border-white/20 p-4 text-white font-bold font-mono focus:border-[#DC2626] outline-none transition-colors"
+                                        className="w-full p-4 font-bold font-mono outline-none transition-colors" style={{ background: 'var(--bg-surface-2)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text-primary)' }} onFocus={e => (e.target as HTMLElement).style.borderColor='#D20000'} onBlur={e => (e.target as HTMLElement).style.borderColor='var(--border)'}
                                         value={formData.quantity_available}
                                         onChange={handleChange}
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-xs font-bold text-white uppercase tracking-widest flex items-center gap-2">
+                                    <label className="text-xs font-bold uppercase tracking-widest flex items-center gap-2" style={{ color: 'var(--text-muted)' }}>
                                         Class (Category)
                                     </label>
                                     <select
                                         name="category_id"
-                                        className="w-full bg-[#111] border border-white/20 p-4 text-white font-bold uppercase tracking-wide focus:border-[#DC2626] outline-none transition-colors appearance-none"
+                                        className="w-full p-4 font-bold uppercase tracking-wide outline-none transition-colors appearance-none" style={{ background: 'var(--bg-surface-2)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text-primary)' }} onFocus={e => (e.target as HTMLElement).style.borderColor='#D20000'} onBlur={e => (e.target as HTMLElement).style.borderColor='var(--border)'}
                                         value={formData.category_id}
                                         onChange={handleChange}
                                     >
@@ -272,7 +276,7 @@ export default function EditToolPage({ params }: { params: Promise<{ id: string 
                             <button
                                 type="submit"
                                 disabled={submitting}
-                                className="w-full bg-[#DC2626] text-black font-black uppercase tracking-widest py-6 hover:bg-white hover:text-black transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                className="w-full font-black uppercase tracking-widest py-5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer" style={{ background: '#D20000', color: 'white', border: 'none', borderRadius: 6 }}
                             >
                                 {submitting ? (
                                     <>
@@ -292,7 +296,7 @@ export default function EditToolPage({ params }: { params: Promise<{ id: string 
                     {/* Preview Section */}
                     <div className="space-y-6">
                         <div className="space-y-2">
-                            <label className="text-xs font-bold text-black uppercase tracking-widest block">
+                            <label className="text-xs font-bold uppercase tracking-widest block" style={{ color: 'var(--text-muted)' }}>
                                 Visual Log (Image)
                             </label>
                             <div className="relative group cursor-pointer">
@@ -302,7 +306,7 @@ export default function EditToolPage({ params }: { params: Promise<{ id: string 
                                     onChange={handleImageChange}
                                     className="absolute inset-0 w-full h-full opacity-0 z-10 cursor-pointer"
                                 />
-                                <div className={`aspect-video border-2 border-dashed border-black flex flex-col items-center justify-center bg-black/5 hover:bg-black/10 transition-colors ${previewUrl ? 'border-solid border-black p-0 overflow-hidden' : 'p-8'}`}>
+                                <div className={`aspect-video flex flex-col items-center justify-center transition-colors ${previewUrl ? 'p-0 overflow-hidden' : 'p-8'}`} style={{ border: '2px dashed #1E1E1E', borderRadius: 8, background: 'var(--bg-surface)' }}>
                                     {previewUrl ? (
                                         <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
                                     ) : (

@@ -62,20 +62,21 @@ export default function ToolDetailsPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-secondary pt-24 pb-12 flex items-center justify-center">
-                <div className="text-white animate-pulse">LOADING TOOL DATA...</div>
+            <div className="min-h-screen pt-24 pb-12 flex items-center justify-center" style={{ background: 'var(--bg-primary)' }}>
+                <div className="w-6 h-6 border-2 rounded-full animate-spin" style={{ borderColor: '#D20000', borderTopColor: 'transparent' }} />
             </div>
         );
     }
 
     if (error || !tool) {
         return (
-            <div className="min-h-screen bg-secondary pt-24 pb-12 flex items-center justify-center">
+            <div className="min-h-screen pt-24 pb-12 flex items-center justify-center" style={{ background: 'var(--bg-primary)' }}>
                 <div className="text-center">
-                    <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-                    <h2 className="text-xl text-white font-bold mb-2">Tool Not Found</h2>
-                    <Link href="/tools" className="text-primary hover:underline">
-                        Return to Inventory
+                    <AlertCircle className="w-12 h-12 mx-auto mb-4" style={{ color: '#D20000' }} />
+                    <h2 className="text-xl font-bold mb-3" style={{ color: 'var(--text-primary)' }}>Item Not Found</h2>
+                    <Link href="/tools" className="font-bold text-sm uppercase tracking-widest no-underline transition-colors"
+                        style={{ color: '#D20000' }}>
+                        ← Back to Browse
                     </Link>
                 </div>
             </div>
@@ -83,17 +84,20 @@ export default function ToolDetailsPage() {
     }
 
     return (
-        <div className="min-h-screen bg-black text-white pt-24 pb-12">
+        <div className="min-h-screen pt-24 pb-12" style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
             <div className="container-custom">
                 {/* Back Button */}
-                <Link href="/tools" className="inline-flex items-center text-gray-400 hover:text-white mb-8 transition-colors uppercase tracking-widest text-sm font-bold">
-                    <ArrowLeft className="w-4 h-4 mr-2" /> Back to Inventory
+                <Link href="/tools" className="inline-flex items-center mb-8 transition-colors uppercase tracking-widest text-sm font-bold no-underline"
+                    style={{ color: 'var(--text-muted)' }}
+                    onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = 'var(--text-primary)'}
+                    onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = 'var(--text-muted)'}>
+                    <ArrowLeft className="w-4 h-4 mr-2" /> Back to Browse
                 </Link>
 
                 <div className="grid lg:grid-cols-2 gap-12">
                     {/* Image Section */}
                     <div className="space-y-4">
-                        <div className="aspect-square bg-[#111] border border-white/10 rounded-xl overflow-hidden relative group">
+                        <div className="aspect-square rounded-xl overflow-hidden relative group" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
                             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                             {tool.images && tool.images.length > 0 ? (
                                 <img
@@ -139,11 +143,11 @@ export default function ToolDetailsPage() {
                             </div>
                         </div>
 
-                        <div className="flex items-end gap-2 border-b border-white/10 pb-8">
-                            <div className="text-5xl font-black text-white leading-none">
+                        <div className="flex items-end gap-2 pb-8" style={{ borderBottom: '1px solid var(--border)' }}>
+                            <div className="text-5xl font-black leading-none" style={{ color: '#D20000', fontFamily: 'var(--font-bebas), sans-serif' }}>
                                 ₹{Math.floor(tool.price_per_day)}
                             </div>
-                            <div className="text-sm font-mono text-gray-400 uppercase mb-2">
+                            <div className="text-sm font-mono uppercase mb-2" style={{ color: 'var(--text-muted)' }}>
                                 / Per Day
                             </div>
                         </div>
@@ -155,33 +159,39 @@ export default function ToolDetailsPage() {
                             </p>
                         </div>
 
-                        <div className="bg-[#111] p-6 rounded-xl border border-white/5 space-y-4">
+                        <div className="p-5 space-y-4" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 8 }}>
                             <div className="flex justify-between items-center">
-                                <span className="text-gray-400 text-sm">Shop Provider</span>
-                                <span className="font-bold text-white">{tool.shop?.name}</span>
+                                <span className="text-sm" style={{ color: 'var(--text-muted)' }}>Owner / Shop</span>
+                                <span className="font-bold text-sm" style={{ color: 'var(--text-primary)' }}>{tool.shop?.name || '—'}</span>
                             </div>
-                            <div className="flex justify-between items-center">
-                                <span className="text-gray-400 text-sm">Security Deposit</span>
-                                <span className="font-bold text-white">₹{tool.deposit_amount}</span>
+                            <div className="flex justify-between items-center" style={{ borderTop: '1px solid var(--border)', paddingTop: '1rem' }}>
+                                <span className="text-sm" style={{ color: 'var(--text-muted)' }}>Refundable Deposit</span>
+                                <span className="font-bold text-sm" style={{ color: 'var(--text-primary)' }}>₹{tool.deposit_amount}</span>
                             </div>
                         </div>
 
                         <div className="pt-4">
-                            {user?.id === tool.shop?.owner?.id ? (
-                                <div className="flex gap-4">
+                            {user?.id != null && tool.shop?.owner?.id != null && String(user.id) === String(tool.shop.owner.id) ? (
+                                <div className="flex gap-3">
                                     <button
                                         onClick={() => router.push(`/tools/edit/${tool.id}`)}
-                                        className="flex-1 py-5 bg-black text-white border border-white/20 hover:bg-white hover:text-black font-black uppercase tracking-widest text-lg transition-all flex items-center justify-center gap-3"
+                                        className="flex-1 py-4 font-black uppercase tracking-widest text-base transition-all flex items-center justify-center gap-2 cursor-pointer"
+                                        style={{ background: 'var(--bg-surface-2)', color: 'var(--text-primary)', border: '1px solid var(--border)', borderRadius: 6 }}
+                                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#D20000'; (e.currentTarget as HTMLElement).style.color = '#D20000'; }}
+                                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--border)'; (e.currentTarget as HTMLElement).style.color = 'var(--text-primary)'; }}
                                     >
-                                        <Edit2 className="w-6 h-6" />
-                                        Edit Unit
+                                        <Edit2 className="w-5 h-5" />
+                                        Edit Item
                                     </button>
                                     <button
                                         onClick={() => setIsDeleteModalOpen(true)}
-                                        className="flex-1 py-5 bg-[#DC2626] text-white hover:bg-red-700 font-black uppercase tracking-widest text-lg transition-all shadow-[0_0_20px_rgba(220,38,38,0.2)] hover:shadow-[0_0_30px_rgba(220,38,38,0.4)] flex items-center justify-center gap-3"
+                                        className="flex-1 py-4 font-black uppercase tracking-widest text-base transition-all flex items-center justify-center gap-2 cursor-pointer"
+                                        style={{ background: 'rgba(210,0,0,0.1)', color: '#D20000', border: '1px solid rgba(210,0,0,0.3)', borderRadius: 6 }}
+                                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#D20000'; (e.currentTarget as HTMLElement).style.color = 'white'; }}
+                                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(210,0,0,0.1)'; (e.currentTarget as HTMLElement).style.color = '#D20000'; }}
                                     >
-                                        <Trash2 className="w-6 h-6" />
-                                        Decommission
+                                        <Trash2 className="w-5 h-5" />
+                                        Delete
                                     </button>
                                 </div>
                             ) : (
@@ -189,13 +199,16 @@ export default function ToolDetailsPage() {
                                     <button
                                         onClick={() => setIsBookingModalOpen(true)}
                                         disabled={tool.quantity_available <= 0}
-                                        className="w-full py-5 bg-white text-black hover:bg-gray-200 font-black uppercase tracking-widest text-lg rounded-xl transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                                        className="w-full py-5 font-black uppercase tracking-widest text-lg transition-all flex items-center justify-center gap-3 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                                        style={{ background: '#D20000', color: 'white', border: 'none', borderRadius: 8 }}
+                                        onMouseEnter={e => { if (tool.quantity_available > 0) (e.currentTarget as HTMLElement).style.background = '#B10000'; }}
+                                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = '#D20000'; }}
                                     >
                                         <ShieldCheck className="w-6 h-6" />
-                                        {tool.quantity_available > 0 ? 'Book This Tool' : 'Currently Unavailable'}
+                                        {tool.quantity_available > 0 ? 'Book This Item' : 'Currently Unavailable'}
                                     </button>
-                                    <p className="text-center text-xs text-gray-500 mt-4 uppercase tracking-wider">
-                                        Secure booking • Verified Shop • Instant Confirmation
+                                    <p className="text-center text-xs mt-4 uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
+                                        Secure booking · Verified Owner · Instant Confirmation
                                     </p>
                                 </>
                             )}

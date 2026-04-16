@@ -9,25 +9,28 @@ const config: Config = {
     theme: {
         extend: {
             colors: {
-                // Brutalist Black on Red
+                // Vaadaka Dark Theme
                 primary: {
-                    DEFAULT: '#000000',
-                    light: '#111111',
-                    dark: '#000000',
+                    DEFAULT: '#D20000',
+                    light: '#FF3333',
+                    dark: '#B10000',
                 },
                 secondary: {
-                    DEFAULT: '#DC2626',
-                    light: '#EF4444',
+                    DEFAULT: '#111111',
+                    light: '#1A1A1A',
                 },
                 accent: {
-                    DEFAULT: '#FFFFFF',
-                    dark: '#cccccc',
+                    DEFAULT: '#F0F0F0',
+                    dark: '#555555',
                 },
-                background: '#DC2626',
-                surface: '#B91C1C',
+                background: '#0A0A0A',
+                surface: '#111111',
+                border: '#1E1E1E',
             },
             fontFamily: {
-                sans: ['var(--font-primary)', 'system-ui', 'sans-serif'],
+                sans: ['var(--font-barlow)', 'system-ui', 'sans-serif'],
+                bebas: ['var(--font-bebas)', 'sans-serif'],
+                barlow: ['var(--font-barlow)', 'sans-serif'],
             },
             animation: {
                 'fade-in': 'fadeIn 0.3s ease-in-out',

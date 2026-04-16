@@ -101,15 +101,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#DC2626] flex items-center justify-center">
-                <div className="w-full max-w-sm px-8 space-y-4 animate-pulse">
-                    {/* Logo skeleton */}
-                    <div className="h-8 w-32 bg-black/20 rounded mx-auto mb-8" />
-                    {/* Content skeletons */}
-                    <div className="h-4 bg-black/20 rounded w-3/4 mx-auto" />
-                    <div className="h-4 bg-black/20 rounded w-1/2 mx-auto" />
-                    <div className="h-4 bg-black/20 rounded w-2/3 mx-auto" />
-                </div>
+            <div className="min-h-screen flex items-center justify-center" style={{ background: '#0A0A0A' }}>
+                <div className="w-5 h-5 border-2 rounded-full animate-spin" style={{ borderColor: '#D20000', borderTopColor: 'transparent' }} />
             </div>
         );
     }

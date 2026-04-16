@@ -29,7 +29,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <aside className="w-64 bg-black border-r border-neutral-800 fixed h-full z-10 hidden md:flex flex-col">
                     <div className="p-6 border-b border-neutral-800">
                         <h1 className="text-2xl font-primary bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600 font-bold">
-                            TOOLSY ADMIN
+                            VAADAKA ADMIN
                         </h1>
                     </div>
 

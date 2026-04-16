@@ -331,6 +331,27 @@ class APIClient {
         const query = search ? `?search=${search}` : '';
         return this.request<any>(`/api/admin/bookings/${query}`, { token });
     }
+
+    // Chat
+    async getChatRooms(token: string) {
+        return this.request<any[]>('/api/chats/', { token });
+    }
+
+    async getChatRoom(token: string, bookingId: string) {
+        return this.request<any>(`/api/chats/${bookingId}/`, { token });
+    }
+
+    async getChatMessages(token: string, bookingId: string) {
+        return this.request<any[]>(`/api/chats/${bookingId}/messages/`, { token });
+    }
+
+    async sendChatMessage(token: string, bookingId: string, message: string) {
+        return this.request<any>(`/api/chats/${bookingId}/messages/`, {
+            method: 'POST',
+            token,
+            body: JSON.stringify({ message }),
+        });
+    }
 }
 
 export const api = new APIClient(API_URL);

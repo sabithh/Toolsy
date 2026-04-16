@@ -42,7 +42,7 @@ export default function PaymentModal({ booking, isOpen, onClose, onSuccess }: Pa
                 currency: order.currency,
                 key: order.key,
                 bookingId: booking.id,
-                name: 'Toolsy Rental',
+                name: 'Vaadaka Rental',
                 description: `Payment for ${booking.tool_name}`,
                 prefill: {
                     name: user ? `${user.first_name || ''} ${user.last_name || ''}`.trim() : '',

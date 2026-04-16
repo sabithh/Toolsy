@@ -1,27 +1,42 @@
 import type { Metadata } from 'next';
 import Script from 'next/script';
-import { Orbitron, Exo_2 } from 'next/font/google';
+import { Bebas_Neue, Barlow_Condensed, Noto_Sans_Malayalam } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { ToastProvider } from '@/contexts/ToastContext';
-import CustomCursor from '@/components/ui/CustomCursor';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 
-
-
-const exo2 = Exo_2({
+const bebasNeue = Bebas_Neue({
   subsets: ['latin'],
-  variable: '--font-primary',
-  weight: ['400', '500', '700', '900'] // Added 900 for extra bold headers
+  variable: '--font-bebas',
+  weight: '400',
+});
+
+const barlowCondensed = Barlow_Condensed({
+  subsets: ['latin'],
+  variable: '--font-barlow',
+  weight: ['600', '700', '900'],
+});
+
+const notoSansMalayalam = Noto_Sans_Malayalam({
+  subsets: ['malayalam'],
+  variable: '--font-noto-ml',
+  weight: ['700'],
 });
 
 export const metadata: Metadata = {
-  title: 'Toolsy - Rent Tools, Build Dreams',
-  description: 'Access professional-grade tools from trusted local shops. No buying. No storing. Just building.',
+  title: 'Vaadaka — Rent Anything · Kerala',
+  description: 'Browse and rent tools, equipment, and items from trusted owners near you. No buying. No storing. Just renting.',
   icons: {
-    icon: '/logo.png',
-    shortcut: '/logo.png',
-    apple: '/logo.png',
+    icon: '/vaadaka-icon.svg',
+    shortcut: '/vaadaka-icon.svg',
+    apple: '/vaadaka-icon.svg',
+  },
+  openGraph: {
+    title: 'Vaadaka — Rent Anything · Kerala',
+    description: 'Browse and rent tools, equipment, and items from trusted owners near you.',
+    siteName: 'Vaadaka',
   },
 };
 
@@ -31,16 +46,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${exo2.variable} antialiased`}>
-        <AuthProvider>
-          <ToastProvider>
-            <CustomCursor />
-            <Navbar />
-            {children}
-            <Script src="https://checkout.razorpay.com/v1/checkout.js" />
-          </ToastProvider>
-        </AuthProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${bebasNeue.variable} ${barlowCondensed.variable} ${notoSansMalayalam.variable} antialiased`}>
+        <ThemeProvider>
+          <AuthProvider>
+            <ToastProvider>
+              <Navbar />
+              {children}
+              <Script src="https://checkout.razorpay.com/v1/checkout.js" />
+            </ToastProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

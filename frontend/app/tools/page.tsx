@@ -3,10 +3,9 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { api } from '@/lib/api';
-import { Search, MapPin, Package, IndianRupee, ShieldCheck, Crosshair, Loader2 } from 'lucide-react';
-import TiltCard from '@/components/ui/TiltCard';
+import { Search, MapPin, Package, IndianRupee, Crosshair, Loader2 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/Skeleton';
-import { getImageUrl } from '@/lib/utils'; // Added import
+import { getImageUrl } from '@/lib/utils';
 
 interface Tool {
     id: string;
@@ -25,16 +24,14 @@ interface Tool {
     images: string[];
 }
 
-export default function ToolsPage() {
+export default function BrowsePage() {
     const [tools, setTools] = useState<Tool[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
     const [isNearbyLoading, setIsNearbyLoading] = useState(false);
     const [isNearbyActive, setIsNearbyActive] = useState(false);
 
-    useEffect(() => {
-        loadTools();
-    }, []);
+    useEffect(() => { loadTools(); }, []);
 
     const loadTools = async () => {
         setLoading(true);
@@ -42,24 +39,15 @@ export default function ToolsPage() {
             const data = await api.getTools();
             setTools(Array.isArray(data) ? data : (data as any).results || []);
         } catch (err) {
-            console.error('Failed to load tools');
+            console.error('Failed to load items');
         } finally {
             setLoading(false);
         }
     };
 
     const handleNearbyToggle = () => {
-        if (isNearbyActive) {
-            setIsNearbyActive(false);
-            loadTools();
-            return;
-        }
-
-        if (!navigator.geolocation) {
-            alert('Geolocation is not supported by your browser');
-            return;
-        }
-
+        if (isNearbyActive) { setIsNearbyActive(false); loadTools(); return; }
+        if (!navigator.geolocation) { alert('Geolocation not supported'); return; }
         setIsNearbyLoading(true);
         navigator.geolocation.getCurrentPosition(
             async (position) => {
@@ -67,17 +55,10 @@ export default function ToolsPage() {
                     const data = await api.getNearbyTools(position.coords.latitude, position.coords.longitude);
                     setTools(Array.isArray(data) ? data : (data as any).results || []);
                     setIsNearbyActive(true);
-                } catch (err) {
-                    console.error('Failed to load nearby tools');
-                    alert('Failed to find nearby tools');
-                } finally {
-                    setIsNearbyLoading(false);
-                }
+                } catch { alert('Failed to find nearby items'); }
+                finally { setIsNearbyLoading(false); }
             },
-            (error) => {
-                setIsNearbyLoading(false);
-                alert('Please allow location access to find nearby tools.');
-            }
+            () => { setIsNearbyLoading(false); alert('Please allow location access.'); }
         );
     };
 
@@ -86,151 +67,178 @@ export default function ToolsPage() {
         (tool.description || '').toLowerCase().includes(search.toLowerCase())
     );
 
-
-
     return (
-        <div className="min-h-screen bg-[#DC2626] text-black pt-24 pb-12">
+        <div className="min-h-screen pt-20 pb-24 md:pb-12" style={{ background: 'var(--bg-primary)' }}>
             <div className="container-custom">
+
                 {/* Header */}
-                <div className="mb-16 border-l-4 border-black pl-8">
-                    <h1 className="text-7xl md:text-8xl font-black uppercase tracking-tighter leading-none mb-4 text-black">
-                        Tool<br />Inventory
+                <div className="mb-10 pt-8">
+                    <h1 className="font-black uppercase tracking-tighter leading-none mb-2"
+                        style={{ fontFamily: 'var(--font-bebas), sans-serif', fontSize: 'clamp(2.5rem, 8vw, 5rem)', color: 'var(--text-primary)' }}>
+                        Browse
+                        <span style={{ color: '#D20000' }}> Items</span>
                     </h1>
-                    <p className="text-xl text-black/60 font-mono">
-                        // ACCESSING GLOBAL DATABASE...
+                    <p className="text-sm font-bold uppercase tracking-widest" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-barlow), sans-serif', letterSpacing: '4px' }}>
+                        Rent Anything · Kerala
                     </p>
                 </div>
 
-                {/* Search & Filter Bar */}
-                <div className="mb-12 sticky top-24 z-30 bg-[#DC2626]/95 backdrop-blur border-y border-black/10 py-6">
-                    <div className="flex flex-col md:flex-row gap-4">
-                        <div className="flex-1 relative group">
+                {/* Search Bar — sticky on mobile */}
+                <div className="mb-8 sticky top-[68px] z-30 py-4"
+                    style={{ background: 'var(--nav-bg)', backdropFilter: 'blur(10px)', borderBottom: '1px solid var(--border)' }}>
+                    <div className="flex flex-col sm:flex-row gap-3">
+                        <div className="flex-1 relative">
                             <input
                                 type="text"
-                                placeholder="SEARCH PROTOCOL_ID OR NAME"
-                                className="w-full bg-[#B91C1C] border border-black/20 p-4 text-white placeholder-white/50 font-bold uppercase tracking-widest focus:outline-none focus:border-black transition-colors"
+                                placeholder="Search anything to rent..."
+                                className="w-full p-4 pr-12 text-sm font-semibold transition-all"
+                                style={{
+                                    background: 'var(--bg-surface)',
+                                    border: '1px solid var(--border)',
+                                    borderRadius: 6,
+                                    color: 'var(--text-primary)',
+                                    outline: 'none',
+                                }}
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
+                                onFocus={e => (e.target as HTMLInputElement).style.borderColor = '#D20000'}
+                                onBlur={e => (e.target as HTMLInputElement).style.borderColor = 'var(--border)'}
                             />
-                            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-black">
-                                <Search size={24} />
-                            </div>
+                            <Search size={18} className="absolute right-4 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-muted)' }} />
                         </div>
-                        <div className="flex gap-4">
-                            <button
-                                onClick={handleNearbyToggle}
-                                disabled={isNearbyLoading}
-                                className={`px-8 py-4 border border-black font-bold uppercase tracking-wider transition-colors flex items-center gap-2 ${isNearbyActive
-                                    ? 'bg-black text-white hover:bg-[#DC2626] hover:text-black hover:border-black'
-                                    : 'bg-transparent text-black hover:bg-black hover:text-white'
-                                    }`}
-                            >
-                                {isNearbyLoading ? <Loader2 size={18} className="animate-spin" /> : <Crosshair size={18} />}
-                                {isNearbyActive ? 'Reset' : 'Near Me'}
-                            </button>
-                            <button className="px-8 py-4 bg-black border border-black text-white font-bold uppercase tracking-wider hover:bg-white hover:text-black hover:border-black transition-colors flex items-center gap-2 hidden md:flex">
-                                <Package size={18} /> Available
-                            </button>
-                        </div>
+                        <button
+                            onClick={handleNearbyToggle}
+                            disabled={isNearbyLoading}
+                            className="flex items-center justify-center gap-2 px-6 py-4 text-sm font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer"
+                            style={{
+                                background: isNearbyActive ? '#D20000' : 'var(--bg-surface)',
+                                color: isNearbyActive ? 'white' : 'var(--text-primary)',
+                                border: `1px solid ${isNearbyActive ? '#D20000' : 'var(--border)'}`,
+                                borderRadius: 6,
+                            }}
+                        >
+                            {isNearbyLoading ? <Loader2 size={16} className="animate-spin" /> : <Crosshair size={16} />}
+                            {isNearbyActive ? 'Reset' : 'Near Me'}
+                        </button>
                     </div>
                 </div>
 
-                {/* Tools Grid */}
+                {/* Grid */}
                 {loading ? (
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-1 bg-black border border-black p-1">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {[1, 2, 3, 4, 5, 6].map((i) => (
-                            <div key={i} className="bg-[#111] p-8 border border-white/5 h-full flex flex-col">
-                                <div className="flex justify-between items-start mb-8">
-                                    <Skeleton className="h-4 w-20" />
-                                    <Skeleton className="h-6 w-24" />
-                                </div>
-                                <div className="flex-1 space-y-4">
-                                    <Skeleton className="h-10 w-full" />
+                            <div key={i} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden' }}>
+                                <Skeleton className="w-full" style={{ aspectRatio: '4/3', background: 'var(--bg-surface-2)' }} />
+                                <div className="p-4 space-y-2">
+                                    <Skeleton className="h-6 w-3/4" />
                                     <Skeleton className="h-4 w-1/3" />
-                                    <div className="space-y-3 mt-8">
-                                        <Skeleton className="h-4 w-full" />
-                                        <Skeleton className="h-4 w-full" />
-                                    </div>
-                                </div>
-                                <div className="mt-8 pt-6 border-t border-white/10 flex justify-between items-end">
-                                    <div>
-                                        <Skeleton className="h-3 w-10 mb-1" />
-                                        <Skeleton className="h-8 w-24" />
-                                    </div>
-                                    <Skeleton className="h-12 w-12" />
                                 </div>
                             </div>
                         ))}
                     </div>
                 ) : filteredTools.length === 0 ? (
-                    <div className="bg-black border border-black/10 p-20 text-center">
-                        <div className="inline-block p-6 border-2 border-white/10 rounded-full mb-6">
-                            <Package size={48} className="text-gray-500" />
-                        </div>
-                        <h2 className="text-3xl font-black uppercase tracking-widest text-white mb-2">No Units Found</h2>
-                        <p className="text-gray-500 font-mono">ADJUST SEARCH PARAMETERS</p>
+                    <div className="flex flex-col items-center justify-center py-32 text-center">
+                        <Package size={48} className="mb-4" style={{ color: '#333333' }} />
+                        <h2 className="text-2xl font-black uppercase tracking-widest mb-2" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-bebas), sans-serif' }}>
+                            No Items Found
+                        </h2>
+                        <p className="text-sm uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>Try a different search</p>
                     </div>
                 ) : (
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-1 bg-black border border-black p-1">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {filteredTools.map((tool) => (
-                            <TiltCard key={tool.id} className="h-full">
-                                <Link
-                                    href={`/tools/${tool.id}`}
-                                    className="group relative bg-[#0a0a0a] border border-[#1a1a1a] hover:border-[#DC2626] transition-colors duration-300 flex flex-col h-full aspect-[4/5] overflow-hidden"
-                                >
-                                    {/* Active Badge (Top Right) */}
-                                    <div className="absolute top-6 right-6 z-10">
-                                        <div className={`px-2 py-1 text-[10px] font-bold uppercase tracking-widest border ${tool.quantity_available > 0
-                                            ? 'border-green-500  text-green-500'
-                                            : 'border-red-500 text-red-500'
-                                            }`}>
-                                            {tool.quantity_available > 0 ? 'ACTIVE' : 'OFFLINE'}
-                                        </div>
+                            <Link
+                                key={tool.id}
+                                href={`/tools/${tool.id}`}
+                                className="group no-underline block"
+                                style={{ borderRadius: 8, overflow: 'hidden', background: 'var(--bg-surface)', border: '1px solid var(--border)', transition: 'border-color 0.2s, box-shadow 0.2s' }}
+                                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#D20000'; (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 30px rgba(210,0,0,0.12)'; }}
+                                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--border)'; (e.currentTarget as HTMLElement).style.boxShadow = 'none'; }}
+                            >
+                                {/* Image container — 4:3, object-fit contain */}
+                                <div style={{ aspectRatio: '4/3', background: 'var(--bg-surface-2)', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                                    {/* Status badge */}
+                                    <div style={{
+                                        position: 'absolute', top: 10, right: 10, zIndex: 10,
+                                        padding: '3px 10px', borderRadius: 20, fontSize: '0.65rem',
+                                        fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase',
+                                        background: tool.quantity_available > 0 ? 'rgba(0,200,80,0.15)' : 'rgba(255,255,255,0.05)',
+                                        border: `1px solid ${tool.quantity_available > 0 ? '#00C850' : '#333333'}`,
+                                        color: tool.quantity_available > 0 ? '#00C850' : 'var(--text-muted)',
+                                    }}>
+                                        {tool.quantity_available > 0 ? 'Available' : 'Unavailable'}
                                     </div>
 
-                                    {/* Circle Decorator (Left Center) */}
-                                    <div className="absolute top-1/2 left-12 -translate-y-1/2 w-8 h-8 rounded-full border border-white/20 z-0"></div>
+                                    {tool.images && tool.images.length > 0 ? (
+                                        <img
+                                            src={getImageUrl(tool.images[0])}
+                                            alt={tool.name}
+                                            style={{ width: '100%', height: '100%', objectFit: 'contain', position: 'relative', zIndex: 1, padding: '12px' }}
+                                        />
+                                    ) : (
+                                        <Package size={56} style={{ color: '#333333' }} />
+                                    )}
+                                    {/* Bottom fade overlay */}
+                                    <div style={{
+                                        position: 'absolute', bottom: 0, left: 0, right: 0, height: '35%',
+                                        background: 'linear-gradient(to top, rgba(17,17,17,0.9), transparent)',
+                                        pointerEvents: 'none',
+                                    }} />
+                                </div>
 
-                                    {/* Image (Centered) */}
-                                    <div className="flex-1 relative flex items-center justify-center p-6 z-0 bg-black/40">
-                                        <div className="relative w-full h-full">
-                                            {/* Accent Glow */}
-                                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[60%] bg-red-500/20 blur-[60px] rounded-full group-hover:bg-red-500/40 transition-colors duration-500"></div>
-
-                                            {tool.images && tool.images.length > 0 ? (
-                                                <img
-                                                    src={getImageUrl(tool.images[0])}
-                                                    alt={tool.name}
-                                                    className="w-full h-full object-contain relative z-10 drop-shadow-2xl"
-                                                />
-                                            ) : (
-                                                <div className="w-full h-full flex items-center justify-center">
-                                                    <Package size={64} className="text-[#333]" />
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    {/* Bottom Info Section */}
-                                    <div className="p-6 pt-0 pb-8 mt-auto relative z-10 bg-gradient-to-t from-black via-black/80 to-transparent">
-                                        <h3 className="text-3xl font-black text-white uppercase tracking-tighter mb-4 group-hover:text-[#DC2626] transition-colors leading-none line-clamp-2">
-                                            {tool.name}
-                                        </h3>
-
-                                        <div className="border-t border-white/10 pt-4 flex items-end justify-between">
-                                            <div className="text-3xl font-black text-white leading-none">
-                                                ₹{Number(tool.price_per_day).toFixed(2)}
+                                {/* Card info */}
+                                <div className="p-4">
+                                    <h3 className="font-black uppercase tracking-tight leading-tight mb-1 line-clamp-2 group-hover:text-[#D20000] transition-colors"
+                                        style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-bebas), sans-serif', fontSize: '1.2rem', letterSpacing: '0.04em' }}>
+                                        {tool.name}
+                                    </h3>
+                                    {tool.shop?.name && (
+                                        <p className="text-xs mb-3 flex items-center gap-1" style={{ color: 'var(--text-muted)' }}>
+                                            <MapPin size={11} style={{ color: '#D20000', flexShrink: 0 }} />
+                                            {tool.shop.name}
+                                        </p>
+                                    )}
+                                    <div className="flex items-center justify-between pt-3" style={{ borderTop: '1px solid var(--border)' }}>
+                                        <div>
+                                            <div className="flex items-baseline gap-1">
+                                                <span className="text-xl font-black" style={{ color: '#D20000', fontFamily: 'var(--font-bebas), sans-serif' }}>
+                                                    ₹{Number(tool.price_per_day).toFixed(0)}
+                                                </span>
+                                                <span className="text-xs font-bold uppercase" style={{ color: 'var(--text-muted)' }}>/day</span>
                                             </div>
-                                            <div className="text-xs font-mono text-gray-500 uppercase pb-1">
-                                                /DAY
-                                            </div>
                                         </div>
+                                        {tool.category?.name && (
+                                            <span className="text-xs font-bold uppercase tracking-wider px-2 py-1"
+                                                style={{ background: 'var(--bg-surface-2)', color: 'var(--text-muted)', borderRadius: 4, fontSize: '0.6rem', letterSpacing: '0.05em' }}>
+                                                {tool.category.name}
+                                            </span>
+                                        )}
                                     </div>
-                                </Link>
-                            </TiltCard>
+                                </div>
+                            </Link>
                         ))}
                     </div>
                 )}
+            </div>
+
+            {/* Mobile Bottom Nav */}
+            <div className="mobile-bottom-nav justify-around">
+                <Link href="/tools" className="flex flex-col items-center gap-1 px-4 py-2 no-underline" style={{ color: '#D20000' }}>
+                    <Search size={20} />
+                    <span className="text-[10px] font-bold uppercase tracking-wider">Browse</span>
+                </Link>
+                <Link href="/bookings" className="flex flex-col items-center gap-1 px-4 py-2 no-underline" style={{ color: 'var(--text-muted)' }}>
+                    <Package size={20} />
+                    <span className="text-[10px] font-bold uppercase tracking-wider">Rentals</span>
+                </Link>
+                <Link href="/chats" className="flex flex-col items-center gap-1 px-4 py-2 no-underline" style={{ color: 'var(--text-muted)' }}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    <span className="text-[10px] font-bold uppercase tracking-wider">Messages</span>
+                </Link>
+                <Link href="/dashboard" className="flex flex-col items-center gap-1 px-4 py-2 no-underline" style={{ color: 'var(--text-muted)' }}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>
+                    <span className="text-[10px] font-bold uppercase tracking-wider">Profile</span>
+                </Link>
             </div>
         </div>
     );

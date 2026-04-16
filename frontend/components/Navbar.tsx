@@ -2,18 +2,76 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 import Modal from '@/components/ui/Modal';
-import { Search, Calendar, LayoutDashboard, LogOut, LogIn, UserPlus, Plus } from 'lucide-react';
+import ThemeToggle from '@/components/ui/ThemeToggle';
+import { Search, Calendar, LayoutDashboard, LogOut, LogIn, UserPlus, Plus, Menu, X } from 'lucide-react';
+
+function VaadakaLogo() {
+    return (
+        <div className="flex items-center gap-3">
+            <div style={{
+                width: 44,
+                height: 44,
+                background: '#D20000',
+                borderRadius: 10,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+            }}>
+                <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: 32, height: 32 }}>
+                    <path d="M18 22 L45 68 L72 22"
+                        stroke="white"
+                        strokeWidth="10"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        fill="none" />
+                    <circle cx="18" cy="22" r="9" fill="white" />
+                    <circle cx="18" cy="22" r="4.5" fill="#D20000" />
+                </svg>
+            </div>
+            <div className="flex flex-col leading-none">
+                <div className="flex items-baseline gap-0">
+                    <span style={{
+                        fontFamily: 'var(--font-noto-ml), serif',
+                        fontSize: '1.35rem',
+                        fontWeight: 700,
+                        color: '#D20000',
+                        lineHeight: 1,
+                    }}>വാ</span>
+                    <span style={{
+                        fontFamily: 'var(--font-bebas), sans-serif',
+                        fontSize: '1.5rem',
+                        fontWeight: 400,
+                        color: 'var(--text-primary)',
+                        letterSpacing: '0.05em',
+                        lineHeight: 1,
+                    }}>DAKA</span>
+                    <span style={{ color: '#D20000', fontFamily: 'var(--font-bebas), sans-serif', fontSize: '1.5rem', lineHeight: 1 }}>.</span>
+                </div>
+                <span style={{
+                    fontFamily: 'var(--font-barlow), sans-serif',
+                    fontSize: '0.55rem',
+                    fontWeight: 600,
+                    color: 'var(--text-muted)',
+                    letterSpacing: '4px',
+                    textTransform: 'uppercase',
+                    marginTop: '2px',
+                }}>Rent Anything · Kerala</span>
+            </div>
+        </div>
+    );
+}
 
 export default function Navbar() {
     const { user, isAuthenticated, logout } = useAuth();
-    const router = useRouter(); // Navbar doesn't use router yet, might need to import it
+    const router = useRouter();
     const { showToast } = useToast();
     const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const handleLogoutConfirm = () => {
         logout();
@@ -22,50 +80,47 @@ export default function Navbar() {
         router.push('/');
     };
 
+    const navLinkStyle = {
+        color: 'var(--text-primary)',
+        border: '1px solid var(--border)',
+        borderRadius: 6,
+    };
+
     return (
         <>
             <Modal
                 isOpen={isLogoutModalOpen}
                 onClose={() => setIsLogoutModalOpen(false)}
                 onConfirm={handleLogoutConfirm}
-                title="Disconnect?"
-                description="You are about to terminate your session. All active unsaved operations will be halted."
+                title="Log out?"
+                description="You will be signed out of your Vaadaka session."
                 confirmText="LOGOUT"
                 variant="danger"
             />
 
             <nav className="fixed top-0 left-0 right-0 z-50">
-                <div className="bg-[#DC2626]/90 backdrop-blur-md border-b border-black/10 transition-colors duration-300">
-                    <div className="max-w-[1920px] mx-auto px-6 py-4">
+                <div style={{ background: 'var(--nav-bg)', borderBottom: '1px solid var(--border)', backdropFilter: 'blur(16px)', transition: 'background 0.35s ease' }}>
+                    <div className="max-w-[1440px] mx-auto px-4 md:px-6 py-3">
                         <div className="flex items-center justify-between">
                             {/* Logo */}
                             <Link
                                 href={isAuthenticated ? (user?.is_superuser ? '/admin' : user?.user_type === 'provider' ? '/dashboard' : '/tools') : '/'}
-                                className="flex items-center gap-4 group"
+                                className="flex items-center group no-underline"
                             >
-                                <div className="relative rounded-sm overflow-hidden border border-black/10 group-hover:border-black transition-colors">
-                                    <Image
-                                        src="/logo.png"
-                                        alt="Toolsy"
-                                        width={40}
-                                        height={40}
-                                        className="relative object-cover"
-                                    />
-                                </div>
-                                <span className="text-2xl font-black text-black uppercase tracking-widest group-hover:text-white transition-colors duration-300">
-                                    Toolsy
-                                </span>
+                                <VaadakaLogo />
                             </Link>
 
-                            {/* Nav Links */}
-                            <div className="flex items-center gap-6">
-                                {/* Tools Button */}
+                            {/* Desktop Nav Links */}
+                            <div className="hidden md:flex items-center gap-3">
                                 <Link
                                     href="/tools"
-                                    className="flex items-center gap-2 px-6 py-2 border border-black/20 hover:border-black hover:bg-black hover:text-white text-black font-bold uppercase tracking-wider transition-all duration-300 no-underline"
+                                    className="flex items-center gap-2 px-5 py-2 text-sm font-bold uppercase tracking-wider transition-all duration-200 no-underline"
+                                    style={navLinkStyle}
+                                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#D20000'; (e.currentTarget as HTMLElement).style.color = '#D20000'; }}
+                                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--border)'; (e.currentTarget as HTMLElement).style.color = 'var(--text-primary)'; }}
                                 >
-                                    <Search size={18} />
-                                    <span>Tools</span>
+                                    <Search size={16} />
+                                    <span>Browse</span>
                                 </Link>
 
                                 {isAuthenticated ? (
@@ -73,49 +128,64 @@ export default function Navbar() {
                                         {!user?.is_superuser && (
                                             <Link
                                                 href="/bookings"
-                                                className="flex items-center gap-2 px-6 py-2 border border-black/20 hover:border-black hover:bg-black hover:text-white text-black font-bold uppercase tracking-wider transition-all duration-300 no-underline"
+                                                className="flex items-center gap-2 px-5 py-2 text-sm font-bold uppercase tracking-wider transition-all duration-200 no-underline"
+                                                style={navLinkStyle}
+                                                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#D20000'; (e.currentTarget as HTMLElement).style.color = '#D20000'; }}
+                                                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--border)'; (e.currentTarget as HTMLElement).style.color = 'var(--text-primary)'; }}
                                             >
-                                                <Calendar size={18} />
-                                                <span>Bookings</span>
+                                                <Calendar size={16} />
+                                                <span>Rentals</span>
                                             </Link>
                                         )}
 
                                         {user?.is_superuser ? (
                                             <Link
                                                 href="/admin"
-                                                className="flex items-center gap-2 px-6 py-2 border border-black/20 hover:border-black hover:bg-black hover:text-white text-black font-bold uppercase tracking-wider transition-all duration-300 no-underline"
+                                                className="flex items-center gap-2 px-5 py-2 text-sm font-bold uppercase tracking-wider transition-all duration-200 no-underline"
+                                                style={navLinkStyle}
+                                                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#D20000'; (e.currentTarget as HTMLElement).style.color = '#D20000'; }}
+                                                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--border)'; (e.currentTarget as HTMLElement).style.color = 'var(--text-primary)'; }}
                                             >
-                                                <LayoutDashboard size={18} />
+                                                <LayoutDashboard size={16} />
                                                 <span>Admin</span>
                                             </Link>
                                         ) : user?.user_type === 'provider' && (
                                             <>
                                                 <Link
                                                     href="/tools/new"
-                                                    className="flex items-center gap-2 px-6 py-2 bg-[#DC2626] hover:bg-white hover:text-[#DC2626] border border-[#DC2626] text-black font-bold uppercase tracking-wider transition-all duration-300 no-underline"
+                                                    className="flex items-center gap-2 px-5 py-2 text-sm font-bold uppercase tracking-wider transition-all duration-200 no-underline"
+                                                    style={{ background: '#D20000', color: 'white', borderRadius: 6, border: '1px solid #D20000' }}
+                                                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#B10000'; }}
+                                                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = '#D20000'; }}
                                                 >
-                                                    <Plus size={18} />
-                                                    <span>Deploy</span>
+                                                    <Plus size={16} />
+                                                    <span>List Item</span>
                                                 </Link>
                                                 <Link
                                                     href="/dashboard"
-                                                    className="flex items-center gap-2 px-6 py-2 border border-black/20 hover:border-black hover:bg-black hover:text-white text-black font-bold uppercase tracking-wider transition-all duration-300 no-underline"
+                                                    className="flex items-center gap-2 px-5 py-2 text-sm font-bold uppercase tracking-wider transition-all duration-200 no-underline"
+                                                    style={navLinkStyle}
+                                                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#D20000'; (e.currentTarget as HTMLElement).style.color = '#D20000'; }}
+                                                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--border)'; (e.currentTarget as HTMLElement).style.color = 'var(--text-primary)'; }}
                                                 >
-                                                    <LayoutDashboard size={18} />
+                                                    <LayoutDashboard size={16} />
                                                     <span>Dashboard</span>
                                                 </Link>
                                             </>
                                         )}
 
-                                        <div className="flex items-center gap-4 pl-4 border-l border-black/10">
-                                            <div className="font-bold text-black/60 uppercase tracking-wide">
+                                        <div className="flex items-center gap-3 pl-3" style={{ borderLeft: '1px solid var(--border)' }}>
+                                            <span className="text-sm font-bold uppercase tracking-wide" style={{ color: 'var(--text-muted)' }}>
                                                 {user?.username}
-                                            </div>
+                                            </span>
                                             <button
                                                 onClick={() => setIsLogoutModalOpen(true)}
-                                                className="flex items-center gap-2 px-6 py-2 bg-black hover:bg-black/80 text-white font-bold uppercase tracking-wider transition-all duration-300"
+                                                className="flex items-center gap-2 px-5 py-2 text-sm font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer"
+                                                style={{ background: 'var(--bg-surface-2)', color: 'var(--text-primary)', border: '1px solid var(--border)', borderRadius: 6 }}
+                                                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#D20000'; (e.currentTarget as HTMLElement).style.color = '#D20000'; }}
+                                                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--border)'; (e.currentTarget as HTMLElement).style.color = 'var(--text-primary)'; }}
                                             >
-                                                <LogOut size={18} />
+                                                <LogOut size={16} />
                                                 <span>Logout</span>
                                             </button>
                                         </div>
@@ -124,22 +194,83 @@ export default function Navbar() {
                                     <>
                                         <Link
                                             href="/login"
-                                            className="flex items-center gap-2 px-6 py-2 text-black/60 hover:text-black font-bold uppercase tracking-wider transition-colors no-underline"
+                                            className="flex items-center gap-2 px-5 py-2 text-sm font-bold uppercase tracking-wider transition-all duration-200 no-underline"
+                                            style={{ color: 'var(--text-muted)' }}
+                                            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'var(--text-primary)'; }}
+                                            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'var(--text-muted)'; }}
                                         >
-                                            <LogIn size={18} />
+                                            <LogIn size={16} />
                                             <span>Login</span>
                                         </Link>
                                         <Link
                                             href="/register"
-                                            className="flex items-center gap-2 px-6 py-2 bg-black hover:bg-black/80 text-white font-bold uppercase tracking-wider transition-all duration-300 no-underline"
+                                            className="flex items-center gap-2 px-5 py-2 text-sm font-bold uppercase tracking-wider transition-all duration-200 no-underline"
+                                            style={{ background: '#D20000', color: 'white', borderRadius: 6, border: '1px solid #D20000' }}
+                                            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#B10000'; }}
+                                            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = '#D20000'; }}
                                         >
-                                            <UserPlus size={18} />
+                                            <UserPlus size={16} />
                                             <span>Join Now</span>
                                         </Link>
                                     </>
                                 )}
+
+                                {/* Theme Toggle */}
+                                <ThemeToggle />
+                            </div>
+
+                            {/* Mobile: theme toggle + hamburger */}
+                            <div className="md:hidden flex items-center gap-3">
+                                <ThemeToggle />
+                                <button
+                                    className="p-2 transition-colors cursor-pointer"
+                                    style={{ color: 'var(--text-primary)' }}
+                                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                                >
+                                    {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                                </button>
                             </div>
                         </div>
+
+                        {/* Mobile dropdown menu */}
+                        {isMobileMenuOpen && (
+                            <div className="md:hidden pt-4 pb-2 space-y-2" style={{ borderTop: '1px solid var(--border)', marginTop: '0.75rem' }}>
+                                <Link href="/tools" className="flex items-center gap-3 px-3 py-3 text-sm font-bold uppercase tracking-wider no-underline" style={{ color: 'var(--text-primary)' }} onClick={() => setIsMobileMenuOpen(false)}>
+                                    <Search size={16} style={{ color: '#D20000' }} /> Browse
+                                </Link>
+                                {isAuthenticated ? (
+                                    <>
+                                        {!user?.is_superuser && (
+                                            <Link href="/bookings" className="flex items-center gap-3 px-3 py-3 text-sm font-bold uppercase tracking-wider no-underline" style={{ color: 'var(--text-primary)' }} onClick={() => setIsMobileMenuOpen(false)}>
+                                                <Calendar size={16} style={{ color: '#D20000' }} /> My Rentals
+                                            </Link>
+                                        )}
+                                        {user?.user_type === 'provider' && (
+                                            <>
+                                                <Link href="/tools/new" className="flex items-center gap-3 px-3 py-3 text-sm font-bold uppercase tracking-wider no-underline" style={{ color: '#D20000' }} onClick={() => setIsMobileMenuOpen(false)}>
+                                                    <Plus size={16} /> List Item
+                                                </Link>
+                                                <Link href="/dashboard" className="flex items-center gap-3 px-3 py-3 text-sm font-bold uppercase tracking-wider no-underline" style={{ color: 'var(--text-primary)' }} onClick={() => setIsMobileMenuOpen(false)}>
+                                                    <LayoutDashboard size={16} style={{ color: '#D20000' }} /> Dashboard
+                                                </Link>
+                                            </>
+                                        )}
+                                        <button onClick={() => { setIsLogoutModalOpen(true); setIsMobileMenuOpen(false); }} className="flex items-center gap-3 px-3 py-3 text-sm font-bold uppercase tracking-wider w-full text-left cursor-pointer" style={{ color: 'var(--text-primary)' }}>
+                                            <LogOut size={16} style={{ color: '#D20000' }} /> Logout
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Link href="/login" className="flex items-center gap-3 px-3 py-3 text-sm font-bold uppercase tracking-wider no-underline" style={{ color: 'var(--text-primary)' }} onClick={() => setIsMobileMenuOpen(false)}>
+                                            <LogIn size={16} style={{ color: '#D20000' }} /> Login
+                                        </Link>
+                                        <Link href="/register" className="flex items-center gap-3 px-3 py-3 text-sm font-bold uppercase tracking-wider no-underline" style={{ color: '#D20000' }} onClick={() => setIsMobileMenuOpen(false)}>
+                                            <UserPlus size={16} /> Join Now
+                                        </Link>
+                                    </>
+                                )}
+                            </div>
+                        )}
                     </div>
                 </div>
             </nav>

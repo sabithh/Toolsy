@@ -103,7 +103,7 @@ const LocationPicker = ({ lat, lng, onLocationChange }: LocationPickerProps) => 
                     type="button"
                     onClick={handleGetCurrentLocation}
                     disabled={loadingGeo}
-                    className="text-xs flex items-center gap-2 bg-[#111] hover:bg-white hover:text-black text-white px-3 py-1 border border-white/20 transition-colors uppercase font-bold tracking-wider"
+                    className="text-xs flex items-center gap-2 hover:bg-white hover:text-black text-white px-3 py-1 border border-white/20 transition-colors uppercase font-bold tracking-wider"
                 >
                     <Crosshair size={12} className={loadingGeo ? "animate-spin" : ""} />
                     {loadingGeo ? 'Scanning...' : 'Auto-Detect'}
