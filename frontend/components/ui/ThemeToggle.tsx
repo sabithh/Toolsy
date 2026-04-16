@@ -10,15 +10,15 @@ export default function ThemeToggle() {
         <motion.button
             onClick={toggleTheme}
             whileTap={{ scale: 0.85 }}
-            title={isLight ? 'Switch to dark mode' : 'Switch to light mode'}
-            aria-label={isLight ? 'Switch to dark mode' : 'Switch to light mode'}
+            title={isLight ? 'Switch to brand mode' : 'Switch to light mode'}
+            aria-label={isLight ? 'Switch to brand mode' : 'Switch to light mode'}
             style={{
                 position: 'relative',
                 width: 56,
                 height: 28,
                 borderRadius: 14,
-                border: isLight ? '1px solid #D8D8D8' : '1px solid #2A2A2A',
-                background: isLight ? '#EBEBEB' : 'var(--bg-surface)',
+                border: isLight ? '1px solid #D8D8D8' : '1px solid rgba(0,0,0,0.4)',
+                background: isLight ? '#EBEBEB' : 'rgba(0,0,0,0.5)',
                 padding: 3,
                 cursor: 'pointer',
                 display: 'flex',
@@ -29,28 +29,28 @@ export default function ThemeToggle() {
                 transition: 'background 0.4s ease, border-color 0.4s ease',
             }}
         >
-            {/* Flash ripple on every toggle */}
+            {/* Flash ripple on toggle */}
             <AnimatePresence mode="wait">
                 <motion.span
                     key={theme}
-                    initial={{ opacity: 0.7, scale: 0.5 }}
+                    initial={{ opacity: 0.6, scale: 0.5 }}
                     animate={{ opacity: 0, scale: 2.8 }}
                     transition={{ duration: 0.45, ease: 'easeOut' }}
                     style={{
                         position: 'absolute',
                         inset: 0,
                         borderRadius: 14,
-                        background: '#D20000',
+                        background: isLight ? '#D20000' : '#ffffff',
                         pointerEvents: 'none',
                         zIndex: 1,
                     }}
                 />
             </AnimatePresence>
 
-            {/* Moon — visible in dark mode, fades out in light */}
+            {/* Brand/red side icon (left) */}
             <motion.span
-                animate={{ opacity: isLight ? 0.15 : 0.75, x: isLight ? -2 : 0 }}
-                transition={{ duration: 0.35 }}
+                animate={{ opacity: isLight ? 0.2 : 0.9 }}
+                transition={{ duration: 0.3 }}
                 style={{
                     position: 'absolute',
                     left: 7,
@@ -60,13 +60,13 @@ export default function ThemeToggle() {
                     zIndex: 0,
                 }}
             >
-                🌙
+                🔴
             </motion.span>
 
-            {/* Sun — visible in light mode, fades out in dark */}
+            {/* Light mode icon (right) */}
             <motion.span
-                animate={{ opacity: isLight ? 0.85 : 0.15, x: isLight ? 0 : 2 }}
-                transition={{ duration: 0.35 }}
+                animate={{ opacity: isLight ? 0.85 : 0.2 }}
+                transition={{ duration: 0.3 }}
                 style={{
                     position: 'absolute',
                     right: 6,
@@ -87,14 +87,17 @@ export default function ThemeToggle() {
                     width: 22,
                     height: 22,
                     borderRadius: '50%',
-                    background: '#D20000',
+                    background: isLight ? '#D20000' : '#FFFFFF',
                     flexShrink: 0,
                     zIndex: 2,
                     position: 'relative',
-                    boxShadow: '0 1px 6px rgba(210,0,0,0.5)',
+                    boxShadow: isLight
+                        ? '0 1px 6px rgba(210,0,0,0.5)'
+                        : '0 1px 6px rgba(0,0,0,0.4)',
+                    transition: 'background 0.3s ease',
                 }}
             >
-                {/* Tiny eyelet circle inside knob — matches Vaadaka icon */}
+                {/* Eyelet */}
                 <span style={{
                     position: 'absolute',
                     top: '50%',
@@ -103,7 +106,7 @@ export default function ThemeToggle() {
                     width: 7,
                     height: 7,
                     borderRadius: '50%',
-                    background: 'rgba(255,255,255,0.35)',
+                    background: isLight ? 'rgba(255,255,255,0.4)' : 'rgba(210,0,0,0.4)',
                     display: 'block',
                 }} />
             </motion.div>

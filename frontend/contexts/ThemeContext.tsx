@@ -35,6 +35,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         localStorage.setItem('vaadaka-theme', theme);
     }, [theme, mounted]);
 
+    // 'dark' = red brand theme (default), 'light' = white theme
     const toggleTheme = () => setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
 
     return (
