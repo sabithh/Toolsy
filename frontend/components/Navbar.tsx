@@ -8,29 +8,40 @@ import { useToast } from '@/contexts/ToastContext';
 import Modal from '@/components/ui/Modal';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 import { Search, Calendar, LayoutDashboard, LogOut, LogIn, UserPlus, Plus, Menu, X } from 'lucide-react';
+import { useTheme } from '@/contexts/ThemeContext';
 
 function VaadakaLogo() {
+    const { isLight } = useTheme();
+
+    // Mode 1 (red theme): dark bg icon — V is red, stands out against red page
+    // Mode 2 (light theme): red bg icon — V is white, classic brand mark
+    const iconBg = isLight ? '#D20000' : '#0A0A0A';
+    const vStroke = isLight ? 'white' : '#D20000';
+    const eyeletFill = isLight ? 'white' : '#D20000';
+    const eyeletInner = isLight ? '#D20000' : '#0A0A0A';
+
     return (
         <div className="flex items-center gap-3">
             <div style={{
                 width: 44,
                 height: 44,
-                background: '#D20000',
+                background: iconBg,
                 borderRadius: 10,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 flexShrink: 0,
+                transition: 'background 0.35s ease',
             }}>
                 <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: 32, height: 32 }}>
                     <path d="M18 22 L45 68 L72 22"
-                        stroke="white"
+                        stroke={vStroke}
                         strokeWidth="10"
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         fill="none" />
-                    <circle cx="18" cy="22" r="9" fill="white" />
-                    <circle cx="18" cy="22" r="4.5" fill="#D20000" />
+                    <circle cx="18" cy="22" r="9" fill={eyeletFill} />
+                    <circle cx="18" cy="22" r="4.5" fill={eyeletInner} />
                 </svg>
             </div>
             <div className="flex flex-col leading-none">
