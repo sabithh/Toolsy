@@ -47,17 +47,20 @@ class RazorpayWebhookView(APIView):
                 
                 # Find booking by order_id
                 try:
-                    booking = Booking.objects.get(razorpay_order_id=order_id)
-                    
-                    if booking.payment_status != 'paid':
-                        booking.payment_status = 'paid'
-                        booking.status = 'active'  # Promote to active, matching verify_payment flow
-                        booking.razorpay_payment_id = payment_id
-                        booking.save(update_fields=['payment_status', 'status', 'razorpay_payment_id'])
-                        logger.info(f"Payment captured and booking {booking.id} activated via webhook")
-                        
-                except Booking.DoesNotExist:
-                    logger.warning(f"Booking not found for order_id: {order_id}")
+                    updated = Booking.objects.filter(
+                        razorpay_order_id=order_id,
+                        payment_status='pending'
+                    ).update(
+                        payment_status='paid',
+                        status='active',
+                        razorpay_payment_id=payment_id
+                    )
+                    if updated:
+                        logger.info(f"Payment captured via webhook for order {order_id}")
+                    else:
+                        logger.info(f"Webhook duplicate or booking not found for order {order_id}")
+                except Exception as e:
+                    logger.warning(f"Webhook booking update failed for order {order_id}: {e}")
 
             return Response({'status': 'ok'})
 

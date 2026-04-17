@@ -88,27 +88,28 @@ class BookingCreateSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         """Create booking and atomically decrement tool quantity"""
+        from django.db import transaction
+        from django.db.models import F
+        from apps.tools.models import Tool
+
         tool_id = validated_data.pop('tool_id')
         tool = validated_data['tool']
         quantity = validated_data['quantity']
-        
-        # Atomic decrement to prevent race conditions (double-booking)
-        from django.db.models import F
-        from apps.tools.models import Tool
-        updated = Tool.objects.filter(
-            id=tool.id,
-            quantity_available__gte=quantity
-        ).update(quantity_available=F('quantity_available') - quantity)
-        
-        if not updated:
-            raise serializers.ValidationError({
-                'quantity': 'Tool is no longer available in requested quantity'
-            })
-        
-        # Create booking
-        validated_data['renter'] = self.context['request'].user
-        booking = super().create(validated_data)
-        
+
+        with transaction.atomic():
+            updated = Tool.objects.filter(
+                id=tool.id,
+                quantity_available__gte=quantity
+            ).update(quantity_available=F('quantity_available') - quantity)
+
+            if not updated:
+                raise serializers.ValidationError({
+                    'quantity': 'Tool is no longer available in requested quantity'
+                })
+
+            validated_data['renter'] = self.context['request'].user
+            booking = super().create(validated_data)
+
         return booking
 
 

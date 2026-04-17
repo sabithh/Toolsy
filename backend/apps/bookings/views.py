@@ -97,16 +97,17 @@ class BookingViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
-        # Atomically restore quantity if booking was confirmed/active
-        if booking.status in ['confirmed', 'active']:
-            from django.db.models import F
-            from apps.tools.models import Tool
-            Tool.objects.filter(id=booking.tool_id).update(
-                quantity_available=F('quantity_available') + booking.quantity
-            )
-        
-        booking.status = 'cancelled'
-        booking.save(update_fields=['status'])
+        from django.db import transaction
+        from django.db.models import F
+        from apps.tools.models import Tool
+
+        with transaction.atomic():
+            if booking.status in ['confirmed', 'active']:
+                Tool.objects.filter(id=booking.tool_id).update(
+                    quantity_available=F('quantity_available') + booking.quantity
+                )
+            booking.status = 'cancelled'
+            booking.save(update_fields=['status'])
         
         serializer = self.get_serializer(booking)
         return Response(serializer.data)

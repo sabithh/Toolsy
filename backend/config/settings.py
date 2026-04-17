@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'apps.payments',
     'apps.admin_dashboard',
     'apps.subscriptions',
+    'apps.chats',
 ]
 
 # Check if we should use PostGIS

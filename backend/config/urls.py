@@ -32,6 +32,7 @@ urlpatterns = [
     path('api/payments/', include('apps.payments.urls')),
     path('api/admin/', include('apps.admin_dashboard.urls')),
     path('api/subscriptions/', include('apps.subscriptions.urls')),
+    path('api/', include('apps.chats.urls')),
     
     # One-time admin setup (disabled after first superuser is created)
     path('api/setup/create-admin/', SetupAdminView.as_view(), name='setup-admin'),
