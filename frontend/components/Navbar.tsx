@@ -7,7 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 import Modal from '@/components/ui/Modal';
 import ThemeToggle from '@/components/ui/ThemeToggle';
-import { Search, Calendar, LayoutDashboard, LogOut, LogIn, UserPlus, Plus, Menu, X } from 'lucide-react';
+import { Search, Calendar, LayoutDashboard, LogOut, LogIn, UserPlus, Plus, Menu, X, MessageCircle } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 
 function VaadakaLogo() {
@@ -137,16 +137,28 @@ export default function Navbar() {
                                 {isAuthenticated ? (
                                     <>
                                         {!user?.is_superuser && (
-                                            <Link
-                                                href="/bookings"
-                                                className="flex items-center gap-2 px-5 py-2 text-sm font-bold uppercase tracking-wider transition-all duration-200 no-underline"
-                                                style={navLinkStyle}
-                                                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#D20000'; (e.currentTarget as HTMLElement).style.color = '#D20000'; }}
-                                                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--border)'; (e.currentTarget as HTMLElement).style.color = 'var(--text-primary)'; }}
-                                            >
-                                                <Calendar size={16} />
-                                                <span>Rentals</span>
-                                            </Link>
+                                            <>
+                                                <Link
+                                                    href="/bookings"
+                                                    className="flex items-center gap-2 px-5 py-2 text-sm font-bold uppercase tracking-wider transition-all duration-200 no-underline"
+                                                    style={navLinkStyle}
+                                                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#D20000'; (e.currentTarget as HTMLElement).style.color = '#D20000'; }}
+                                                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--border)'; (e.currentTarget as HTMLElement).style.color = 'var(--text-primary)'; }}
+                                                >
+                                                    <Calendar size={16} />
+                                                    <span>Rentals</span>
+                                                </Link>
+                                                <Link
+                                                    href="/chats"
+                                                    className="flex items-center gap-2 px-5 py-2 text-sm font-bold uppercase tracking-wider transition-all duration-200 no-underline"
+                                                    style={navLinkStyle}
+                                                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#D20000'; (e.currentTarget as HTMLElement).style.color = '#D20000'; }}
+                                                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--border)'; (e.currentTarget as HTMLElement).style.color = 'var(--text-primary)'; }}
+                                                >
+                                                    <MessageCircle size={16} />
+                                                    <span>Chats</span>
+                                                </Link>
+                                            </>
                                         )}
 
                                         {user?.is_superuser ? (
@@ -252,9 +264,14 @@ export default function Navbar() {
                                 {isAuthenticated ? (
                                     <>
                                         {!user?.is_superuser && (
-                                            <Link href="/bookings" className="flex items-center gap-3 px-3 py-3 text-sm font-bold uppercase tracking-wider no-underline" style={{ color: 'var(--text-primary)' }} onClick={() => setIsMobileMenuOpen(false)}>
-                                                <Calendar size={16} style={{ color: '#D20000' }} /> My Rentals
-                                            </Link>
+                                            <>
+                                                <Link href="/bookings" className="flex items-center gap-3 px-3 py-3 text-sm font-bold uppercase tracking-wider no-underline" style={{ color: 'var(--text-primary)' }} onClick={() => setIsMobileMenuOpen(false)}>
+                                                    <Calendar size={16} style={{ color: '#D20000' }} /> My Rentals
+                                                </Link>
+                                                <Link href="/chats" className="flex items-center gap-3 px-3 py-3 text-sm font-bold uppercase tracking-wider no-underline" style={{ color: 'var(--text-primary)' }} onClick={() => setIsMobileMenuOpen(false)}>
+                                                    <MessageCircle size={16} style={{ color: '#D20000' }} /> Chats
+                                                </Link>
+                                            </>
                                         )}
                                         {user?.user_type === 'provider' && (
                                             <>

@@ -43,4 +43,4 @@ class ChatRoomSerializer(serializers.ModelSerializer):
 
     def get_unread_count(self, obj):
         user = self.context['request'].user
-        return obj.messages.exclude(sender=user).count()
+        return obj.messages.exclude(sender=user).filter(is_read=False).count()

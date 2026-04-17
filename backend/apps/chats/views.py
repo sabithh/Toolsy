@@ -54,6 +54,8 @@ class MessageListView(APIView):
             return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
 
         room, _ = ChatRoom.objects.get_or_create(booking=booking)
+        # Mark messages from the other party as read when this user loads the chat
+        room.messages.exclude(sender=user).filter(is_read=False).update(is_read=True)
         messages = room.messages.select_related('sender').all()
         serializer = MessageSerializer(messages, many=True)
         return Response(serializer.data)
