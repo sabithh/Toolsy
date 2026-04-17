@@ -9,17 +9,20 @@ import '../theme/theme_provider.dart';
 class VaadakaLogo extends ConsumerWidget {
   final double height;
   final bool showTagline;
+  /// Force white text/icon regardless of theme (use on red backgrounds).
+  final bool forceLight;
 
-  const VaadakaLogo({super.key, this.height = 44, this.showTagline = true});
+  const VaadakaLogo({super.key, this.height = 44, this.showTagline = true, this.forceLight = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isLight = ref.watch(isLightProvider);
+    final isLight = forceLight ? true : ref.watch(isLightProvider);
     final palette = VaadakaPalette(isLight);
 
-    // Icon color logic — same as web
-    final iconBg = isLight ? VaadakaColors.brandRed : VaadakaColors.brandBlack;
-    final vStroke = isLight ? Colors.white : VaadakaColors.brandRed;
+    // On a red background (forceLight) use white icon box + white text
+    final iconBg = forceLight ? Colors.white : (isLight ? VaadakaColors.brandRed : VaadakaColors.brandBlack);
+    final vStroke = forceLight ? VaadakaColors.brandRed : (isLight ? Colors.white : VaadakaColors.brandRed);
+    final textColor = forceLight ? Colors.white : palette.textPrimary;
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -62,7 +65,7 @@ class VaadakaLogo extends ConsumerWidget {
                   'DAKA',
                   style: GoogleFonts.bebasNeue(
                     fontSize: height * 0.58,
-                    color: palette.textPrimary,
+                    color: textColor,
                     letterSpacing: 1.2,
                     height: 1,
                   ),

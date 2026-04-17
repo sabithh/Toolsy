@@ -2,77 +2,67 @@ class Tool {
   final String id;
   final String name;
   final String? description;
-  final double pricePerHour;
-  final double? pricePerDay;
+  final double pricePerDay;    // primary — always present on backend
+  final double? pricePerHour;  // optional
   final double? depositAmount;
   final int quantityAvailable;
   final int quantityTotal;
   final String? condition;
-  final String? image;
   final List<String> images;
   final Map<String, dynamic>? category;
   final Map<String, dynamic>? shop;
-  final bool isActive;
-  final double? averageRating;
-  final int? reviewCount;
-  final DateTime? createdAt;
+  final bool isAvailable;
 
   const Tool({
     required this.id,
     required this.name,
     this.description,
-    required this.pricePerHour,
-    this.pricePerDay,
+    required this.pricePerDay,
+    this.pricePerHour,
     this.depositAmount,
     required this.quantityAvailable,
     required this.quantityTotal,
     this.condition,
-    this.image,
     this.images = const [],
     this.category,
     this.shop,
-    this.isActive = true,
-    this.averageRating,
-    this.reviewCount,
-    this.createdAt,
+    this.isAvailable = true,
   });
 
-  String? get primaryImage {
-    if (image != null && image!.isNotEmpty) return image;
-    if (images.isNotEmpty) return images.first;
-    return null;
-  }
+  String? get primaryImage => images.isNotEmpty ? images.first : null;
 
   String? get categoryName => category?['name']?.toString();
   String? get shopName => shop?['name']?.toString();
 
+  /// Display price — prefer day rate; fall back to hour rate.
+  double get displayPrice => pricePerDay > 0 ? pricePerDay : (pricePerHour ?? 0);
+  String get displayUnit => pricePerDay > 0 ? 'DAY' : 'HOUR';
+
   factory Tool.fromJson(Map<String, dynamic> json) {
+    // images is a plain JSON array of URL strings on the backend
     final imgs = <String>[];
     final imagesJson = json['images'];
     if (imagesJson is List) {
       for (final it in imagesJson) {
+        if (it is String && it.isNotEmpty) imgs.add(it);
+        // legacy nested format
         if (it is Map && it['image'] != null) imgs.add(it['image'].toString());
-        if (it is String) imgs.add(it);
       }
     }
     return Tool(
       id: json['id']?.toString() ?? '',
       name: json['name']?.toString() ?? 'Untitled',
       description: json['description']?.toString(),
-      pricePerHour: _toDouble(json['price_per_hour']) ?? 0,
-      pricePerDay: _toDouble(json['price_per_day']),
+      pricePerDay: _toDouble(json['price_per_day']) ?? 0,
+      pricePerHour: _toDouble(json['price_per_hour']),
       depositAmount: _toDouble(json['deposit_amount']),
       quantityAvailable: (json['quantity_available'] as num?)?.toInt() ?? 0,
       quantityTotal: (json['quantity_total'] as num?)?.toInt() ?? 0,
       condition: json['condition']?.toString(),
-      image: json['image']?.toString(),
       images: imgs,
-      category: json['category'] is Map ? Map<String, dynamic>.from(json['category']) : null,
-      shop: json['shop'] is Map ? Map<String, dynamic>.from(json['shop']) : null,
-      isActive: json['is_active'] != false,
-      averageRating: _toDouble(json['average_rating']),
-      reviewCount: (json['review_count'] as num?)?.toInt(),
-      createdAt: DateTime.tryParse(json['created_at']?.toString() ?? ''),
+      category: json['category'] is Map ? Map<String, dynamic>.from(json['category'] as Map) : null,
+      shop: json['shop'] is Map ? Map<String, dynamic>.from(json['shop'] as Map) : null,
+      isAvailable: json['is_available'] != false,
     );
   }
 }

@@ -185,25 +185,26 @@ class ToolCard extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              AspectRatio(
-                aspectRatio: 16 / 10,
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(9)),
-                  child: image == null
-                      ? Container(
+              ClipRRect(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(9)),
+                child: image == null
+                    ? Container(
+                        height: 180,
+                        color: palette.bgSurface2,
+                        child: Center(child: Icon(LucideIcons.package, size: 40, color: palette.textMuted2)),
+                      )
+                    : CachedNetworkImage(
+                        imageUrl: image,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: 200,
+                        placeholder: (_, _) => Container(height: 200, color: palette.bgSurface2),
+                        errorWidget: (_, _, _) => Container(
+                          height: 200,
                           color: palette.bgSurface2,
-                          child: Icon(LucideIcons.package, size: 40, color: palette.textMuted2),
-                        )
-                      : CachedNetworkImage(
-                          imageUrl: image,
-                          fit: BoxFit.cover,
-                          placeholder: (_, _) => Container(color: palette.bgSurface2),
-                          errorWidget: (_, _, _) => Container(
-                            color: palette.bgSurface2,
-                            child: Icon(LucideIcons.image, size: 32, color: palette.textMuted2),
-                          ),
+                          child: Center(child: Icon(LucideIcons.image, size: 32, color: palette.textMuted2)),
                         ),
-                ),
+                      ),
               ),
               Padding(
                 padding: const EdgeInsets.all(14),
@@ -270,12 +271,12 @@ class ToolCard extends ConsumerWidget {
                       textBaseline: TextBaseline.alphabetic,
                       children: [
                         Text(
-                          '₹${tool.pricePerHour.toStringAsFixed(0)}',
+                          '₹${tool.displayPrice.toStringAsFixed(0)}',
                           style: GoogleFonts.bebasNeue(fontSize: 24, color: VaadakaColors.brandRed, letterSpacing: 1),
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          '/ HOUR',
+                          '/ ${tool.displayUnit}',
                           style: GoogleFonts.barlow(
                             fontSize: 10,
                             fontWeight: FontWeight.w800,

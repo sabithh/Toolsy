@@ -109,7 +109,7 @@ class ToolDetailScreen extends ConsumerWidget {
                         textBaseline: TextBaseline.alphabetic,
                         children: [
                           Text(
-                            '₹${tool.pricePerHour.toStringAsFixed(0)}',
+                            '₹${tool.displayPrice.toStringAsFixed(0)}',
                             style: GoogleFonts.bebasNeue(
                               fontSize: 48,
                               color: VaadakaColors.brandRed,
@@ -118,7 +118,7 @@ class ToolDetailScreen extends ConsumerWidget {
                           ),
                           const SizedBox(width: 6),
                           Text(
-                            '/ HOUR',
+                            '/ ${tool.displayUnit}',
                             style: GoogleFonts.barlow(
                               fontSize: 12,
                               fontWeight: FontWeight.w800,

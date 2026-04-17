@@ -40,8 +40,8 @@ class ApiService {
     if (ordering != null) params['ordering'] = ordering;
     final r = await _dio.get('/api/tools/', queryParameters: params);
     final data = r.data;
-    final list = data is List ? data : (data['results'] as List? ?? []);
-    return list.map((e) => Tool.fromJson(Map<String, dynamic>.from(e))).toList();
+    final list = List<dynamic>.from(data is List ? data : (data['results'] as List? ?? []));
+    return list.map<Tool>((e) => Tool.fromJson(Map<String, dynamic>.from(e as Map))).toList();
   }
 
   Future<Tool> getTool(String id) async {
@@ -60,8 +60,8 @@ class ApiService {
     final params = <String, dynamic>{};
     if (status != null && status.isNotEmpty) params['status'] = status;
     final r = await _dio.get('/api/bookings/', queryParameters: params);
-    final list = r.data is List ? r.data : (r.data['results'] as List? ?? []);
-    return list.map((e) => Booking.fromJson(Map<String, dynamic>.from(e))).toList();
+    final list = List<dynamic>.from(r.data is List ? r.data : (r.data['results'] as List? ?? []));
+    return list.map<Booking>((e) => Booking.fromJson(Map<String, dynamic>.from(e as Map))).toList();
   }
 
   Future<Booking> createBooking(Map<String, dynamic> data) async {
@@ -103,8 +103,8 @@ class ApiService {
   // ─── CHAT ───
   Future<List<ChatRoomSummary>> listChatRooms() async {
     final r = await _dio.get('/api/chats/');
-    final list = r.data is List ? r.data : (r.data['results'] as List? ?? []);
-    return list.map((e) => ChatRoomSummary.fromJson(Map<String, dynamic>.from(e))).toList();
+    final list = List<dynamic>.from(r.data is List ? r.data : (r.data['results'] as List? ?? []));
+    return list.map<ChatRoomSummary>((e) => ChatRoomSummary.fromJson(Map<String, dynamic>.from(e as Map))).toList();
   }
 
   Future<Map<String, dynamic>> getChatRoom(String bookingId) async {
@@ -114,8 +114,8 @@ class ApiService {
 
   Future<List<ChatMessage>> listMessages(String bookingId) async {
     final r = await _dio.get('/api/chats/$bookingId/messages/');
-    final list = r.data is List ? r.data : (r.data['results'] as List? ?? []);
-    return list.map((e) => ChatMessage.fromJson(Map<String, dynamic>.from(e))).toList();
+    final list = List<dynamic>.from(r.data is List ? r.data : (r.data['results'] as List? ?? []));
+    return list.map<ChatMessage>((e) => ChatMessage.fromJson(Map<String, dynamic>.from(e as Map))).toList();
   }
 
   Future<ChatMessage> sendMessage(String bookingId, String text) async {

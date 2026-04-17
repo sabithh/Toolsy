@@ -44,13 +44,13 @@ class _BookingSheetState extends ConsumerState<_BookingSheet> {
     super.dispose();
   }
 
-  double get _hours {
+  double get _days {
     if (_start == null || _end == null) return 0;
-    final diff = _end!.difference(_start!).inMinutes / 60.0;
+    final diff = _end!.difference(_start!).inMinutes / 60.0 / 24.0;
     return diff > 0 ? diff : 0;
   }
 
-  double get _rental => _hours * widget.tool.pricePerHour * _quantity;
+  double get _rental => _days * widget.tool.displayPrice * _quantity;
   double get _deposit => (widget.tool.depositAmount ?? 0) * _quantity;
   double get _total => _rental + _deposit;
 
@@ -263,8 +263,8 @@ class _BookingSheetState extends ConsumerState<_BookingSheet> {
                   child: Column(
                     children: [
                       _PriceLine(
-                        label: 'Hours',
-                        value: _hours.toStringAsFixed(1),
+                        label: 'Days',
+                        value: _days.toStringAsFixed(1),
                         palette: palette,
                       ),
                       _PriceLine(

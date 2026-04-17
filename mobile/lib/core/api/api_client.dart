@@ -36,7 +36,19 @@ class VaadakaApiClient {
       if (res != null) {
         final data = res.data;
         if (data is Map) {
-          if (data['detail'] != null) return data['detail'].toString();
+          if (data['detail'] != null) {
+            final detail = data['detail'].toString();
+            // Translate generic SimpleJWT / Django auth messages to friendly copy
+            if (detail.toLowerCase().contains('no active account') ||
+                detail.toLowerCase().contains('given credentials')) {
+              return 'Incorrect username or password.';
+            }
+            if (detail.toLowerCase().contains('token is invalid') ||
+                detail.toLowerCase().contains('token is expired')) {
+              return 'Session expired. Please sign in again.';
+            }
+            return detail;
+          }
           // Collect field errors
           final parts = <String>[];
           data.forEach((k, v) {

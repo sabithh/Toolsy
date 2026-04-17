@@ -26,7 +26,7 @@ class _ListItemScreenState extends ConsumerState<ListItemScreen> {
   final _formKey = GlobalKey<FormState>();
   final _name = TextEditingController();
   final _description = TextEditingController();
-  final _pricePerHour = TextEditingController();
+  final _pricePerDay = TextEditingController();
   final _deposit = TextEditingController();
   final _quantity = TextEditingController(text: '1');
 
@@ -82,7 +82,7 @@ class _ListItemScreenState extends ConsumerState<ListItemScreen> {
   void dispose() {
     _name.dispose();
     _description.dispose();
-    _pricePerHour.dispose();
+    _pricePerDay.dispose();
     _deposit.dispose();
     _quantity.dispose();
     super.dispose();
@@ -103,7 +103,7 @@ class _ListItemScreenState extends ConsumerState<ListItemScreen> {
       final tool = await api.createTool({
         'name': _name.text.trim(),
         'description': _description.text.trim(),
-        'price_per_hour': double.tryParse(_pricePerHour.text.trim()) ?? 0,
+        'price_per_day': double.tryParse(_pricePerDay.text.trim()) ?? 0,
         'deposit_amount': double.tryParse(_deposit.text.trim()) ?? 0,
         'quantity_total': qty,
         'quantity_available': qty,
@@ -177,8 +177,8 @@ class _ListItemScreenState extends ConsumerState<ListItemScreen> {
                         children: [
                           Expanded(
                             child: BrandTextField(
-                              controller: _pricePerHour,
-                              label: '₹ / Hour',
+                              controller: _pricePerDay,
+                              label: '₹ / Day',
                               hint: '50',
                               keyboardType: TextInputType.number,
                               validator: (v) => (double.tryParse(v ?? '') ?? 0) > 0 ? null : 'Required',

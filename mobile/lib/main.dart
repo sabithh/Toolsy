@@ -28,22 +28,26 @@ class _VaadakaAppState extends ConsumerState<VaadakaApp> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await ref.read(notificationsServiceProvider).init();
-      // Register FCM token when a user is authenticated.
-      ref.listen(authProvider, (prev, next) {
-        if (next.isAuthenticated && prev?.isAuthenticated != true) {
-          ref.read(notificationsServiceProvider).registerTokenIfNeeded();
-        }
-      });
-      if (ref.read(authProvider).isAuthenticated) {
-        await ref.read(notificationsServiceProvider).registerTokenIfNeeded();
-      }
-    });
+    _initNotifications();
+  }
+
+  Future<void> _initNotifications() async {
+    await ref.read(notificationsServiceProvider).init();
+    if (!mounted) return;
+    if (ref.read(authProvider).isAuthenticated) {
+      await ref.read(notificationsServiceProvider).registerTokenIfNeeded();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    // ConsumerState.ref.listen is only valid during build in Riverpod.
+    ref.listen(authProvider, (prev, next) {
+      if (next.isAuthenticated && prev?.isAuthenticated != true) {
+        ref.read(notificationsServiceProvider).registerTokenIfNeeded();
+      }
+    });
+
     final isLight = ref.watch(isLightProvider);
     final router = ref.watch(routerProvider);
 
@@ -52,7 +56,9 @@ class _VaadakaAppState extends ConsumerState<VaadakaApp> {
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: isLight ? Brightness.dark : Brightness.light,
         systemNavigationBarColor: isLight ? Colors.white : Colors.black,
-        systemNavigationBarIconBrightness: isLight ? Brightness.dark : Brightness.light,
+        systemNavigationBarIconBrightness: isLight
+            ? Brightness.dark
+            : Brightness.light,
       ),
     );
 
