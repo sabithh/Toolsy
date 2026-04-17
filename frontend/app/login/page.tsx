@@ -142,16 +142,16 @@ export default function LoginPage() {
                             disabled={loading}
                             className="w-full font-black uppercase tracking-widest py-4 mt-2 transition-all duration-200 cursor-pointer"
                             style={{
-                                background: loading ? 'var(--text-muted)' : '#D20000',
-                                color: 'white',
+                                background: loading ? 'var(--text-muted)' : 'var(--highlight)',
+                                color: 'var(--bg-primary)',
                                 border: 'none',
                                 borderRadius: 6,
                                 fontSize: '1rem',
                                 fontFamily: 'var(--font-bebas), sans-serif',
                                 letterSpacing: '0.1em',
                             }}
-                            onMouseEnter={e => { if (!loading) (e.currentTarget as HTMLElement).style.background = '#B10000'; }}
-                            onMouseLeave={e => { if (!loading) (e.currentTarget as HTMLElement).style.background = '#D20000'; }}
+                            onMouseEnter={e => { if (!loading) (e.currentTarget as HTMLElement).style.background = 'var(--highlight-hover)'; }}
+                            onMouseLeave={e => { if (!loading) (e.currentTarget as HTMLElement).style.background = 'var(--highlight)'; }}
                         >
                             {loading ? 'Logging in...' : 'Log In to Vaadaka'}
                         </button>
@@ -161,7 +161,7 @@ export default function LoginPage() {
                         Don&apos;t have an account?{' '}
                         <Link href="/register" className="font-bold no-underline transition-colors"
                             style={{ color: 'var(--text-primary)' }}
-                            onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = '#D20000'}
+                            onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = 'var(--highlight)'}
                             onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = 'var(--text-primary)'}>
                             Join Vaadaka →
                         </Link>

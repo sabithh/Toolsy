@@ -40,36 +40,43 @@
 
 :root {
   /* Red brand theme (default) */
-  --bg-primary:    #D20000;
-  --bg-surface:    #0A0A0A;
-  --bg-surface-2:  #111111;
-  --border:        rgba(0, 0, 0, 0.25);
-  --text-primary:  #FFFFFF;
-  --text-muted:    rgba(255, 255, 255, 0.55);
-  --text-muted-2:  rgba(255, 255, 255, 0.35);
-  --accent:        #000000;
-  --accent-hover:  #111111;
-  --nav-bg:        rgba(0, 0, 0, 0.92);
-  --grid-line:     rgba(0, 0, 0, 0.12);
-  --glass-bg:      rgba(0, 0, 0, 0.85);
-  --card-shadow:   rgba(0, 0, 0, 0.5);
+  --bg-primary:       #D20000;
+  --bg-surface:       #0A0A0A;
+  --bg-surface-2:     #111111;
+  --border:           rgba(0, 0, 0, 0.3);
+  --text-primary:     #FFFFFF;
+  --text-muted:       rgba(255, 255, 255, 0.55);
+  --text-muted-2:     rgba(255, 255, 255, 0.35);
+  /* highlight = accent used ON the red page bg */
+  --highlight:        #000000;
+  --highlight-hover:  #2A2A2A;
+  /* accent = accent used ON dark surfaces (always red) */
+  --accent:           #D20000;
+  --accent-hover:     #B10000;
+  --nav-bg:           rgba(0, 0, 0, 0.92);
+  --grid-line:        rgba(0, 0, 0, 0.12);
+  --glass-bg:         rgba(0, 0, 0, 0.85);
+  --card-shadow:      rgba(0, 0, 0, 0.5);
 }
 
 html.light {
   /* Clean light theme */
-  --bg-primary:    #F8F8F8;
-  --bg-surface:    #FFFFFF;
-  --bg-surface-2:  #F0F0F0;
-  --border:        #E2E2E2;
-  --text-primary:  #0A0A0A;
-  --text-muted:    #888888;
-  --text-muted-2:  #AAAAAA;
-  --accent:        #D20000;
-  --accent-hover:  #B10000;
-  --nav-bg:        rgba(248, 248, 248, 0.96);
-  --grid-line:     rgba(0, 0, 0, 0.04);
-  --glass-bg:      rgba(255, 255, 255, 0.9);
-  --card-shadow:   rgba(0, 0, 0, 0.08);
+  --bg-primary:       #F8F8F8;
+  --bg-surface:       #FFFFFF;
+  --bg-surface-2:     #F0F0F0;
+  --border:           #E2E2E2;
+  --text-primary:     #0A0A0A;
+  --text-muted:       #888888;
+  --text-muted-2:     #AAAAAA;
+  /* in light mode highlight = accent (both are red) */
+  --highlight:        #D20000;
+  --highlight-hover:  #B10000;
+  --accent:           #D20000;
+  --accent-hover:     #B10000;
+  --nav-bg:           rgba(248, 248, 248, 0.96);
+  --grid-line:        rgba(0, 0, 0, 0.04);
+  --glass-bg:         rgba(255, 255, 255, 0.9);
+  --card-shadow:      rgba(0, 0, 0, 0.08);
 }
 
 /* ── Base ── */

@@ -107,7 +107,7 @@ export default function BillingPage() {
     if (loading) {
         return (
             <div className="min-h-screen pt-24 flex items-center justify-center" style={{ background: 'var(--bg-primary)' }}>
-                <div className="w-6 h-6 border-2 border-[#D20000] border-t-transparent rounded-full animate-spin" />
+                <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: 'var(--highlight)', borderTopColor: 'transparent' }} />
             </div>
         );
     }
@@ -155,10 +155,10 @@ export default function BillingPage() {
                 {/* Current month summary */}
                 {currentMonth ? (
                     <div className="mb-8 p-6"
-                        style={{ background: 'rgba(210,0,0,0.06)', border: '1px solid rgba(210,0,0,0.2)', borderRadius: 8 }}>
+                        style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 8 }}>
                         <div className="flex items-start justify-between mb-6">
                             <div>
-                                <div className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: '#D20000' }}>
+                                <div className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--highlight)' }}>
                                     Current Month
                                 </div>
                                 <h2 className="font-black uppercase tracking-tight"
@@ -178,7 +178,7 @@ export default function BillingPage() {
                                 <div key={label}>
                                     <div className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--text-muted)' }}>{label}</div>
                                     <div className="text-2xl font-black"
-                                        style={{ color: highlight ? '#D20000' : 'var(--text-primary)', fontFamily: 'var(--font-bebas), sans-serif' }}>
+                                        style={{ color: highlight ? 'var(--highlight)' : 'var(--text-primary)', fontFamily: 'var(--font-bebas), sans-serif' }}>
                                         {value}
                                     </div>
                                 </div>
@@ -187,7 +187,7 @@ export default function BillingPage() {
 
                         {/* Rental breakdown */}
                         {currentMonth.bookings.length > 0 && (
-                            <div style={{ borderTop: '1px solid rgba(210,0,0,0.15)', paddingTop: '1rem' }}>
+                            <div style={{ borderTop: "1px solid var(--border)", paddingTop: '1rem' }}>
                                 <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--text-muted)' }}>
                                     Rental Breakdown
                                 </div>
@@ -197,7 +197,7 @@ export default function BillingPage() {
                                             <div style={{ color: 'var(--text-primary)' }}>{b.tool?.name || `Booking #${b.id?.slice(0,8)}`}</div>
                                             <div className="flex items-center gap-4">
                                                 <span style={{ color: 'var(--text-primary)' }}>₹{parseFloat(b.total_amount).toLocaleString()}</span>
-                                                <span style={{ color: '#D20000', fontSize: '0.75rem' }}>
+                                                <span style={{ color: 'var(--highlight)', fontSize: '0.75rem' }}>
                                                     −₹{(parseFloat(b.total_amount) * COMMISSION_RATE).toFixed(2)}
                                                 </span>
                                             </div>

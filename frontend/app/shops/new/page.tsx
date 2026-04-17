@@ -57,7 +57,7 @@ export default function CreateShopPage() {
         <div className="min-h-screen pt-24 pb-12 px-6" style={{ background: 'var(--bg-primary)' }}>
             <div className="max-w-3xl mx-auto">
                 {/* Header */}
-                <div className="mb-10" style={{ borderLeft: '3px solid #D20000', paddingLeft: '1.25rem' }}>
+                <div className="mb-10" style={{ borderLeft: '3px solid var(--highlight)', paddingLeft: '1.25rem' }}>
                     <h1 className="font-black uppercase tracking-tighter leading-none mb-2"
                         style={{ fontFamily: 'var(--font-bebas), sans-serif', fontSize: 'clamp(2.5rem, 6vw, 4rem)', color: 'var(--text-primary)' }}>
                         Set Up Your Shop

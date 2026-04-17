@@ -76,7 +76,7 @@ export default function BrowsePage() {
                     <h1 className="font-black uppercase tracking-tighter leading-none mb-2"
                         style={{ fontFamily: 'var(--font-bebas), sans-serif', fontSize: 'clamp(2.5rem, 8vw, 5rem)', color: 'var(--text-primary)' }}>
                         Browse
-                        <span style={{ color: '#D20000' }}> Items</span>
+                        <span style={{ color: 'var(--highlight)' }}> Items</span>
                     </h1>
                     <p className="text-sm font-bold uppercase tracking-widest" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-barlow), sans-serif', letterSpacing: '4px' }}>
                         Rent Anything · Kerala
@@ -111,9 +111,9 @@ export default function BrowsePage() {
                             disabled={isNearbyLoading}
                             className="flex items-center justify-center gap-2 px-6 py-4 text-sm font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer"
                             style={{
-                                background: isNearbyActive ? '#D20000' : 'var(--bg-surface)',
-                                color: isNearbyActive ? 'white' : 'var(--text-primary)',
-                                border: `1px solid ${isNearbyActive ? '#D20000' : 'var(--border)'}`,
+                                background: isNearbyActive ? 'var(--highlight)' : 'var(--bg-surface)',
+                                color: isNearbyActive ? 'var(--bg-primary)' : 'var(--text-primary)',
+                                border: `1px solid ${isNearbyActive ? 'var(--highlight)' : 'var(--border)'}`,
                                 borderRadius: 6,
                             }}
                         >

@@ -140,7 +140,7 @@ export default function EditToolPage({ params }: { params: Promise<{ id: string 
     if (loading) {
         return (
             <div className="min-h-screen pt-24 flex items-center justify-center" style={{ background: 'var(--bg-primary)' }}>
-                <div className="w-6 h-6 border-2 rounded-full animate-spin" style={{ borderColor: '#D20000', borderTopColor: 'transparent' }} />
+                <div className="w-6 h-6 border-2 rounded-full animate-spin" style={{ borderColor: 'var(--highlight)', borderTopColor: 'transparent' }} />
             </div>
         );
     }

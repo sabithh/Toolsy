@@ -16,7 +16,7 @@ export default function Home() {
             <ScrollReveal>
               <div className="inline-flex items-center gap-2 px-4 py-2 mb-10 text-xs font-bold uppercase tracking-[4px]"
                 style={{ background: 'var(--bg-surface-2)', border: '1px solid var(--border)', borderRadius: 20, color: 'var(--text-muted)' }}>
-                <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#D20000', display: 'inline-block' }}></span>
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--highlight)', display: 'inline-block' }}></span>
                 Rent Anything · Kerala
               </div>
             </ScrollReveal>
@@ -26,7 +26,7 @@ export default function Home() {
               <h1 className="font-black mb-10 leading-[0.85] tracking-tighter uppercase"
                 style={{ fontFamily: 'var(--font-bebas), sans-serif', fontSize: 'clamp(4.5rem, 14vw, 10rem)', color: 'var(--text-primary)' }}>
                 <span className="block">Rent</span>
-                <span className="block" style={{ color: '#D20000' }}>Anything</span>
+                <span className="block" style={{ color: 'var(--highlight)' }}>Anything</span>
                 <span className="block">Near You</span>
               </h1>
             </ScrollReveal>
@@ -44,16 +44,16 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center mb-24">
                 <Link href="/tools"
                   className="group flex items-center justify-center gap-3 px-10 py-5 font-black text-lg uppercase tracking-widest no-underline transition-all duration-200"
-                  style={{ background: '#D20000', color: 'white', borderRadius: 8, fontFamily: 'var(--font-bebas), sans-serif', letterSpacing: '0.1em' }}
-                  onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = '#B10000'}
-                  onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = '#D20000'}
+                  style={{ background: 'var(--highlight)', color: 'var(--bg-primary)', borderRadius: 8, fontFamily: 'var(--font-bebas), sans-serif', letterSpacing: '0.1em' }}
+                  onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = 'var(--highlight-hover)'}
+                  onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'var(--highlight)'}
                 >
                   <SearchCheck size={22} /> Browse Items
                 </Link>
                 <Link href="/register"
                   className="group flex items-center justify-center gap-3 px-10 py-5 font-black text-lg uppercase tracking-widest no-underline transition-all duration-200"
                   style={{ background: 'transparent', color: 'var(--text-primary)', borderRadius: 8, border: '1px solid var(--border)', fontFamily: 'var(--font-bebas), sans-serif', letterSpacing: '0.1em' }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#D20000'; (e.currentTarget as HTMLElement).style.color = '#D20000'; }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--highlight)'; (e.currentTarget as HTMLElement).style.color = 'var(--highlight)'; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--border)'; (e.currentTarget as HTMLElement).style.color = 'var(--text-primary)'; }}
                 >
                   <Tag size={22} /> List Your Items
@@ -74,7 +74,7 @@ export default function Home() {
                     style={{ borderRight: '1px solid var(--border)' }}>
                     <div className="text-5xl font-black mb-2 transition-colors"
                       style={{ fontFamily: 'var(--font-bebas), sans-serif', color: 'var(--text-primary)' }}
-                      onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = '#D20000'}
+                      onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = 'var(--highlight)'}
                       onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = 'var(--text-primary)'}
                     >{stat.value}</div>
                     <div className="text-xs font-bold uppercase tracking-[0.2em]" style={{ color: 'var(--text-muted)' }}>{stat.label}</div>
@@ -90,10 +90,10 @@ export default function Home() {
       <section className="relative z-10 py-32" style={{ borderTop: '1px solid var(--border)' }}>
         <div className="container-custom">
           <ScrollReveal>
-            <div className="mb-20" style={{ borderLeft: '3px solid #D20000', paddingLeft: '1.5rem' }}>
+            <div className="mb-20" style={{ borderLeft: '3px solid var(--highlight)', paddingLeft: '1.5rem' }}>
               <h2 className="font-black uppercase tracking-tighter leading-none mb-3"
                 style={{ fontFamily: 'var(--font-bebas), sans-serif', fontSize: 'clamp(3rem, 8vw, 6rem)', color: 'var(--text-primary)' }}>
-                Why <span style={{ color: '#D20000' }}>Vaadaka?</span>
+                Why <span style={{ color: 'var(--highlight)' }}>Vaadaka?</span>
               </h2>
               <p className="text-sm uppercase tracking-widest font-bold" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-barlow), sans-serif', letterSpacing: '4px' }}>
                 Rent anything · Earn from what you own
@@ -109,10 +109,9 @@ export default function Home() {
             ].map(({ icon: Icon, title, desc }, i) => (
               <ScrollReveal key={title} delay={0.1 * (i + 1)}>
                 <div className="p-10 group transition-colors duration-300 h-full"
-                  style={{ background: 'var(--bg-surface)' }}
-                  onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = '#D20000'}
-                  onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = 'transparent'}>
+                  style={{ background: 'var(--bg-surface)' }}>
                   <div className="mb-6">
+                    {/* Icon on dark surface — accent red is always visible here */}
                     <Icon size={40} style={{ color: '#D20000' }} />
                   </div>
                   <h3 className="text-xl font-black uppercase tracking-wider mb-3"
@@ -138,7 +137,7 @@ export default function Home() {
           </ScrollReveal>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {/* Renter */}
+            {/* Renter — dark surface card, red accents stay red */}
             <ScrollReveal delay={0.1}>
               <div className="p-8 h-full" style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 8 }}>
                 <div className="flex items-center gap-3 mb-6">
@@ -164,7 +163,7 @@ export default function Home() {
               </div>
             </ScrollReveal>
 
-            {/* Owner */}
+            {/* Owner — dark surface card, red accents stay red */}
             <ScrollReveal delay={0.2}>
               <div className="p-8 h-full" style={{ background: 'var(--bg-surface)', border: '1px solid #D20000', borderRadius: 8 }}>
                 <div className="flex items-center gap-3 mb-6">
@@ -194,7 +193,7 @@ export default function Home() {
       </section>
 
       {/* Final CTA */}
-      <section className="relative z-10 py-32" style={{ borderTop: '1px solid var(--border)', background: '#0D0D0D' }}>
+      <section className="relative z-10 py-32" style={{ borderTop: '1px solid var(--border)', background: 'var(--bg-surface)' }}>
         <div className="container-custom">
           <ScrollReveal>
             <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-12">

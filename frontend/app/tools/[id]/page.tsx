@@ -63,7 +63,7 @@ export default function ToolDetailsPage() {
     if (loading) {
         return (
             <div className="min-h-screen pt-24 pb-12 flex items-center justify-center" style={{ background: 'var(--bg-primary)' }}>
-                <div className="w-6 h-6 border-2 rounded-full animate-spin" style={{ borderColor: '#D20000', borderTopColor: 'transparent' }} />
+                <div className="w-6 h-6 border-2 rounded-full animate-spin" style={{ borderColor: 'var(--highlight)', borderTopColor: 'transparent' }} />
             </div>
         );
     }
@@ -72,10 +72,10 @@ export default function ToolDetailsPage() {
         return (
             <div className="min-h-screen pt-24 pb-12 flex items-center justify-center" style={{ background: 'var(--bg-primary)' }}>
                 <div className="text-center">
-                    <AlertCircle className="w-12 h-12 mx-auto mb-4" style={{ color: '#D20000' }} />
+                    <AlertCircle className="w-12 h-12 mx-auto mb-4" style={{ color: 'var(--highlight)' }} />
                     <h2 className="text-xl font-bold mb-3" style={{ color: 'var(--text-primary)' }}>Item Not Found</h2>
                     <Link href="/tools" className="font-bold text-sm uppercase tracking-widest no-underline transition-colors"
-                        style={{ color: '#D20000' }}>
+                        style={{ color: 'var(--highlight)' }}>
                         ← Back to Browse
                     </Link>
                 </div>
@@ -144,7 +144,7 @@ export default function ToolDetailsPage() {
                         </div>
 
                         <div className="flex items-end gap-2 pb-8" style={{ borderBottom: '1px solid var(--border)' }}>
-                            <div className="text-5xl font-black leading-none" style={{ color: '#D20000', fontFamily: 'var(--font-bebas), sans-serif' }}>
+                            <div className="text-5xl font-black leading-none" style={{ color: 'var(--highlight)', fontFamily: 'var(--font-bebas), sans-serif' }}>
                                 ₹{Math.floor(tool.price_per_day)}
                             </div>
                             <div className="text-sm font-mono uppercase mb-2" style={{ color: 'var(--text-muted)' }}>
@@ -200,9 +200,9 @@ export default function ToolDetailsPage() {
                                         onClick={() => setIsBookingModalOpen(true)}
                                         disabled={tool.quantity_available <= 0}
                                         className="w-full py-5 font-black uppercase tracking-widest text-lg transition-all flex items-center justify-center gap-3 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                                        style={{ background: '#D20000', color: 'white', border: 'none', borderRadius: 8 }}
-                                        onMouseEnter={e => { if (tool.quantity_available > 0) (e.currentTarget as HTMLElement).style.background = '#B10000'; }}
-                                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = '#D20000'; }}
+                                        style={{ background: 'var(--highlight)', color: 'var(--bg-primary)', border: 'none', borderRadius: 8 }}
+                                        onMouseEnter={e => { if (tool.quantity_available > 0) (e.currentTarget as HTMLElement).style.background = 'var(--highlight-hover)'; }}
+                                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'var(--highlight)'; }}
                                     >
                                         <ShieldCheck className="w-6 h-6" />
                                         {tool.quantity_available > 0 ? 'Book This Item' : 'Currently Unavailable'}

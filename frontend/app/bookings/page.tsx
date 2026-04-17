@@ -166,9 +166,9 @@ export default function BookingsPage() {
                     <Link
                         href={isRenter ? "/tools" : "/tools/new"}
                         className="flex items-center gap-2 px-5 py-3 text-sm font-bold uppercase tracking-wider no-underline transition-all duration-200"
-                        style={{ background: '#D20000', color: 'white', borderRadius: 6 }}
-                        onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = '#B10000'}
-                        onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = '#D20000'}
+                        style={{ background: 'var(--highlight)', color: 'var(--bg-primary)', borderRadius: 6 }}
+                        onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = 'var(--highlight-hover)'}
+                        onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'var(--highlight)'}
                     >
                         {isRenter ? 'Browse Items' : 'List New Item'}
                     </Link>
@@ -191,7 +191,7 @@ export default function BookingsPage() {
                         {isRenter && (
                             <Link href="/tools"
                                 className="px-6 py-3 font-bold text-sm uppercase tracking-wider no-underline transition-all duration-200"
-                                style={{ background: '#D20000', color: 'white', borderRadius: 6 }}>
+                                style={{ background: 'var(--highlight)', color: 'var(--bg-primary)', borderRadius: 6 }}>
                                 Browse Items
                             </Link>
                         )}

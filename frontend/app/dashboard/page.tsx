@@ -120,7 +120,7 @@ export default function DashboardPage() {
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 pb-8" style={{ borderBottom: '1px solid var(--border)' }}>
                     <div>
                         <div className="flex items-center gap-2 mb-2">
-                            <span className="text-xs font-bold uppercase tracking-widest px-2 py-1" style={{ background: 'rgba(210,0,0,0.1)', color: '#D20000', borderRadius: 4, border: '1px solid rgba(210,0,0,0.2)' }}>
+                            <span className="text-xs font-bold uppercase tracking-widest px-2 py-1" style={{ background: 'var(--bg-surface)', color: 'var(--highlight)', borderRadius: 4, border: '1px solid var(--border)' }}>
                                 Owner Dashboard
                             </span>
                             <span className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
@@ -135,9 +135,9 @@ export default function DashboardPage() {
                     <div className="flex gap-3 mt-6 md:mt-0">
                         <Link href="/tools/new"
                             className="flex items-center gap-2 px-5 py-3 text-sm font-bold uppercase tracking-wider no-underline transition-all duration-200"
-                            style={{ background: '#D20000', color: 'white', borderRadius: 6, border: '1px solid #D20000' }}
-                            onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = '#B10000'}
-                            onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = '#D20000'}>
+                            style={{ background: 'var(--highlight)', color: 'var(--bg-primary)', borderRadius: 6, border: '1px solid var(--highlight)' }}
+                            onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = 'var(--highlight-hover)'}
+                            onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'var(--highlight)'}>
                             <Plus size={16} /> List Item
                         </Link>
                         <Link href="/shops/manage"
@@ -174,9 +174,9 @@ export default function DashboardPage() {
 
                 {/* Commission Billing Banner */}
                 <div className="mb-10 p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
-                    style={{ background: 'rgba(210,0,0,0.06)', border: '1px solid rgba(210,0,0,0.2)', borderRadius: 8 }}>
+                    style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 8 }}>
                     <div className="flex items-start gap-4">
-                        <Receipt size={28} style={{ color: '#D20000', flexShrink: 0, marginTop: 2 }} />
+                        <Receipt size={28} style={{ color: 'var(--highlight)', flexShrink: 0, marginTop: 2 }} />
                         <div>
                             <h3 className="font-black uppercase tracking-wider mb-1" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-bebas), sans-serif', letterSpacing: '0.1em', fontSize: '1.1rem' }}>
                                 This Month&apos;s Commission
@@ -188,16 +188,16 @@ export default function DashboardPage() {
                     </div>
                     <div className="flex items-center gap-6">
                         <div className="text-right">
-                            <div className="text-2xl font-black" style={{ color: '#D20000', fontFamily: 'var(--font-bebas), sans-serif' }}>
+                            <div className="text-2xl font-black" style={{ color: 'var(--highlight)', fontFamily: 'var(--font-bebas), sans-serif' }}>
                                 ₹{stats.monthlyCommission.toFixed(2)}
                             </div>
                             <div className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>pending</div>
                         </div>
                         <Link href="/billing"
                             className="flex items-center gap-2 px-5 py-2.5 text-sm font-bold uppercase tracking-wider no-underline transition-all duration-200"
-                            style={{ background: '#D20000', color: 'white', borderRadius: 6 }}
-                            onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = '#B10000'}
-                            onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = '#D20000'}>
+                            style={{ background: 'var(--highlight)', color: 'var(--bg-primary)', borderRadius: 6 }}
+                            onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = 'var(--highlight-hover)'}
+                            onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'var(--highlight)'}>
                             <TrendingUp size={14} /> View Billing
                         </Link>
                     </div>
@@ -214,7 +214,7 @@ export default function DashboardPage() {
                             </h2>
                             <Link href="/tools/new"
                                 className="text-xs font-bold uppercase tracking-widest no-underline transition-colors"
-                                style={{ color: '#D20000' }}>
+                                style={{ color: 'var(--highlight)' }}>
                                 + Add Item
                             </Link>
                         </div>

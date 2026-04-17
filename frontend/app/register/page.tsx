@@ -129,14 +129,14 @@ export default function RegisterPage() {
                     {/* STEP INDICATOR */}
                     <div className="flex items-center gap-3 mb-8">
                         <div className="flex items-center gap-2">
-                            <div style={{ width: 24, height: 24, borderRadius: '50%', background: selectedRole ? '#D20000' : 'var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', fontWeight: 700, color: 'white' }}>
+                            <div style={{ width: 24, height: 24, borderRadius: '50%', background: selectedRole ? 'var(--highlight)' : 'var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', fontWeight: 700, color: 'var(--bg-primary)' }}>
                                 {selectedRole ? '✓' : '1'}
                             </div>
                             <span className="text-xs font-bold uppercase tracking-widest" style={{ color: selectedRole ? 'var(--text-primary)' : 'var(--text-muted)' }}>Choose role</span>
                         </div>
-                        <div style={{ flex: 1, height: 1, background: selectedRole ? '#D20000' : 'var(--border)' }} />
+                        <div style={{ flex: 1, height: 1, background: selectedRole ? 'var(--highlight)' : 'var(--border)' }} />
                         <div className="flex items-center gap-2">
-                            <div style={{ width: 24, height: 24, borderRadius: '50%', background: selectedRole ? '#D20000' : 'var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', fontWeight: 700, color: 'white' }}>2</div>
+                            <div style={{ width: 24, height: 24, borderRadius: '50%', background: selectedRole ? 'var(--highlight)' : 'var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', fontWeight: 700, color: 'var(--bg-primary)' }}>2</div>
                             <span className="text-xs font-bold uppercase tracking-widest" style={{ color: selectedRole ? 'var(--text-primary)' : 'var(--text-muted)' }}>Your details</span>
                         </div>
                     </div>
@@ -208,7 +208,7 @@ export default function RegisterPage() {
                                 Already have an account?{' '}
                                 <Link href="/login" className="font-bold no-underline transition-colors"
                                     style={{ color: 'var(--text-primary)' }}
-                                    onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = '#D20000'}
+                                    onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = 'var(--highlight)'}
                                     onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = 'var(--text-primary)'}>
                                     Log in →
                                 </Link>
@@ -234,8 +234,8 @@ export default function RegisterPage() {
                             </h1>
                             <div className="flex items-center gap-2 mb-8">
                                 {selectedRole === 'renter'
-                                    ? <><ShoppingBag size={14} style={{ color: '#D20000' }} /><span className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Renter Account</span></>
-                                    : <><Tag size={14} style={{ color: '#D20000' }} /><span className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Owner Account</span></>
+                                    ? <><ShoppingBag size={14} style={{ color: 'var(--highlight)' }} /><span className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Renter Account</span></>
+                                    : <><Tag size={14} style={{ color: 'var(--highlight)' }} /><span className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Owner Account</span></>
                                 }
                             </div>
 
@@ -331,8 +331,8 @@ export default function RegisterPage() {
                                     disabled={loading}
                                     className="w-full font-black uppercase tracking-widest py-4 transition-all duration-200 cursor-pointer mt-2"
                                     style={{
-                                        background: loading ? 'var(--text-muted)' : '#D20000',
-                                        color: 'white',
+                                        background: loading ? 'var(--text-muted)' : 'var(--highlight)',
+                                        color: 'var(--bg-primary)',
                                         border: 'none',
                                         borderRadius: 6,
                                         fontSize: '0.95rem',
@@ -348,7 +348,7 @@ export default function RegisterPage() {
                                 Already have an account?{' '}
                                 <Link href="/login" className="font-bold no-underline transition-colors"
                                     style={{ color: 'var(--text-primary)' }}
-                                    onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = '#D20000'}
+                                    onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = 'var(--highlight)'}
                                     onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = 'var(--text-primary)'}>
                                     Log in →
                                 </Link>

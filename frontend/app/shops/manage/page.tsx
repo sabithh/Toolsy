@@ -102,7 +102,7 @@ export default function ManageShopPage() {
                         onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = 'var(--text-muted)'}>
                         <ArrowLeft size={16} /> Back to Dashboard
                     </Link>
-                    <div style={{ borderLeft: '3px solid #D20000', paddingLeft: '1.25rem' }}>
+                    <div style={{ borderLeft: '3px solid var(--highlight)', paddingLeft: '1.25rem' }}>
                         <h1 className="font-black uppercase tracking-tighter leading-none mb-2"
                             style={{ fontFamily: 'var(--font-bebas), sans-serif', fontSize: 'clamp(2.5rem, 6vw, 4rem)', color: 'var(--text-primary)' }}>
                             Shop Settings
