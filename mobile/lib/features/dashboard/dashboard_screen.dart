@@ -13,10 +13,6 @@ import '../../core/widgets/brand_button.dart';
 import '../../core/widgets/placeholder_screen.dart';
 import '../auth/auth_providers.dart';
 
-final providerShopsProvider = FutureProvider.autoDispose<List<Map<String, dynamic>>>((ref) async {
-  return ref.watch(apiServiceProvider).myShops();
-});
-
 final providerBookingsProvider = FutureProvider.autoDispose<List<Booking>>((ref) async {
   return ref.watch(apiServiceProvider).listBookings();
 });
@@ -29,7 +25,6 @@ class DashboardScreen extends ConsumerWidget {
     final isLight = ref.watch(isLightProvider);
     final palette = VaadakaPalette(isLight);
     final user = ref.watch(authProvider).user;
-    final shopsAsync = ref.watch(providerShopsProvider);
     final bookingsAsync = ref.watch(providerBookingsProvider);
 
     if (user == null || !user.isProvider) {
@@ -52,7 +47,6 @@ class DashboardScreen extends ConsumerWidget {
           IconButton(
             icon: Icon(LucideIcons.refreshCw, color: palette.textPrimary, size: 18),
             onPressed: () {
-              ref.invalidate(providerShopsProvider);
               ref.invalidate(providerBookingsProvider);
             },
           ),
@@ -62,7 +56,6 @@ class DashboardScreen extends ConsumerWidget {
         color: VaadakaColors.brandRed,
         backgroundColor: palette.bgSurface,
         onRefresh: () async {
-          ref.invalidate(providerShopsProvider);
           ref.invalidate(providerBookingsProvider);
         },
         child: ListView(
@@ -91,48 +84,6 @@ class DashboardScreen extends ConsumerWidget {
                   ),
                 ),
               ],
-            ),
-            const SizedBox(height: 24),
-            _sectionLabel('MY SHOPS', palette),
-            const SizedBox(height: 10),
-            shopsAsync.when(
-              loading: () => const Padding(padding: EdgeInsets.all(20), child: LoadingView()),
-              error: (e, _) => _errorCard(e.toString(), palette),
-              data: (shops) {
-                if (shops.isEmpty) {
-                  return Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: palette.bgSurface,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: palette.border),
-                    ),
-                    child: Column(
-                      children: [
-                        Icon(LucideIcons.store, size: 36, color: palette.textMuted2),
-                        const SizedBox(height: 10),
-                        Text(
-                          'No shop yet',
-                          style: GoogleFonts.bebasNeue(
-                            fontSize: 22,
-                            color: palette.textPrimary,
-                            letterSpacing: 1,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Create a shop on the web to start listing items.',
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.barlow(fontSize: 12, color: palette.textMuted),
-                        ),
-                      ],
-                    ),
-                  );
-                }
-                return Column(
-                  children: shops.map((s) => _shopCard(s, palette)).toList(),
-                );
-              },
             ),
             const SizedBox(height: 24),
             _sectionLabel('INCOMING BOOKINGS', palette),
@@ -171,55 +122,6 @@ class DashboardScreen extends ConsumerWidget {
         fontWeight: FontWeight.w800,
         color: palette.textMuted,
         letterSpacing: 2,
-      ),
-    );
-  }
-
-  Widget _shopCard(Map<String, dynamic> shop, VaadakaPalette palette) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: palette.bgSurface,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: palette.border),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: VaadakaColors.brandRed.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            alignment: Alignment.center,
-            child: const Icon(LucideIcons.store, color: VaadakaColors.brandRed, size: 18),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  shop['name']?.toString() ?? 'Shop',
-                  style: GoogleFonts.barlow(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w800,
-                    color: palette.textPrimary,
-                  ),
-                ),
-                if (shop['address'] != null)
-                  Text(
-                    shop['address'].toString(),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.barlow(fontSize: 11, color: palette.textMuted),
-                  ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

@@ -116,7 +116,7 @@ class _ListItemScreenState extends ConsumerState<ListItemScreen> {
       }
 
       if (!mounted) return;
-      ref.invalidate(providerShopsProvider);
+      ref.invalidate(providerBookingsProvider);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Item listed!')),
       );
