@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
@@ -12,6 +12,7 @@ export default function ChatsPage() {
     const router = useRouter();
     const [chats, setChats] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
     useEffect(() => {
         if (!loading && !isAuthenticated) router.push('/login');
@@ -20,6 +21,13 @@ export default function ChatsPage() {
     useEffect(() => {
         if (isAuthenticated && accessToken) loadChats();
         else setLoading(false);
+    }, [isAuthenticated, accessToken]);
+
+    // Poll chat list every 8 seconds to refresh unread counts
+    useEffect(() => {
+        if (!isAuthenticated || !accessToken) return;
+        pollRef.current = setInterval(loadChats, 8000);
+        return () => { if (pollRef.current) clearInterval(pollRef.current); };
     }, [isAuthenticated, accessToken]);
 
     const loadChats = async () => {

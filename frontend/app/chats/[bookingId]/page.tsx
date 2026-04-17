@@ -20,6 +20,8 @@ export default function ChatPage() {
     const [sending, setSending] = useState(false);
     const [isArchived, setIsArchived] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+    const latestMessageId = useRef<any>(null);
 
     useEffect(() => {
         if (!loading && !isAuthenticated) router.push('/login');
@@ -29,6 +31,23 @@ export default function ChatPage() {
         if (isAuthenticated && accessToken && bookingId) loadChat();
         else setLoading(false);
     }, [isAuthenticated, accessToken, bookingId]);
+
+    // Poll for new messages every 4 seconds
+    useEffect(() => {
+        if (!isAuthenticated || !accessToken || !bookingId || isArchived) return;
+        pollRef.current = setInterval(async () => {
+            try {
+                const msgs = await api.getChatMessages(accessToken, bookingId);
+                const newMsgs = Array.isArray(msgs) ? msgs : [];
+                const lastId = newMsgs[newMsgs.length - 1]?.id;
+                if (lastId !== latestMessageId.current) {
+                    latestMessageId.current = lastId;
+                    setMessages(newMsgs);
+                }
+            } catch {}
+        }, 4000);
+        return () => { if (pollRef.current) clearInterval(pollRef.current); };
+    }, [isAuthenticated, accessToken, bookingId, isArchived]);
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -41,8 +60,9 @@ export default function ChatPage() {
                 api.getChatMessages(accessToken!, bookingId),
             ]);
             setChatInfo(roomData);
-            setMessages(Array.isArray(msgData) ? msgData : []);
-            // Mark archived if rental ended
+            const msgs = Array.isArray(msgData) ? msgData : [];
+            setMessages(msgs);
+            latestMessageId.current = msgs[msgs.length - 1]?.id ?? null;
             if (roomData?.booking?.status === 'completed' || roomData?.booking?.status === 'cancelled') {
                 setIsArchived(true);
             }
@@ -69,6 +89,7 @@ export default function ChatPage() {
         try {
             const sent = await api.sendChatMessage(accessToken!, bookingId, msg);
             setMessages(prev => prev.map(m => m.pending ? sent : m));
+            latestMessageId.current = sent.id;
         } catch {
             // Remove the optimistic message on failure
             setMessages(prev => prev.filter(m => !m.pending));
