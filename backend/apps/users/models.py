@@ -69,3 +69,32 @@ class User(AbstractUser):
     def is_renter(self):
         """Check if user is a tool renter"""
         return self.user_type == 'renter'
+
+
+class DeviceToken(models.Model):
+    """Registered FCM / APNs device token for push notifications."""
+
+    PLATFORM_CHOICES = [
+        ('android', 'Android'),
+        ('ios', 'iOS'),
+        ('web', 'Web'),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(
+        'users.User',
+        on_delete=models.CASCADE,
+        related_name='device_tokens',
+    )
+    token = models.CharField(max_length=512, unique=True)
+    platform = models.CharField(max_length=10, choices=PLATFORM_CHOICES, default='android')
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'device_tokens'
+        indexes = [models.Index(fields=['user', 'is_active'])]
+
+    def __str__(self):
+        return f"{self.user.username} · {self.platform}"

@@ -110,6 +110,24 @@ class BookingCreateSerializer(serializers.ModelSerializer):
             validated_data['renter'] = self.context['request'].user
             booking = super().create(validated_data)
 
+        # Notify the shop owner of the new booking request
+        try:
+            from apps.users.notifications import send_push
+            Notification.objects.create(
+                user=booking.shop.owner,
+                type='booking',
+                title='New Booking Request',
+                message=f'{booking.renter.username} requested to rent {booking.tool.name}.'
+            )
+            send_push(
+                booking.shop.owner,
+                'New Booking Request',
+                f'{booking.renter.username} wants to rent {booking.tool.name}.',
+                data={'type': 'booking', 'booking_id': str(booking.id)},
+            )
+        except Exception:
+            pass
+
         return booking
 
 

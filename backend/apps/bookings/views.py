@@ -7,6 +7,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from apps.bookings.models import Booking, Notification
 from apps.payments.services import create_razorpay_order, verify_payment_signature
+from apps.users.notifications import send_push
 from .serializers import (
     BookingSerializer, BookingCreateSerializer, NotificationSerializer
 )
@@ -75,10 +76,16 @@ class BookingViewSet(viewsets.ModelViewSet):
             title='Booking Confirmed',
             message=f'Your booking for {booking.tool.name} has been confirmed. Please complete payment to activate it.'
         )
-        
+        send_push(
+            booking.renter,
+            'Booking Confirmed',
+            f'{booking.tool.name} — complete payment to activate.',
+            data={'type': 'booking', 'booking_id': str(booking.id)},
+        )
+
         serializer = self.get_serializer(booking)
         return Response(serializer.data)
-    
+
     @action(detail=True, methods=['post'])
     def cancel(self, request, pk=None):
         """Cancel a booking"""
@@ -108,7 +115,23 @@ class BookingViewSet(viewsets.ModelViewSet):
                 )
             booking.status = 'cancelled'
             booking.save(update_fields=['status'])
-        
+
+        # Notify the other party
+        canceller = request.user
+        recipient = booking.shop.owner if canceller == booking.renter else booking.renter
+        Notification.objects.create(
+            user=recipient,
+            type='booking',
+            title='Booking Cancelled',
+            message=f'Booking for {booking.tool.name} was cancelled.'
+        )
+        send_push(
+            recipient,
+            'Booking Cancelled',
+            f'{booking.tool.name} — cancelled by {canceller.username}.',
+            data={'type': 'booking', 'booking_id': str(booking.id)},
+        )
+
         serializer = self.get_serializer(booking)
         return Response(serializer.data)
 
@@ -195,12 +218,24 @@ class BookingViewSet(viewsets.ModelViewSet):
                     title='Payment Successful',
                     message=f'Payment for {booking.tool.name} was successful. Your booking is active!'
                 )
-                
+                send_push(
+                    booking.renter,
+                    'Payment Successful',
+                    f'{booking.tool.name} is now active. Ready to pick up!',
+                    data={'type': 'payment', 'booking_id': str(booking.id)},
+                )
+
                 Notification.objects.create(
                     user=booking.shop.owner,
                     type='payment',
                     title='Payment Received',
                     message=f'Payment received for booking {booking.id}'
+                )
+                send_push(
+                    booking.shop.owner,
+                    'Payment Received',
+                    f'{booking.renter.username} paid for {booking.tool.name}.',
+                    data={'type': 'payment', 'booking_id': str(booking.id)},
                 )
                 
                 return Response({'status': 'Payment verified successfully'})

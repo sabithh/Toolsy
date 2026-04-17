@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from apps.bookings.models import Booking
+from apps.users.notifications import send_push
 from .models import ChatRoom, Message
 from .serializers import ChatRoomSerializer, MessageSerializer
 
@@ -73,5 +74,16 @@ class MessageListView(APIView):
 
         room, _ = ChatRoom.objects.get_or_create(booking=booking)
         message = Message.objects.create(room=room, sender=user, message=message_text)
+
+        # Push the other party
+        recipient = booking.shop.owner if user == booking.renter else booking.renter
+        preview = message_text if len(message_text) <= 80 else message_text[:77] + '...'
+        send_push(
+            recipient,
+            f'New message from {user.username}',
+            preview,
+            data={'type': 'chat', 'booking_id': str(booking.id)},
+        )
+
         serializer = MessageSerializer(message)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
