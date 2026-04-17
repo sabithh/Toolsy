@@ -96,12 +96,12 @@ export default function RegisterPage() {
                                 <circle cx="18" cy="22" r="4.5" fill="#D20000" />
                             </svg>
                         </div>
-                        <span style={{ fontFamily: 'var(--font-bebas), sans-serif', fontSize: '1.4rem', color: 'var(--text-primary)', letterSpacing: '0.05em' }}>
+                        <span style={{ fontFamily: 'var(--font-bebas), sans-serif', fontSize: '1.4rem', color: '#FFFFFF', letterSpacing: '0.05em' }}>
                             VAA<span style={{ color: '#D20000' }}>DAKA</span><span style={{ color: '#D20000' }}>.</span>
                         </span>
                     </div>
                     <h2 className="font-black uppercase tracking-tighter leading-none mb-4"
-                        style={{ fontFamily: 'var(--font-bebas), sans-serif', fontSize: '3.5rem', color: 'var(--text-primary)', lineHeight: 0.9 }}>
+                        style={{ fontFamily: 'var(--font-bebas), sans-serif', fontSize: '3.5rem', color: '#FFFFFF', lineHeight: 0.9 }}>
                         Join<br /><span style={{ color: '#D20000' }}>Kerala's</span><br />Network
                     </h2>
                 </div>
@@ -114,8 +114,8 @@ export default function RegisterPage() {
                         <div key={item.label} className="flex items-start gap-3">
                             <CheckCircle size={16} style={{ color: '#D20000', flexShrink: 0, marginTop: 2 }} />
                             <div>
-                                <div className="text-sm font-bold uppercase tracking-wider" style={{ color: 'var(--text-primary)' }}>{item.label}</div>
-                                <div className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>{item.desc}</div>
+                                <div className="text-sm font-bold uppercase tracking-wider" style={{ color: '#FFFFFF' }}>{item.label}</div>
+                                <div className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.55)' }}>{item.desc}</div>
                             </div>
                         </div>
                     ))}

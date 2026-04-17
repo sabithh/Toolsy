@@ -70,20 +70,20 @@ export default function LoginPage() {
                                 <circle cx="18" cy="22" r="4.5" fill="#D20000" />
                             </svg>
                         </div>
-                        <span style={{ fontFamily: 'var(--font-bebas), sans-serif', fontSize: '1.5rem', color: 'var(--text-primary)', letterSpacing: '0.05em' }}>
+                        <span style={{ fontFamily: 'var(--font-bebas), sans-serif', fontSize: '1.5rem', color: '#FFFFFF', letterSpacing: '0.05em' }}>
                             VAA<span style={{ color: '#D20000' }}>DAKA</span><span style={{ color: '#D20000' }}>.</span>
                         </span>
                     </div>
                     <h1 className="font-black uppercase tracking-tighter leading-[0.85] mb-8"
-                        style={{ fontFamily: 'var(--font-bebas), sans-serif', fontSize: 'clamp(4rem, 8vw, 7rem)', color: 'var(--text-primary)' }}>
+                        style={{ fontFamily: 'var(--font-bebas), sans-serif', fontSize: 'clamp(4rem, 8vw, 7rem)', color: '#FFFFFF' }}>
                         Rent<br />
                         <span style={{ color: '#D20000' }}>Anything</span><br />
                         Near You
                     </h1>
                     <div style={{ borderLeft: '3px solid #D20000', paddingLeft: '1.25rem' }}>
-                        <p className="text-base font-bold uppercase tracking-widest" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-barlow), sans-serif', letterSpacing: '3px' }}>
+                        <p className="text-base font-bold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.55)', fontFamily: 'var(--font-barlow), sans-serif', letterSpacing: '3px' }}>
                             Kerala&apos;s rental platform.<br />
-                            <span style={{ color: 'var(--text-primary)' }}>No ownership required.</span>
+                            <span style={{ color: '#FFFFFF' }}>No ownership required.</span>
                         </p>
                     </div>
                 </div>
