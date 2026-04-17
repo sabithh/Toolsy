@@ -239,13 +239,6 @@ export default function RegisterPage() {
                                 }
                             </div>
 
-                            {error && (
-                                <div className="px-4 py-3 mb-6 text-sm font-mono"
-                                    style={{ background: 'rgba(210,0,0,0.1)', border: '1px solid rgba(210,0,0,0.3)', borderRadius: 6, color: '#FF6666' }}>
-                                    {error}
-                                </div>
-                            )}
-
                             <form onSubmit={handleSubmit} className="space-y-5">
                                 <div className="grid sm:grid-cols-2 gap-4">
                                     <div>
@@ -325,6 +318,13 @@ export default function RegisterPage() {
                                         />
                                     </div>
                                 </div>
+
+                                {error && (
+                                    <div className="px-4 py-3 text-sm font-mono"
+                                        style={{ background: 'rgba(210,0,0,0.1)', border: '1px solid rgba(210,0,0,0.3)', borderRadius: 6, color: '#FF6666' }}>
+                                        {error}
+                                    </div>
+                                )}
 
                                 <button
                                     type="submit"

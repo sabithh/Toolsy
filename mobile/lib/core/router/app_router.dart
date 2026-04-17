@@ -18,13 +18,46 @@ import '../../features/profile/profile_screen.dart';
 import '../../features/tools/tool_detail_screen.dart';
 import '../../features/tools/tools_screen.dart';
 
+CustomTransitionPage<T> _fadeSlidePage<T>(Widget child, {LocalKey? key}) {
+  return CustomTransitionPage<T>(
+    key: key,
+    child: child,
+    transitionDuration: const Duration(milliseconds: 320),
+    reverseTransitionDuration: const Duration(milliseconds: 240),
+    transitionsBuilder: (context, animation, secondary, child) {
+      final curved = CurvedAnimation(parent: animation, curve: Curves.easeOutCubic);
+      return FadeTransition(
+        opacity: curved,
+        child: SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0, 0.04),
+            end: Offset.zero,
+          ).animate(curved),
+          child: child,
+        ),
+      );
+    },
+  );
+}
+
+CustomTransitionPage<T> _fadePage<T>(Widget child, {LocalKey? key}) {
+  return CustomTransitionPage<T>(
+    key: key,
+    child: child,
+    transitionDuration: const Duration(milliseconds: 220),
+    reverseTransitionDuration: const Duration(milliseconds: 160),
+    transitionsBuilder: (context, animation, secondary, child) {
+      return FadeTransition(opacity: animation, child: child);
+    },
+  );
+}
+
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: '/',
     refreshListenable: _AuthRouterNotifier(ref),
     redirect: (context, state) {
       final auth = ref.read(authProvider);
-      // Still bootstrapping
       if (auth.loading) return null;
 
       final loc = state.matchedLocation;
@@ -32,7 +65,6 @@ final routerProvider = Provider<GoRouter>((ref) {
       final authPages = {'/login', '/register', '/welcome'};
 
       if (!isAuthed && !authPages.contains(loc)) {
-        // Allow browse as guest
         if (loc == '/tools' || loc.startsWith('/tools/')) return null;
         return '/welcome';
       }
@@ -42,37 +74,47 @@ final routerProvider = Provider<GoRouter>((ref) {
       return null;
     },
     routes: [
-      GoRoute(path: '/', builder: (_, _) => const SplashScreen()),
-      GoRoute(path: '/welcome', builder: (_, _) => const WelcomeScreen()),
-      GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
-      GoRoute(path: '/register', builder: (_, _) => const RegisterScreen()),
+      GoRoute(path: '/', pageBuilder: (_, s) => _fadePage(const SplashScreen(), key: s.pageKey)),
+      GoRoute(path: '/welcome', pageBuilder: (_, s) => _fadeSlidePage(const WelcomeScreen(), key: s.pageKey)),
+      GoRoute(path: '/login', pageBuilder: (_, s) => _fadeSlidePage(const LoginScreen(), key: s.pageKey)),
+      GoRoute(path: '/register', pageBuilder: (_, s) => _fadeSlidePage(const RegisterScreen(), key: s.pageKey)),
 
-      // Main shell with bottom nav
       ShellRoute(
         builder: (context, state, child) => HomeShell(child: child),
         routes: [
-          GoRoute(path: '/tools', builder: (_, _) => const ToolsScreen()),
-          GoRoute(path: '/bookings', builder: (_, _) => const BookingsScreen()),
-          GoRoute(path: '/chats', builder: (_, _) => const ChatListScreen()),
-          GoRoute(path: '/dashboard', builder: (_, _) => const DashboardScreen()),
-          GoRoute(path: '/profile', builder: (_, _) => const ProfileScreen()),
+          GoRoute(path: '/tools', pageBuilder: (_, s) => _fadePage(const ToolsScreen(), key: s.pageKey)),
+          GoRoute(path: '/bookings', pageBuilder: (_, s) => _fadePage(const BookingsScreen(), key: s.pageKey)),
+          GoRoute(path: '/chats', pageBuilder: (_, s) => _fadePage(const ChatListScreen(), key: s.pageKey)),
+          GoRoute(path: '/dashboard', pageBuilder: (_, s) => _fadePage(const DashboardScreen(), key: s.pageKey)),
+          GoRoute(path: '/profile', pageBuilder: (_, s) => _fadePage(const ProfileScreen(), key: s.pageKey)),
         ],
       ),
 
-      // Detail pages (full screen)
       GoRoute(
         path: '/tools/:id',
-        builder: (context, state) => ToolDetailScreen(toolId: state.pathParameters['id']!),
+        pageBuilder: (context, s) => _fadeSlidePage(
+          ToolDetailScreen(toolId: s.pathParameters['id']!),
+          key: s.pageKey,
+        ),
       ),
       GoRoute(
         path: '/bookings/:id',
-        builder: (context, state) => BookingDetailScreen(bookingId: state.pathParameters['id']!),
+        pageBuilder: (context, s) => _fadeSlidePage(
+          BookingDetailScreen(bookingId: s.pathParameters['id']!),
+          key: s.pageKey,
+        ),
       ),
       GoRoute(
         path: '/chats/:bookingId',
-        builder: (context, state) => ChatDetailScreen(bookingId: state.pathParameters['bookingId']!),
+        pageBuilder: (context, s) => _fadeSlidePage(
+          ChatDetailScreen(bookingId: s.pathParameters['bookingId']!),
+          key: s.pageKey,
+        ),
       ),
-      GoRoute(path: '/list-item', builder: (_, _) => const ListItemScreen()),
+      GoRoute(
+        path: '/list-item',
+        pageBuilder: (_, s) => _fadeSlidePage(const ListItemScreen(), key: s.pageKey),
+      ),
     ],
   );
 });

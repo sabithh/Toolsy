@@ -9,6 +9,7 @@ import '../../core/api/api_service.dart';
 import '../../core/models/tool.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/theme_provider.dart';
+import '../../core/widgets/animations.dart';
 import '../../core/widgets/brand_button.dart';
 import '../../core/widgets/placeholder_screen.dart';
 import '../../core/widgets/theme_toggle.dart';
@@ -138,7 +139,10 @@ class _ToolsScreenState extends ConsumerState<ToolsScreen> {
                       padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
                       itemCount: tools.length,
                       separatorBuilder: (_, _) => const SizedBox(height: 12),
-                      itemBuilder: (_, i) => ToolCard(tool: tools[i]),
+                      itemBuilder: (_, i) => FadeSlideIn(
+                        index: i,
+                        child: ToolCard(tool: tools[i]),
+                      ),
                     );
                   },
                   loading: () => const LoadingView(),
@@ -171,7 +175,9 @@ class ToolCard extends ConsumerWidget {
     final isLight = ref.watch(isLightProvider);
     final palette = VaadakaPalette(isLight);
     final image = tool.primaryImage;
-    return Material(
+    return PressScale(
+      onTap: () => context.push('/tools/${tool.id}'),
+      child: Material(
       color: palette.bgSurface,
       borderRadius: BorderRadius.circular(10),
       child: InkWell(
@@ -185,7 +191,9 @@ class ToolCard extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ClipRRect(
+              Hero(
+                tag: 'tool-image-${tool.id}',
+                child: ClipRRect(
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(9)),
                 child: image == null
                     ? Container(
@@ -205,6 +213,7 @@ class ToolCard extends ConsumerWidget {
                           child: Center(child: Icon(LucideIcons.image, size: 32, color: palette.textMuted2)),
                         ),
                       ),
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.all(14),
@@ -272,7 +281,7 @@ class ToolCard extends ConsumerWidget {
                       children: [
                         Text(
                           '₹${tool.displayPrice.toStringAsFixed(0)}',
-                          style: GoogleFonts.bebasNeue(fontSize: 24, color: VaadakaColors.brandRed, letterSpacing: 1),
+                          style: GoogleFonts.bebasNeue(fontSize: 24, color: isLight ? VaadakaColors.brandRed : palette.textPrimary, letterSpacing: 1),
                         ),
                         const SizedBox(width: 4),
                         Text(
@@ -292,6 +301,7 @@ class ToolCard extends ConsumerWidget {
             ],
           ),
         ),
+      ),
       ),
     );
   }

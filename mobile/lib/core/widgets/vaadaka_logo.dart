@@ -51,13 +51,13 @@ class VaadakaLogo extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisSize: MainAxisSize.min,
               children: [
-                // "വാ" in Malayalam, always red
+                // "വാ" in red on light bg, white on red brand bg
                 Text(
                   'വാ',
                   style: GoogleFonts.notoSerifMalayalam(
                     fontSize: height * 0.52,
                     fontWeight: FontWeight.w700,
-                    color: VaadakaColors.brandRed,
+                    color: forceLight ? Colors.white : (isLight ? VaadakaColors.brandRed : Colors.white),
                     height: 1,
                   ),
                 ),
@@ -74,7 +74,7 @@ class VaadakaLogo extends ConsumerWidget {
                   '.',
                   style: GoogleFonts.bebasNeue(
                     fontSize: height * 0.58,
-                    color: VaadakaColors.brandRed,
+                    color: forceLight ? Colors.white54 : (isLight ? VaadakaColors.brandRed : Colors.white54),
                     height: 1,
                   ),
                 ),

@@ -56,17 +56,20 @@ class ToolDetailScreen extends ConsumerWidget {
                 ),
                 expandedHeight: 300,
                 flexibleSpace: FlexibleSpaceBar(
-                  background: image == null
-                      ? Container(
-                          color: palette.bgSurface2,
-                          child: Icon(LucideIcons.package, size: 80, color: palette.textMuted2),
-                        )
-                      : CachedNetworkImage(
-                          imageUrl: image,
-                          fit: BoxFit.cover,
-                          placeholder: (_, _) => Container(color: palette.bgSurface2),
-                          errorWidget: (_, _, _) => Container(color: palette.bgSurface2),
-                        ),
+                  background: Hero(
+                    tag: 'tool-image-${tool.id}',
+                    child: image == null
+                        ? Container(
+                            color: palette.bgSurface2,
+                            child: Icon(LucideIcons.package, size: 80, color: palette.textMuted2),
+                          )
+                        : CachedNetworkImage(
+                            imageUrl: image,
+                            fit: BoxFit.cover,
+                            placeholder: (_, _) => Container(color: palette.bgSurface2),
+                            errorWidget: (_, _, _) => Container(color: palette.bgSurface2),
+                          ),
+                  ),
                 ),
               ),
               SliverToBoxAdapter(
@@ -112,7 +115,7 @@ class ToolDetailScreen extends ConsumerWidget {
                             '₹${tool.displayPrice.toStringAsFixed(0)}',
                             style: GoogleFonts.bebasNeue(
                               fontSize: 48,
-                              color: VaadakaColors.brandRed,
+                              color: isLight ? VaadakaColors.brandRed : palette.textPrimary,
                               letterSpacing: 1,
                             ),
                           ),

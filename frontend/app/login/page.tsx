@@ -25,7 +25,12 @@ export default function LoginPage() {
             showToast('Welcome back to Vaadaka!', 'success');
             router.push('/dashboard');
         } catch (err: any) {
-            setError(err.message || 'Login failed. Check your credentials.');
+            const raw = (err.message || '').toLowerCase();
+            if (raw.includes('no active account') || raw.includes('given credentials') || raw.includes('incorrect')) {
+                setError('Incorrect username or password.');
+            } else {
+                setError(err.message || 'Login failed. Check your credentials.');
+            }
         } finally {
             setLoading(false);
         }
