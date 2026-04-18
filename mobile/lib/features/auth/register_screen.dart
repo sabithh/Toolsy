@@ -42,10 +42,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   Future<void> _submit() async {
     setState(() => _error = null);
     if (!_formKey.currentState!.validate()) return;
-    if (_password.text != _confirm.text) {
-      setState(() => _error = 'Passwords do not match');
-      return;
-    }
     try {
       await ref.read(authProvider.notifier).register(
             username: _username.text.trim(),
@@ -152,7 +148,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   keyboardType: TextInputType.emailAddress,
                   validator: (v) {
                     if (v == null || v.trim().isEmpty) return 'Required';
-                    if (!v.contains('@')) return 'Invalid email';
+                    final emailRe = RegExp(r'^[\w.+\-]+@[\w\-]+\.[a-zA-Z]{2,}$');
+                    if (!emailRe.hasMatch(v.trim())) return 'Invalid email';
                     return null;
                   },
                 ),
@@ -182,7 +179,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   icon: LucideIcons.lock,
                   obscure: _obscure,
                   textInputAction: TextInputAction.done,
-                  validator: (v) => (v == null || v.isEmpty) ? 'Required' : null,
+                  validator: (v) {
+                    if (v == null || v.isEmpty) return 'Required';
+                    if (v != _password.text) return 'Passwords do not match';
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 8),
                 Align(

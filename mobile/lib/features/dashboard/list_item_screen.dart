@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../core/api/api_client.dart';
 import '../../core/api/api_service.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/theme_provider.dart';
@@ -61,7 +62,7 @@ class _ListItemScreenState extends ConsumerState<ListItemScreen> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _error = e.toString();
+          _error = VaadakaApiClient.describeError(e);
           _loading = false;
         });
       }
@@ -124,7 +125,7 @@ class _ListItemScreenState extends ConsumerState<ListItemScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed: $e')),
+          SnackBar(content: Text(VaadakaApiClient.describeError(e))),
         );
       }
     } finally {

@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../core/api/api_client.dart';
 import '../../core/api/api_service.dart';
 import '../../core/models/tool.dart';
 import '../../core/theme/app_colors.dart';
@@ -90,7 +91,7 @@ class DashboardScreen extends ConsumerWidget {
             const SizedBox(height: 10),
             bookingsAsync.when(
               loading: () => const Padding(padding: EdgeInsets.all(20), child: LoadingView()),
-              error: (e, _) => _errorCard(e.toString(), palette),
+              error: (e, _) => _errorCard(VaadakaApiClient.describeError(e), palette),
               data: (bookings) {
                 if (bookings.isEmpty) {
                   return Padding(

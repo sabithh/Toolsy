@@ -52,6 +52,10 @@ class _BookingDetailScreenState extends ConsumerState<BookingDetailScreen> {
     try {
       final api = ref.read(apiServiceProvider);
       final order = await api.createPaymentOrder(booking.id);
+      if (order['key'] == null || order['amount'] == null) {
+        _showSnack('Invalid payment configuration. Please try again.', isError: true);
+        return;
+      }
       final user = ref.read(authProvider).user;
       final options = {
         'key': order['key'],
@@ -165,11 +169,11 @@ class _BookingDetailScreenState extends ConsumerState<BookingDetailScreen> {
         error: (e, _) => EmptyStateView(
           icon: LucideIcons.alertTriangle,
           title: 'Failed to load',
-          subtitle: e.toString(),
+          subtitle: VaadakaApiClient.describeError(e),
         ),
         data: (b) {
           final fmt = DateFormat('EEE, MMM d · HH:mm');
-          final isRenter = user?.id == b.renter?['id']?.toString();
+          final isRenter = user != null && b.renter != null && user.id == b.renter!['id']?.toString();
           final isProvider = user?.isProvider == true;
           final canPay = isRenter && b.status == 'confirmed' && b.paymentStatus == 'pending';
           final canConfirm = isProvider && b.status == 'pending';

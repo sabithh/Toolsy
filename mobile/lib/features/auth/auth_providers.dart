@@ -74,6 +74,7 @@ class AuthController extends StateNotifier<AuthState> {
         'username': username,
         'email': email,
         'password': password,
+        'password_confirm': password,
         'user_type': userType,
         if (firstName != null && firstName.isNotEmpty) 'first_name': firstName,
         if (lastName != null && lastName.isNotEmpty) 'last_name': lastName,

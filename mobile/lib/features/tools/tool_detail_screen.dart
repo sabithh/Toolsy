@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../core/api/api_client.dart';
 import '../../core/api/api_service.dart';
 import '../../core/models/tool.dart';
 import '../../core/theme/app_colors.dart';
@@ -36,7 +37,7 @@ class ToolDetailScreen extends ConsumerWidget {
         error: (e, _) => EmptyStateView(
           icon: LucideIcons.alertTriangle,
           title: 'Couldn\'t load item',
-          subtitle: e.toString(),
+          subtitle: VaadakaApiClient.describeError(e),
           action: BrandButton(label: 'Retry', onPressed: () => ref.invalidate(toolDetailProvider(toolId))),
         ),
         data: (tool) {
@@ -195,7 +196,7 @@ class ToolDetailScreen extends ConsumerWidget {
       ),
       bottomSheet: async.maybeWhen(
         data: (tool) {
-          final isOwner = user != null && tool.shop?['owner'] == user.id;
+          final isOwner = user != null && tool.shop?['owner']?.toString() == user.id;
           final canBook = user != null && !isOwner && tool.quantityAvailable > 0 && user.isRenter;
           return Container(
             padding: EdgeInsets.fromLTRB(16, 12, 16, MediaQuery.of(context).padding.bottom + 12),

@@ -26,6 +26,7 @@ const notoSansMalayalam = Noto_Sans_Malayalam({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://vaadaka.vercel.app'),
   title: 'Vaadaka — Rent Anything · Kerala',
   description: 'Browse and rent tools, equipment, and items from trusted owners near you. No buying. No storing. Just renting.',
   icons: {
@@ -37,6 +38,13 @@ export const metadata: Metadata = {
     title: 'Vaadaka — Rent Anything · Kerala',
     description: 'Browse and rent tools, equipment, and items from trusted owners near you.',
     siteName: 'Vaadaka',
+    images: [{ url: '/logo.png', width: 512, height: 512, alt: 'Vaadaka' }],
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Vaadaka — Rent Anything · Kerala',
+    description: 'Browse and rent tools, equipment, and items from trusted owners near you.',
+    images: ['/logo.png'],
   },
 };
 
